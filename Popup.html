@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<title>Empty</title>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<script type="text/javascript" btkid="page::common" src="scripts/common/base.js"></script>
+		
+		<style type="text/css">
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			.links {
+				min-width: 100px;
+				border: 1px solid #ccc;
+				padding: 2px;
+				background-color: #eee;
+			}
+			.links hr {
+				margin: 0;
+			}
+			.link {
+				border: 1px solid transparent;
+				border-radius: 4px;
+				padding-left: 8px;
+				padding-right: 8px;
+				text-align: center;
+			}
+			.link:hover {
+				border-color: #aabbff;
+				background-color: #cfdfff;
+				cursor: pointer;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<div class="links">
+			<div class="link" onclick="page.bg.launch('Test.html');">Test</div>
+			<div class="link" onclick="page.bg.popup({url:'Bookmarks.html', width:800,height:800});">Bookmarks</div>
+			<div class="link" onclick="page.bg.launch('Bookmarks.html');">Bookmarks(tab)</div>
+			<hr />
+			<div class="link" onclick="page.link.alarms.showMessages();">Messages</div>
+			<div class="link" onclick="page.bg.launch('Log.html');">Log</div>
+			<div class="link" onclick="page.bg.launch('Topics.html');">Topics</div>
+			<div class="link" onclick="page.bg.launch('doc/btkdoc.html');">Documentation</div>
+			<hr />
+			<div class="link" onclick="page.bg.launch('Terminal.html');">Terminal</div>
+			<div class="link" onclick="page.bg.launch('Scratch.html');">Scratch</div>
+			<div class="link" onclick="page.bg.launch('Blank.html');">Blank</div>
+			<hr />
+			<div class="link" onclick="page.bg.launch('XMLNote.html');">XMLNote</div>
+			<hr />
+			<!--div class="link" onclick="page.bg.launch('Options.html');">Options</div-->
+			<div class="link" onclick="page.bg.popup.center({url:'Options.html', width:300, height:200});">Options</div>
+		</div>
+	</body>
+</html>

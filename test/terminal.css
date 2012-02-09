@@ -1,0 +1,177 @@
+/* Prevent the text contents of draggable elements from being selectable. */
+[draggable=true] {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+/* don't know what this does */
+[draggable=true] {
+	-moz-user-drag: element;
+	-khtml-user-drag: element;
+	-webkit-user-drag: element;
+	user-drag: element;
+}
+
+/*
+	somewhere to put all the terminal examples
+*/
+.terminalBox {
+	position: absolute;
+	top: 2em;
+	/*left: 55%;*/
+	right: 2.5em;
+}
+.terminalBox > * {
+	margin-bottom: 10px;
+}
+/*
+	themes for terminals
+	this one is pretty
+*/
+.myFirst.frame {
+	display: inline-block;
+	background-color: #cccc00;
+	color: black;
+	border-width: 1px;
+	border-style: outset;
+	border-color: #eeee00;
+	padding: 2px;
+}
+.myFirst.title {
+	font-weight: bold;
+	font-size: 125%;
+	background-color: #aacc00;
+	border-width: 1px;
+	border-style: outset;
+	border-color: #ccff00;
+	padding-left: 2px;
+	padding-right: 2px;
+	/*cursor: move;*/
+}
+.myFirst.terminal {
+	resize: both;
+	width: 640px;
+	height: 140px;
+	overflow-y:auto;
+	background-color:inherit;
+	color:inherit;
+	white-space: pre-wrap;
+}
+.myFirst.terminal > *{
+	resize: none;
+}
+.myFirst.terminal  .log > *:hover {
+	background-color:#ccee00;
+}
+.myFirst.terminal  .commandline:hover {
+	background-color:#ccee00;
+}
+.myFirst.terminal  .log > *.info {
+	color:blue;
+}
+.myFirst.terminal  .log > *.error {
+	color: red;
+}
+
+/*
+	fairly standard looking terminal
+*/
+.mySecond.terminal {
+	width: 640px;
+	height: 160px;
+	overflow-y: auto;
+	resize: both;
+	border-width: 1px;
+	border-style: outset;
+	border-color: white;
+	padding: 2px;
+	color: #ffff00;
+}
+/*
+	resize seems to be inheritable in Google Chrome
+	don't want it to be
+*/
+.mySecond.terminal > * {
+	resize: none;
+}
+
+/*
+	using flexbox model for layout
+*/
+.myThird.frame {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: start;
+	-webkit-box-align: stretch;
+	display: -khtml-box;
+	-khtml-box-orient: vertical;
+	-khtml-box-pack: start;
+	-khtml-box-align: stretch;
+	display: -moz-box;
+	-moz-box-orient: vertical;
+	-moz-box-pack: start;
+	-moz-box-align: stretch;
+	display: box;
+	box-orient: vertical;
+	box-pack: start;
+	box-align: stretch;
+	width: 640px;
+	height: 160px;
+	background-color: #dddddd;
+	color: black;
+	border-width: 1px;
+	/*border-style: outset;
+	border-color: white;*/
+	border-style: solid;
+	border-color: black;
+	margin: 0px;
+	/*padding: 2px;*/
+	padding: 0px;
+	resize: both;
+	overflow: hidden;
+}
+.myThird.frame * {
+	resize: none;
+}
+.myThird.title {
+	-webkit-box-flex: 0;
+	-khtml-flex: 0;
+	-moz-box-flex: 0;
+	box-flex: 0;
+	font-weight: bold;
+	font-size: 125%;
+	background-color: #aaaaaa;
+	/*border-width: 1px;
+	border-style: outset;
+	border-color: #eeeeee;*/
+	border-width: 0px;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: black;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+.myThird.terminal {
+	-webkit-box-flex: 1;
+	-khtml-flex: 1;
+	-moz-box-flex: 1;
+	box-flex: 1;
+	overflow-y:auto;
+	background-color:inherit;
+	color:inherit;
+	padding: 2px; /**/
+}
+.myThird.terminal  .log > *:hover {
+	background-color:#cccccc;
+}
+.myThird.terminal  .commandline:hover {
+	background-color:#cccccc;
+}
+.myThird.terminal  .log > *.info {
+	color:blue;
+}
+.myThird.terminal  .log > *.error {
+	color: red;
+}
+	

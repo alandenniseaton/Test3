@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<title>Background</title>
+
+		<script type="text/javascript" btkid="page::information">
+			var pageInformation = {
+				title: "Test2 Background Page",
+				version: {
+					date: new Date("December 15, 2011, GMT+1000"),
+					number: {major: 0, minor: 0, patch: 0}
+				},
+				extensions: {}
+			};
+		</script>
+
+		<script type="text/javascript" btkid="page::btk.config">
+			btk = {
+				config: {
+					test: true
+				}
+			};
+		</script>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="scripts::common" src="scripts/common/package.js"></script>
+		
+		<script type="text/javascript" btkid="page::background" src="scripts/background.js"></script>
+		
+		<script type="text/javascript" btkid="page::loading">
+			function listen(topic) {
+				var client = new btk.Publisher.Client();
+				
+				client.on(
+					btk.Publisher.DEFAULT,
+					function (data, message) {
+						btk.message("#heard " + this.topic);
+						btk.defer(
+							{sub:this.sub},
+							function(){ this.sub.cancel(); },
+							[]
+						);
+					}
+				);
+				
+				client.setContext({
+					sub:btk.subscribe(topic, client),
+					topic:topic
+				});
+			}
+			
+			listen("state::window.loaded");
+			listen("state::dom.content.loaded");
+			listen("state::document.ready");
+			listen("state::document.loaded");
+		</script>
+		
+	</head>
+	
+	<body onload="btk.trigger.state('document.loaded');">
+		<div id="Audio">
+			<audio id="pips1" src="audio/pips1.wav" preload>No Audio</audio>
+			<audio id="pips3" src="audio/pips3.wav" preload>No Audio</audio>
+			<audio id="phone" src="audio/phone.wav" preload>No Audio</audio>
+		</div>
+	</body>
+</html>

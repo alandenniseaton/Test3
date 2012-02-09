@@ -1,0 +1,20 @@
+/*
+	basic default terminal theme
+ */
+
+.terminal {
+	font-family: monospace;
+	white-space: pre;
+	background-color: black;
+	color: white;
+}
+.terminal > .wrap {
+	overflow: auto;
+	outline: none;
+}
+.terminal > .wrap > .commandline:hover {
+	background-color: rgba(0,0,0,0.125);
+}
+.terminal > .wrap > .commandline .prompt {
+	font-weight: bold;
+}

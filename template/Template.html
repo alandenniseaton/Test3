@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<title>Title</title>
+
+		<script type="text/javascript" btkid="page::information">
+			var pageInformation = {
+				title: "Test2",
+				version: {
+					date: new Date("June 7, 2011, GMT+1000"),
+					//	API implementation changes
+					//		--> patch++
+					//	API backwards compatable additions/changes
+					//		--> minor++
+					//	API backwards incompatable changes
+					//		--> major++
+					number: {major: 0, minor: 0, patch: 0}
+				},
+				extensions: {}
+			};
+		</script>
+
+		<script type="text/javascript" btkid="page::btk.config">
+			var btk = {
+				config: {
+					useCacheFrom: "Dec 31, 9999, GMT+1000",
+					// disable debug messages (there are LOTS!) (defaults to false anyway)
+					debug: false,
+					// just so I know :)
+					test:"TEST.TEST.TEST"
+				}
+			};
+		</script>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="page::reload">
+			//	force resource reloading
+			//	has to be done IMMEDIATELY if it is required
+			//	-->	it cannot be done in any script that depends on
+			//		injected modules
+
+			//require('btk.inject@btk').useCacheFrom(new Date("Dec 31, 9999, GMT+1000"));
+			//require('btk.inject@btk').useCacheFrom("Dec 31, 9999, GMT+1000");
+			//require('btk.inject@btk').useCacheFrom(new Date().now + 60*1000);
+			require('btk.inject@btk').forceReload();
+		</script>
+		
+		<script type="text/javascript" btkid="page::package" src="scripts/package.js"></script>
+		
+		<script type="text/javascript" btkid="page::base" src="scripts/base.js"></script>
+		
+		<script type="text/javascript" btkid="page::main" src="scripts/main.js"></script>
+		
+		<style type="text/css">
+			#javascriptWarning {
+				width: 100%;
+				text-align: center;
+				font-weight: bold;
+				background-color: #dd1100;
+				color: #fff;
+				padding: 1em 0em;
+			}
+		</style>
+	</head>
+	<body onload="require('btk@btk').trigger.state('document.loaded');">
+		<noscript>
+			<div id="javascriptWarning">
+				This page requires JavaScript to function properly.<br />
+				<br />
+				If you are using Microsoft Internet Explorer you may need to click on the yellow
+				bar above/below and select 'Allow Blocked Content'. You must then click 'Yes' on the following
+				security warning.
+			</div>
+		</noscript>
+	</body>
+</html>

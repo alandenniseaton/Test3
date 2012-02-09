@@ -1,0 +1,36 @@
+{
+	"name":"test2",
+	
+	"description":"a test",
+	
+	"version":"0.1",
+
+	"icons": {
+		"16": "images/vm16.png",
+		"48": "images/vm48.png",
+		"128": "images/vm128.png"
+	},
+/*	
+	"app": {
+		"launch": {
+			"local_path":"Main.html"
+		}
+	},
+*/	
+	"browser_action": {
+		"default_icon": "images/vm16.png",
+		"default_title": "VM",
+		"default_popup": "Popup.html"
+	},
+	
+	"options_page": "Options.html",
+	
+	"background_page": "background.html",
+	
+	"permissions":[
+		"tts",
+		"unlimitedStorage",
+		"tabs",
+		"notifications"
+	]
+}

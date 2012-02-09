@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<title>Scratch Page</title>
+		
+		<script type="text/javascript" btkid="page::information">
+			var pageInformation = {
+				title: "Scratch Page",
+				version: {
+					date: new Date("January 26, 2012, GMT+1000"),
+					number: {major: 0, minor: 0, patch: 0}
+				},
+				extensions: {}
+			};
+		</script>
+
+		<script type="text/javascript" btkid="page::btk.config">
+			var btk = {
+				config: {
+					useCacheFrom: "Dec 31, 9999, GMT+1000",
+					// disable debug messages (there are LOTS!) (defaults to false anyway)
+					debug: false,
+					// just so I know :)
+					test:"TEST.TEST.TEST"
+				}
+			};
+		</script>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<script type="text/plain" id="plaintext" btkid="page::test.plain">
+			btk.define({
+				name: 'test.plain@page',
+				load: true,
+				when: [ 'state::page.loaded' ],
+				init: function() {
+					// will this get executed???
+					
+					alert("text/plain was executed");
+					
+					// it was not!
+				}});
+		</script>
+		
+		<script type="text/javascript" btkid="page::test">
+			btk.define({
+				name: 'test@page',
+				load: true,
+				libs: { base: 'base@common' },
+				css : [ 'base@wtk' ],
+				when: [ 'state::page.loaded' ],
+				init: function() {
+					var x = {};
+					
+					x.doc = [
+						"BlobBuilder = WebKitBlobBuilder",
+						"URL = webkitURL",
+					];
+					
+					x.appId = chrome.app.getDetails().id
+					x.BlobBuilder = WebKitBlobBuilder;
+					x.URL = webkitURL;
+					x.output = document.querySelector('#output');
+					
+					x.html_h = [
+						'<html>',
+						'  <head>',
+						'    <link rel="stylesheet" type="text/css" href="'
+							+ 'chrome-extension://'
+							+ x.appId
+							+ '/lib/wtk/scroll-plain.css">',
+						'  </head>',
+						'  <body class="scroll-plain">'
+					].join('\n');
+						
+					x.html_t = [
+						'  </body>',
+						'</html>'
+					].join('\n');
+					
+					x.create = function(n) {
+					
+						x.reset();
+						
+						n = btk.ifNumber(n, 0);
+						
+						if (n < 0) { n = 0; }
+						if (n > 1) { n = 1; }
+						
+						if (n === 0) {
+							x.html = [
+								x.html_h,
+								'hello there world',
+								x.html_t
+							].join('\n');
+						} else if (n === 1) {
+							x.html = [
+								x.html_h,
+								'    <pre>',
+								document.querySelector('#plaintext').textContent,
+								'    </pre>',
+								x.html_t
+							].join('\n');
+						}
+						
+						x.bb = new x.BlobBuilder();
+						x.bb.append(x.html);
+						
+						x.b = x.bb.getBlob('text/html');
+						
+						x.url = x.URL.createObjectURL(x.b);
+						
+						x.i = document.createElement('iframe');
+						x.i.setAttribute('style', 'width: 50%;');
+						x.i.src = x.url;
+						
+						x.created = true;
+						
+						return x;
+					};
+					
+					x.append = function(n) {
+						if (!!x.appended) {
+							console.error('already appended');
+							return x;
+						}
+						
+						if (!x.created) {
+							console.info('needed to create first');
+							x.create(n);
+						}
+						
+						if (!!x.output && !!x.i) {
+							x.j = x.output.appendChild(x.i);
+							x.appended = true;
+						}
+						
+						return x;
+					};
+					
+					x.reset = function() {
+						if (!!x.appended && !!x.output && !!x.i) {
+							x.output.removeChild(x.i);
+							
+							delete x.appended;
+						}
+						
+						if (!!x.created) {
+							delete x.j;
+							delete x.i;
+							
+							if (!!x.url) {
+								x.URL.revokeObjectURL(x.url);
+							}
+							delete x.url;
+							
+							delete x.b;
+							delete x.bb;
+							
+							delete x.html;
+							
+							delete x.created;
+						}
+						
+						return x;
+					};
+					
+					btk.global.x = x;
+					
+					return x;
+				}
+			});
+		</script>
+		
+		<style type="text/css">
+			.details.root {
+				position: relative;
+				display: inline-block;
+				z-index: 100;
+				border-style: solid;
+				border-width: 1px;
+				border-radius: 3px;
+				border-color: grey;
+				padding: 4px;
+			}
+			.details.root:hover {
+				border-color: black;
+			}
+			
+			.details > summary{
+				cursor: pointer;
+			}
+			.details > .content {
+				margin-left: 1em;
+				cursor: normal;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<details class="details root">
+			<summary>Details</summary>
+			<div class="content">
+				<details class="details">
+					<summary>Scratch Page</summary>
+					<div class="content">a place for messing about</div>
+				</details>
+				<details class="details">
+					<summary>222</summary>
+					<div class="content">a place for messing about</div>
+				</details>
+				<details class="details">
+					<summary>333</summary>
+					<div class="content">a place for messing about</div>
+				</details>
+			</div>
+		</details>
+		<div class="fill">
+			<table class="layout"><tbody>
+				<tr><td id="output" style="text-align: center; font-size:200%;">
+					<a href="file://alan-pc/html/Test/Test2/notes.txt" download="notes">click this</a>
+					<p>no permission in extension?. check console</p>
+					<a href="file:///D:/Everyone/Documents/HTML/Test/Test2/notes.txt" download="notes">try this one</a>
+					<p>no permission in extension?. check console</p>
+					<a href="notes.txt" download="notes" dragable>what about this?</a>
+					<p>it worked</p>
+					<a href="template/*" download="template">trying a dir</a>
+					<p>did not work</p>
+					<a href="filesystem:file:///persistent/log.txt">fs</a>
+					<p></p>
+				</td></tr>
+			</tbody></table>
+			
+		</div>
+	</body>
+</html>

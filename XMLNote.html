@@ -1,0 +1,78 @@
+<html>
+<body>
+<h1>W3Schools Internal Note</h1>
+from the <a href="http://www.w3schools.com/XML/xml_dom.asp">XML DOM Tutorial</a>
+<ul>
+	<li>it does not work in Chrome: cross origin request</li>
+	<ul>
+		<li>
+			unless in an extension
+		</li>
+		<li>
+			or unless the flags --allow-file-access-from-files and --unlimited-quota-for-files
+			are added<br />
+			if an application is created from the page then the flag has to be set
+			on its desktop icon as well
+		</li>
+		<li>
+			does not work even with flags in portable chrome<br />
+			works for extensions though
+		</li>
+	</ul>
+	<li>it does work in Firefox</li>
+</ul>
+<hr />
+
+<div>
+<b>To:</b> <span id="to"></span><br />
+<b>From:</b> <span id="from"></span><br />
+<b>Message:</b> <span id="message"></span>
+</div>
+
+<script type="text/javascript">
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.open("GET","xmlnote.xml",false);
+xmlhttp.send();
+xmlDoc=xmlhttp.responseXML;
+
+document.getElementById("to").innerHTML=
+xmlDoc.getElementsByTagName("to")[0].childNodes[0].nodeValue;
+document.getElementById("from").innerHTML=
+xmlDoc.getElementsByTagName("from")[0].childNodes[0].nodeValue;
+document.getElementById("message").innerHTML=
+xmlDoc.getElementsByTagName("body")[0].childNodes[0].nodeValue;
+</script>
+
+<!--
+my addition
+-->
+<hr/>
+<h1>Source (note.xml)</h1>
+<style type="text/css">
+.sourceBox
+{
+	background:#6688ff;
+	padding:2px;
+	border-color:black;
+	border-width:1px;
+	border-style:solid;
+}
+</style>
+<div class="sourceBox">
+<text id="myText"></text>
+</div>
+
+<script type="text/javascript">
+myText = document.getElementById("myText");
+myText.innerText = xmlhttp.responseText;
+//document.write(xmlhttp.responseText);
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+
+body {
+	padding: 0;
+	margin: 0;
+	background-color: #ddd;
+}
+
+#error {
+	position:absolute;
+	bottom: 0;
+	right: 0;
+	z-index: 100;
+	
+	background-color: pink;
+	color: black;
+	
+	padding-left: 0.25em;
+	padding-right: 0.25em;
+	
+	border-width: 1px;
+	border-style: solid;
+	border-color: black;
+}
+
+.view {
+	padding-left: 0.25em;
+	padding-right: 0.25em;
+}
+
+.pair {
+	width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+.controls {
+	background-color: rgba(0,0,0,0.5);
+	margin-bottom: 0.25em;
+}
+.controls  .left.cell {
+	width: 100%;
+	text-align: left;
+}
+.controls  .right.cell {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.editor {
+	background: pink;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #444;
+}
+.editor .controls {
+	text-align: right;
+	margin-bottom: 0;
+}
+.editor .fields {
+	padding: 0.25em;
+}
+.editor .fields table{
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+.editor .fields tr {
+	width: 100%;
+}
+.editor .fields td {
+	padding: 0;
+	padding-top: 2px;
+	padding-right: 0.25em;
+}
+.editor .fields .label {
+	text-align: right;
+	vertical-align: top;
+}
+.editor .fields .input {
+	width: 100%;
+	text-align: left;
+}
+.editor .fields input,
+.editor .fields textarea {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	text-align: left;
+}
+.editor .fields input {
+	margin-right:0.125em;
+}
+.editor .fields textarea {
+	resize: vertical;
+	min-height: 5em;
+}
+
+.bookmark {
+	background-color: transparent;
+	
+	border-width: 1px;
+	border-style: solid;
+	border-color: transparent;
+	
+	padding: 0;
+}
+.bookmark:hover {
+	border-color: black;
+}
+.bookmark.dead {
+	background-color: pink;
+}
+.bookmark  .fields {
+	position: relative;
+	width: 100%;
+	background-color: transparent;
+}
+.bookmark  .head {
+	background-color: rgba(0,0,0,0.0675);
+}
+.bookmark  .head  tbody{
+	vertical-align: top;
+}
+.bookmark  .head  tr {
+	width: 100%;
+}
+.bookmark  .head  td {
+	padding: 0;
+	padding-bottom: 0.25em;
+}
+.bookmark  .head  .left.cell {
+	width: 100%;
+	text-align: left;
+	padding-left: 0.25em;
+}
+.bookmark  .head  .title {
+	font-weight: bold;
+}
+.bookmark  .head  .link {
+	color:blue;
+	padding-left: 2px;
+	padding-right: 2px;
+}
+.bookmark  .head  .link:hover {
+	background-color: rgba(0,0,0,0.125);
+}
+.bookmark  .head  .right.cell {
+	text-align: right;
+}
+.bookmark  .head  .control {
+	white-space: nowrap;
+}
+.bookmark  .head  .wmbox{
+	width: 10px;
+	height: 10px;
+	background-color: #ddd;
+}
+.bookmark  .head  .wmbutton {
+	height: 100%;
+}
+.bookmark  .head  .wmenu {
+	text-align: center;
+	min-width: 5em;
+	z-index: 100;
+}
+.bookmark  .head  .date {
+	font-size: 75%;
+	padding-right:0.5em;
+}
+.bookmark  .data {
+	min-height: 1em;
+	max-height: 10em;
+	padding: 0.25em;
+	white-space: pre;
+	overflow: auto;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		<title>Bookmarks</title>
+
+		<script type="text/javascript" btkid="page::information">
+			var page = {
+				information: {
+					title: "Bookmarks",
+					version: {
+						date: new Date("Jan 29, 2012, GMT+1000"),
+						number: {major: 0, minor: 0, patch: 0}
+					},
+					extensions: {}
+				},
+				nolink: false
+			};
+		</script>
+
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<script type="text/javascript" btkid="page::main" src="scripts/bookmarks/bookmarks.js"></script>
+		
+		<link rel="stylesheet" type="text/css" btkid="page::css" href="scripts/bookmarks/bookmarks.css">
+		
+	</head>
+	<body class="fill">
+		<table class="layout"><tbody>
+			<tr class="top row"><td>
+				<span id="error" class="hidden"></span>
+				<h1 class="hidden">Not Finished Yet</h1>
+				<div class="page controls">
+					<table class="pair"><tbody><tr class="top row">
+						<td class="left cell"></td>
+						<td class="right cell">
+							<input id="saveall" class="hidden" type="button" title="Save any changes" value="save" onclick="page.action.saveAll()">
+							<input id="addnew" type="button" title="Add a new bookmark" value="new" onclick="page.action.newBookmark()">
+							<input id="showdead" class="" type="button" title="Show the bookmarks that have been deleted" value="trash" onclick="page.action.showDead()">
+							<input id="showlive" class="hidden" type="button" title="Show the active bookmarks" value="active" onclick="page.action.showLive()">
+							<input id="transfer" class="" type="button" title="upload or download the bookmarks" value="transfer" onclick="page.action.error('not implemented yet')">
+						</td>
+					</tr></tbody></table>
+				</div>
+			</td></tr>
+			<tr class="middle row"><td class="middle cell">
+				<div class="viewframe"><div id="viewport" class="viewport scroll-plain">
+					<div class="view">
+						<div id="test" class="hidden">
+							<h3>hello world</h3>
+							<div id="sandbox"></div>
+						</div>
+						<div id="bookmarks">
+							<div id="live"></div>
+							<div id="dead" class="hidden"></div>
+						</div>
+						<div id="output" class="hidden">
+							<hr />
+							<div>
+								<h3>Databases</h3>
+								<div  class="log" data-name="db"></div>
+							</div>
+							<hr />
+							<div>
+								<h3>Log</h3>
+								<div class="log" data-name="log"></div>
+							</div>
+						</div>
+					</div>
+				</div></div>
+			</td></tr>
+		</tbody></table>
+	</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+		<title>Test Notification</title>
+
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<script type="text/javascript">
+			btk.define({
+			name: 'test@page',
+			load: true,
+			libs: { Timer:'timer@btk' },
+			when: [ 'state::window.loaded' ],
+			init: function(libs, exports) {
+				var Timer = libs.Timer;
+				
+				function populate(selector, source) {
+					var nodes = document.querySelectorAll(selector);
+					for (var i=0; i<nodes.length; i++) {
+						nodes[i].innerText = source[nodes[i].id] || '*** undefined ***';
+					}
+				}
+				
+				populate('.location', document.location);
+				
+				var qnode = document.querySelector('#query');
+				if (qnode) {
+					var href = document.location.href;
+					var q = href.lastIndexOf('?');
+					var query = (q < 0)? '{}': href.substr(q+1);
+					
+					qnode.innerText = query;
+				}
+				
+				new Timer(
+					function() {
+						populate('.window', window);
+						populate('.parentnode', document.body.parentNode);
+					},
+					2*Timer.SECOND
+				).start();
+				
+			}});
+		</script>
+
+		<link rel="stylesheet" type="text/css" href="lib/wtk/base.css"/>
+		
+		<link rel="stylesheet" type="text/css" href="lib/wtk/scroll-plain.css"/>
+		
+		<style type="text/css">
+			xxxbody {
+				max-height: 100%;
+				margin: 0;
+				padding: 4px;
+				background-color: #ffcccc;
+			}
+			body {
+				position: relative;
+				margin: 0;
+				background-color: #ffcccc;
+			}
+			.wrap {
+				position:absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				overflow: auto;
+			}
+			.location, .query {
+				font-family: monospace;
+				white-space: nowrap;
+			}
+			.location {
+				color: blue;
+			}
+			.query {
+				color: green;
+			}
+		</style>
+		
+	</head>
+	<body>
+		<div class="wrap scroll-plain">
+			<table><tbody>
+				<tr>
+					<td>host</td>
+					<td id="host" class="location">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>hostname</td>
+					<td id="hostname" class="location">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>href</td>
+					<td id="href" class="location">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>origin</td>
+					<td id="origin" class="location">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>pathname</td>
+					<td id="pathname" class="location">*** not found ***</td>
+				</tr>
+			</tbody></table>
+			<hr />
+			<table><tbody>
+				<tr>
+					<td>query</td>
+					<td id="query" class="query">*** not found ***</td>
+				</tr>
+			</tbody></table>
+			<hr />
+			<table><tbody>
+				<tr>
+					<td>window.innerWidth</td>
+					<td id="innerWidth" class="window">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>window.innerHeight</td>
+					<td id="innerHeight" class="window">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>window.outerWidth</td>
+					<td id="outerWidth" class="window">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>window.outerHeight</td>
+					<td id="outerHeight" class="window">*** not found ***</td>
+				</tr>
+			</tbody></table>
+			<hr />
+			<table><tbody>
+				<tr>
+					<td>html.scrollHeight</td>
+					<td id="scrollHeight" class="parentnode">*** not found ***</td>
+				</tr>
+				<tr>
+					<td>html.clientHeight</td>
+					<td id="clientHeight" class="parentnode">*** not found ***</td>
+				</tr>
+			</tbody></table>
+		</div>
+	</body>
+</html>

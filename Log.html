@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<title>Log</title>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<script type="text/javascript" btkid="page::logview">
+			btk.define({
+				name: 'logview@page',
+				load: true,
+				libs: {
+					base: 'base@common',
+					Log: 'log@wtk'
+				},
+				css : [ 'scroll-plain@wtk' ],
+				when: [ 'state::page.loaded' ],
+				init: function(libs, exports) {
+				
+					var output = new libs.Log();
+					var view = output.create();
+					var wrap = document.getElementById('wrap');
+					
+					wrap.appendChild(view);
+					
+					var message = page.link.btk.message;
+					
+					message.buffer.forEach(function(line) {
+						output.log(line);
+					});
+
+					
+					var client = new btk.Publisher.Client();
+					
+					client.on(message.DATA, function(data) {
+						output.log(data);
+					});
+					client.on(message.STATE, function(state) {
+						if (state === message.CLEAR) {
+							output.clear();
+						}
+					});
+					
+					var subscription = page.link.btk.subscribe(message.LOGTOPIC, client);
+
+					function unload() {
+						subscription.cancel();
+					};
+					
+					
+					var scrolling = false;
+	
+					function doScroll() {
+						wrap.scrollTop = wrap.scrollHeight - wrap.clientHeight;
+						scrolling = false;
+					}
+					
+					function scroll() {
+						if (scrolling) { return; }
+						
+						scrolling = true;
+						btk.defer({}, doScroll, []);
+					}
+
+					output.onappend = scroll;
+
+					exports.output = output;
+					exports.view = view;
+					exports.wrap = wrap;
+					exports.client = client;
+					exports.subscription = subscription;
+					exports.unload = unload;
+					
+					page.logview = exports;
+				}
+			});
+		</script>
+					
+		<script type="text/javascript" btkid="page::loading">
+			window.onunload = function(event) {
+				btk.require('logview@page').unload();
+			};
+		</script>
+
+		<style type="text/css">
+			body {
+				background-color: #ffcccc;
+				margin: 0.5em;
+			}
+			
+			.wrap {
+				overflow: auto;
+				border-width: 1px;
+				border-style: solid;
+				border-color: black;
+				background-color: #dddddd;
+				padding: 0.5em;
+			}
+			
+			table.showProps {
+				max-width: 100%;
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+			table.showProps > tbody {
+				max-width: 100%;
+			}
+			table.showProps > tbody > tr {
+				max-width: 100%;
+			}
+			table.showProps > tbody > tr:hover {
+				background-color: #aaaa00
+			}
+			table.showProps > tbody > tr > td {
+				border-style: solid;
+				border-width: 1px;
+				border-color: grey;
+				padding: 2px;
+				vertical-align: top;
+			}
+			table.showProps > tbody > tr > td:hover {
+				background-color: #aacc00
+			}
+			table.showProps > tbody > tr > td > span {
+				max-width: 100%;
+			}
+			table.showProps > tbody > tr > td > span.code {
+				white-space: pre-wrap;
+			}
+		</style>
+		
+	</head>
+	<body class="fill">
+		<div id="wrap" class="wrap fill scroll-plain mono"></div>
+	</body>
+</html>

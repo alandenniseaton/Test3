@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<title>Test2</title>
+
+		<script type="text/javascript" btkid="page::information">
+			var pageInformation = {
+				title: "Test2",
+				version: {
+					date: "June 7, 2011, GMT+1000",
+					//	API implementation changes
+					//		--> patch++
+					//	API backwards compatable additions/changes
+					//		--> minor++
+					//	API backwards incompatable changes
+					//		--> major++
+					number: {major: 0, minor: 0, patch: 0}
+				},
+				extensions: {}
+			};
+		</script>
+
+		<script type="text/javascript" btkid="page::btk.config">
+			btk = {
+				config: {
+					useCacheFrom: "Dec 31, 9999, GMT+1000",
+					// disable debug messages (there are LOTS!) (defaults to false anyway)
+					debug: false,
+					// just so I know :)
+					test:"TEST.TEST.TEST"
+				}
+			};
+		</script>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="test::package" src="test/package.js"></script>
+		
+		<script type="text/javascript" btkid="test::main" src="test/main.js" async="true"></script>
+		
+		<style type="text/css">
+			#javascriptWarning {
+				width: 100%;
+				text-align: center;
+				font-weight: bold;
+				background-color: #dd1100;
+				color: #fff;
+				padding: 1em 0em;
+			}
+			
+			.box {
+				display: inline-block;
+				width:365px;
+				height:160px;
+				margin:0;
+				border:0;
+				padding:0;
+			}
+			#TerminalA {
+				background-color: green;
+				border: 1px solid black;
+			}
+			#TerminalB {
+				background-color: #bbbb00;
+				overflow: hidden;
+			}
+			#TerminalB .title {
+				background-color: transparent;
+				background-image: -webkit-linear-gradient(-90deg, rgba(0,0,0,0), rgba(0,0,0,0.5));
+				background-image: -moz-linear-gradient(-90deg, rgba(0,0,0,0), rgba(0,0,0,0.5));
+				text-align: center;
+				border: 1px solid black;
+				border-radius: 16px;
+			}
+			#TerminalB .top.row .cell {
+				padding-right: 2px;
+			}
+			#TerminalB > .body {
+				margin-top: 4px;
+			}
+			.test.terminal {
+				padding: 0px;
+				
+				white-space: normal;
+				
+				background-color: inherit;
+				color: black;
+
+				border-style: none;
+			}
+			/*
+			.test.terminal .log > *:hover {
+				background-color:#ccdd00;
+			}
+			.test.terminal .commandline:hover {
+				background-color:#ccdd00;
+			}
+			*/
+			.test.terminal .log > *.info {
+				color: green;
+			}
+			#Audio {
+				background-color: #ffaaaa;
+			}
+			#Audio [controls] {
+				width: 100%;
+			}
+			#Box3 {
+				background-color: #c0c0ff;
+			}
+			#Box3  .wrap {
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-box-align: stretch;
+				-webkit-box-pack: start;
+				display: -moz-box;
+				-moz-box-orient: vertical;
+				-moz-box-align: stretch;
+				-moz-box-pack: start;
+				display: box;
+				box-orient: vertical;
+				box-align: stretch;
+				box-pack: start;
+			}
+			#Box3 .body .head{
+				background-color: #9090ff;
+				border: 1px solid black;
+				border-radius: 16px;
+				text-align: center;
+				margin-bottom: 2px;
+			}
+			#Box3 .body .body{
+			/*	position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+			*/
+				-webkit-box-flex: 1;
+				-moz-box-flex: 1;
+				box-flex: 1;
+				background-color: #b0b0ff;
+				border: 1px solid black;
+			}
+			#Box4 {
+				display: inline-block;
+				padding: 5px;
+			}
+			#Box4 .head, #Box4 .foot {
+				border: 1px solid black;
+				border-radius: 16px;
+				text-align: center;
+				font-weight: bold;
+			}
+			#Box4 .wrap {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+			}
+			#Box4 .content4 {
+				width: 360px;
+				height: 100px;
+				overflow: auto;
+			}
+			#Box4 > *:hover {
+				background-color: #aaaaaa;
+			}
+		</style>
+		
+		<script type="text/javascript" btkid="test::terminal.inline">
+			btk.define({
+				name: 'terminal.inline@test',
+				load: true,
+				data: {from:'Test.html'},
+				libs: {
+					dom: "dom@btk",
+					kde: "element@wtk",
+					Terminal: "terminal@wtk",
+				//	jQuery: "base@jQuery",
+				//	jQueryUI: "ui@jQuery"
+				},
+				when: [ "state::document.ready" ],
+				init: function(libs, exports) {
+					var kde = libs.dom.element;
+					var Terminal = libs.Terminal;
+					//var $ = libs.jQuery;
+					function $(selector) {
+						return btk.document.querySelectorAll(selector);
+					}
+					
+					function onSubmit(value) {
+						this.log(this.commandLine.createEcho());
+						this.log(value);
+					}
+					
+					var terminal = new Terminal({
+						prompt: "[input]",
+						submit: onSubmit,
+						theme : "test",
+						size  : 0
+					}).create();
+					
+					$("#TerminalB .middle.cell .content")[0].appendChild(terminal);
+					
+					/*
+					$("div[id='TerminalB']").addClass('ui-widget');
+					$("div[id='TerminalB']").draggable().resizable();
+					
+					// the date picker has display:none!
+					// don't know how to fix that
+					var datepicker = kde('div',{id:"datepicker"}).create();
+					$('#pageRight')[0].appendChild(datepicker);
+					$('#datepicker').datepicker();
+					*/
+				}
+			});
+		</script>
+		
+		<script type="text/javascript" btkid="test::loading">
+			function listen(topic) {
+				var s = btk.subscribe(
+					topic,
+					function (data, message) {
+						btk.message("#heard " + topic);
+						btk.defer({}, function(s){ s.cancel(); }, [s]);
+					}
+				);
+			}
+			
+			listen("state::window.loaded");
+			listen("state::dom.content.loaded");
+			listen("state::document.ready");
+			listen("state::document.loaded");
+		</script>
+		
+	</head>
+	<body onload="btk.trigger.state('document.loaded');">
+		<noscript>
+			<div id="javascriptWarning">
+				This page requires JavaScript to function properly.<br />
+				<br />
+				If you are using Microsoft Internet Explorer you may need to click on the yellow
+				bar above/below and select 'Allow Blocked Content'. You must then click 'Yes' on the following
+				security warning.
+			</div>
+		</noscript>
+		<div id="page" class="fill scroll-plain"><table class="layout"><tbody>
+			<tr class="top row">
+				<td class="cell" colspan="3">
+					<div id="pageTop" class="content">TOP</div>
+				</td>
+			</tr>
+			<tr class="middle row">
+				<td class="left cell"><div id="pageLeft" class="content"></div></td>
+				<td class="middle cell">
+					<div id="pageMiddle" class="content">
+						<!--content-->
+						<div id="log"></div>
+						<!--test-->
+						<div style="height:4px;"></div>
+						<!--iframe id="TerminalA" class="box" src="Terminal.html">
+							<span style="color:red;">IFrames not supported</span>
+						</iframe-->
+						<div id="TerminalB" class="frame box"><div class="body">
+							<table class="layout"><tbody>
+								<tr class="top row"><td class="cell">
+									<div class="content title">Terminal B</div>
+								</td></tr>
+								<tr class="middle row"><td class="middle cell">
+									<div class="content"></div>
+								</td></tr>
+							</tbody></table>
+						</div></div>
+						<div id="Audio" class="frame box"><div class="body">
+							pips1.wav
+							<button onclick="var p=document.getElementById('pips1');p.volume=0.25;p.play();">Play</button>
+							<br />
+							<audio id="pips1" src="audio/pips1.wav" preload>No Audio</audio>
+							pips3.wav
+							<button onclick="var p=document.getElementById('pips3');p.volume=0.25;p.play();">Play</button>
+							<br />
+							<audio id="pips3" src="audio/pips3.wav" controls preload>No Audio</audio>
+							<!--div>
+							Somewhere Over the Rainbow.mp3<br/>
+							<audio src="file:///D:/Everyone/Music/Somewhere Over the Rainbow.mp3" controls>No Audio</audio>
+							</div-->
+						</div></div>
+						<div id="Box3" class="frame box"><div class="body">
+							<div class="wrap expand">
+								<div class="head">Hello World</div>
+								<div class="body">Howdy</div>
+							</div>
+						</div></div>
+						<span id="Box4" class="frame">
+							<div class="head">HEADER</div>
+							<div class="content4">
+								BODY<br/>
+								more body stuff<br/>
+								and some more stuff<br/>
+								and some more stuff<br/>
+								and some more stuff<br/>
+								and some more stuff<br/>
+								and some more stuff<br/>
+								the last line
+							</div>
+							<div class="foot">FOOTER</div>
+						</span>
+						<!--/test-->
+						<!--/content-->
+					</div>
+				</td>
+				<td class="right cell">
+					<div id="pageRight" class="content" style="position:relative">
+						<img src="images/vm48.png" style="position:absolute; bottom:0; right:0; z-index:0;" />
+					</div>
+				</td>
+			</tr>
+			<tr class="bottom row">
+				<td class="cell" colspan="3">
+					<div id="pageBottom" class="content">BOTTOM</div>
+				</td>
+			</tr>
+		</tbody></table></div>
+	</body>
+</html>

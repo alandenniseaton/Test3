@@ -1,0 +1,31 @@
+.commandline {
+	border-collapse: collapse;
+	border-spacing: 0;
+	border: 0;
+}
+.commandline  td {
+	vertical-align: top;
+	/*white-space: nowrap;*/
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.commandline  .prompt {
+	white-space: nowrap;
+}
+.commandline  .input {
+	width: 100%;
+}
+.commandline  input.input {
+	font: inherit;
+	color: inherit;
+	background-color: transparent;
+	outline: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	text-align: left;
+}
+.commandline  span.prompt {
+	color: green;
+}

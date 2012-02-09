@@ -1,0 +1,17 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="6">
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="640" startPos="562" endPos="562" selMode="0" lang="Normal Text" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\notes.txt" />
+            <File firstVisibleLine="122" xOffset="0" scrollWidth="1232" startPos="4554" endPos="4562" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\lib\btk\btk.js" />
+            <File firstVisibleLine="204" xOffset="0" scrollWidth="768" startPos="5899" endPos="5899" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\lib\btk\promise.js" />
+            <File firstVisibleLine="52" xOffset="0" scrollWidth="512" startPos="356" endPos="356" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\scripts\base.js" />
+            <File firstVisibleLine="37" xOffset="0" scrollWidth="712" startPos="2025" endPos="2025" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\lib\wtk\element.js" />
+            <File firstVisibleLine="103" xOffset="0" scrollWidth="536" startPos="2179" endPos="2179" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\lib\wtk\menu.js" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="360" startPos="715" endPos="715" selMode="0" lang="CSS" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\lib\wtk\menu.css" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1448" startPos="1169" endPos="1169" selMode="0" lang="HTML" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\Bookmarks.html" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="424" startPos="1" endPos="1" selMode="0" lang="CSS" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\scripts\bookmarks.css" />
+            <File firstVisibleLine="758" xOffset="0" scrollWidth="872" startPos="18172" endPos="18172" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test2\scripts\bookmarks.js" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>

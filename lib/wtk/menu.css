@@ -1,0 +1,75 @@
+
+.wmenu {
+	display: inline-block;
+	border-width: 1px;
+	border-style: outset;
+	border-color: white;
+	background-color: #ddd;
+}
+
+.wmenu > .wmhead {
+	background-color: rgba(0,0,0,0.125);
+	margin-bottom: 2px;
+}
+
+.wmenu > .wmhead,
+.wmenu > .wmitem {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.wmenu > .wmitem {
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.wmenu > .wmitem:hover {
+	background-color: rgba(0,0,0,0.125);
+}
+
+.wmenu > .line {
+	border-width: 0;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-style: inset;
+	border-color: white;
+}
+
+.wmbox {
+	display: inline-block;
+	position: relative;
+	border-width: 1px;
+	border-style: outset;
+	border-color: white;
+	background-color: transparent;
+	cursor: pointer;
+	padding: 0!important;
+}
+
+.wmbox > .wmenu {
+	position: absolute;
+	margin-left: -1px;
+	margin-right: -1px;
+}
+
+.wmbox.over > .wmenu {
+	top: 0;
+}
+
+.wmbox.above > .wmenu {
+	bottom: 100%;
+}
+
+.wmbox.below > .wmenu {
+	top: 100%;
+	margin-top: 1px;
+}
+
+.wmbox.left  > .wmenu {
+	right: 0;
+}
+
+.wmbox.right  > .wmenu {
+	left: 0;
+}
+

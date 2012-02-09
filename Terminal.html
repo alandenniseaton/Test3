@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<title>Terminal</title>
+
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="page::reload">
+			btk.inject.forceReload();
+		</script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<style type="text/css">
+			#terminal {
+				position: fixed;
+				top: 4px;
+				left: 4px;
+				bottom: 4px;
+				right: 4px;
+			}
+			#title {
+				background-color: #aaaaaa;
+				background-image: -webkit-linear-gradient(-90deg, rgba(0,0,0,0), rgba(0,0,0,0.5));
+				background-image: -moz-linear-gradient(-90deg, rgba(0,0,0,0), rgba(0,0,0,0.5));
+				text-align: center;
+				border: 1px solid black;
+				border-radius: 16px;
+			}
+			.grey.terminal {
+				padding: 0px;
+				
+				white-space: normal;
+				
+				background-color: inherit;
+				color: black;
+
+				border-style: none;
+			}
+			.grey.terminal .log > *.info {
+				color: green;
+			}
+			.grey.terminal .commandline .prompt {
+				color: blue;
+			}
+		</style>
+		
+		<script type="text/javascript" btkid="page::terminal">
+			btk.define({
+				name: "terminal@page",
+				load: true,
+				libs: {
+					base: 'base@common',
+					Terminal:"terminal@wtk"
+				},
+				when: [ "state::page.loaded" ],
+				init: function(libs, exports) {
+				
+					var Terminal = libs.Terminal;
+					
+					function $(selector) {
+						return btk.document.querySelector(selector);
+					}
+					
+					function onSubmit(value) {
+						this.log(this.commandLine.createEcho());
+						this.log(value);
+					}
+					
+					var terminal = new Terminal({
+						prompt: "[input]",
+						submit: onSubmit,
+						theme : "grey"
+					});
+					
+					var content = $(".middle.cell .content");
+				//	console.log(content);
+					content.appendChild(terminal.create());
+				}
+			});
+		</script>
+		
+	</head>
+	<body>
+		<div id="terminal" class="frame">
+			<div class="body">
+				<table class="layout"><tbody>
+					<tr class="top row"><td class="cell">
+						<div id="title" class="content">Terminal</div>
+					</td></tr>
+					<tr class="middle row"><td class="middle cell">
+						<div class="content"></div>
+					</td></tr>
+				</tbody></table>
+			</div>
+		</div>
+	</body>
+</html>

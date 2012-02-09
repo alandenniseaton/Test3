@@ -1,0 +1,134 @@
+#page {
+	margin: 0;
+	padding: 2px;
+	overflow: auto;
+/*	background-attachment: fixed;*/
+	background-image: -webkit-linear-gradient(-135deg, rgba(0,0,255,0), rgba(0,255,0,255));
+	background-image: -moz-linear-gradient(-135deg, rgba(0,0,255,0), rgba(0,255,0,255));
+/*	background-image: url("../images/DBluebox.bmp");*/
+/*	background-image: url("../images/Blackbox1440-900.bmp");*/
+/*	background-image: url("../images/GREY.JPG");*/
+}
+#pageTop {
+	text-align: center;
+/*	background-color: #ffcccc;*/
+	background-image: -webkit-linear-gradient(-90deg, #ffcccc, #886666);
+	background-image: -moz-linear-gradient(-90deg, #ffcccc, #886666);
+	border-radius:16px;
+	border: 1px solid black;
+}
+#pageLeft {
+	width: 20px;
+	height: 100%;
+/*	background-color: #ccccff;*/
+	background-image: -webkit-linear-gradient(0deg, #ccccff, #666688);
+	background-image: -moz-linear-gradient(0deg, #ccccff, #666688);
+	border-radius:16px;
+	border: 1px solid black;
+}
+#pageMiddle {
+	width: 100%;
+}
+#pageRight {
+	height:100%;
+}
+#pageBottom {
+	text-align: center;
+/*	background-color: #ddffdd;*/
+	background-image: -webkit-linear-gradient(-90deg, #ddffdd, #447744);
+	background-image: -moz-linear-gradient(-90deg, #ddffdd, #447744);
+	border-radius: 16px;
+	border: 1px solid black;
+}
+
+
+/*
+	the table created by btk.showProps(...)
+*/
+table.showProps {
+	max-width: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+/*	white-space: pre-wrap;*/
+}
+table.showProps > caption {
+	max-width: 100%;
+	background-color: inherit;
+	text-align: left;
+	white-space: nowrap;
+}
+table.showProps > thead {
+	max-width: 100%;
+}
+table.showProps > thead > tr > th {
+	text-align: left;
+}
+table.showProps > tbody{
+	max-width: 100%;
+}
+table.showProps > tbody > tr{
+	max-width: 100%;
+}
+table.showProps > tbody > tr:hover {
+	background-color: #aaaa00
+}
+table.showProps > tbody > tr > td {
+	border-style: solid;
+	border-width: 1px;
+	border-color: grey;
+	padding: 2px;
+	vertical-align: top;
+}
+table.showProps > tbody > tr > td:hover {
+	background-color: #aacc00
+}
+table.showProps > tbody > tr > td > span {
+	max-width: 100%;
+}
+table.showProps > tbody > tr > td > span.code {
+	white-space: pre-wrap;
+}
+
+/*
+*/
+#logView {
+	background-color: #dddddd;
+	height: 560px;
+}
+#logView  .title {
+	background-color: transparent;
+	background-image: -webkit-linear-gradient(-90deg, rgba(0,0,0,0), rgba(0,0,0,0.5));
+	background-image: -moz-linear-gradient(-90deg, rgba(0,0,0,0), rgba(0,0,0,0.5));
+	text-align: center;
+	border: 1px solid black;
+	border-radius: 16px;
+}
+.logView.terminal {
+	padding: 0px;
+	
+	white-space: normal;
+	
+	background-color: inherit;
+	color: black;
+
+	border-style: none;
+}
+.logView.terminal  .log > *:hover {
+	background-color:#cccccc;
+}
+.logView.terminal  .log > *.info {
+	color: green;
+}
+.logView.terminal  .log > *.error {
+	color: red;
+}
+.logView.terminal  .log > * {
+	margin: 0;
+}
+.logView.terminal  .commandline:hover {
+	background-color:#cccccc;
+}
+.logView.terminal  .commandline  .prompt {
+	color: blue;
+	font-weight: bold;
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<title>Topics</title>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<script type="text/javascript" btkid="page::topic.view">
+			btk.define({
+				name: 'topic.view@page',
+				load: true,
+				libs: {
+					base: 'base@common',
+					Log: 'log@wtk'
+				},
+				css : [ 'scroll-plain@wtk' ],
+				when: [ 'state::page.loaded' ],
+				init: function(libs, exports) {
+				
+					exports.output = new libs.Log();
+					exports.view = exports.output.create();
+					exports.wrap = document.getElementById('wrap');
+					
+					exports.wrap.appendChild(exports.view);
+					
+					(function(log, kto){
+						var topics = kto.getAllTopics('').sort();
+						var message;
+						
+						for (var i=0, limit=topics.length; i<limit; i++) {
+							message = kto.query(topics[i]).message;
+							if (message) {
+								if (btk.isBoolean(message.data)) {
+									if (message.data) {
+										log.log('$<span class="true">' + topics[i] + '</span>');
+									} else {
+										log.log('$<span class="false">' + topics[i] + '</span>');
+									}
+								} else if (!btk.isDefined(message.data)) {
+										log.log('$<span class="undefined">' + topics[i] + '</span>');
+								} else {
+									log.log('$<span class="value">' + topics[i] + '</span>');
+								}
+							} else {
+								log.log('$<span class="missing">' + topics[i] + '</span>');
+							}
+						}
+										
+					}(exports.output, page.link.btk.topic));
+					
+				}
+			});
+		</script>
+					
+		<style type="text/css">
+			body {
+				background-color: #ffcccc;
+				margin: 0.5em;
+			}
+			
+			.wrap {
+				overflow: auto;
+				border-width: 1px;
+				border-style: solid;
+				border-color: black;
+				background-color: #dddddd;
+				padding: 0.5em;
+			}
+			
+			.log span.value {
+				color: blue;
+			}
+			.log span.true {
+				color: green;
+			}
+			.log span.false {
+				color: red;
+			}
+			.log span.undefined {
+				color: yellow;
+			}
+			.log span.missing {
+				color: black;
+			}
+		</style>
+		
+	</head>
+	<body class="fill">
+		<div id="wrap" class="wrap fill scroll-plain mono"></div>
+	</body>
+</html>

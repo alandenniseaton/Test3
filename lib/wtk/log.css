@@ -1,0 +1,28 @@
+.log {
+	display: inline-block;
+	min-width: 100%;
+	white-space: nowrap;
+}
+.log > * {
+	margin: 0;
+}
+.log > *:hover {
+	background-color: rgba(0,0,0,0.125);
+}
+.log > *.text {
+	color: black;
+}
+.log > *.info {
+	color: blue;
+}
+.log > *.error {
+	color: red;
+}
+.log.block {
+	display:block;
+	min-width: 0%;
+	padding: 0;
+}
+.log.block:hover {
+	background-color: transparent
+}

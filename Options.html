@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+		
+		<title>Options</title>
+		
+		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		
+		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		
+		<script type="text/javascript" btkid="page::options">
+			btk.define({
+				name: 'options@page',
+				load: true,
+				libs: { base: 'base@common' },
+				when: [ 'state::page.loaded' ],
+				init: function(libs, exports) {
+				
+					var bg = page.link.bg;
+					
+					var keys = [
+						'disableTimers',
+						'stopLoop',
+						'test'
+					];
+					
+					function get(key) {
+						var node = document.getElementById(key);
+						
+						return node.checked;
+					};
+					
+					function set(key, value) {
+						console.info('options.set: ' + key + ' = ' + value);
+						var node = document.getElementById(key);
+						node.checked = value;
+					}
+					
+					page.toggle = function(key) {
+						set(!get(key));
+					};
+					
+					function load() {
+						for (var i in keys) {
+							set(keys[i], !!bg.lsget(keys[i]));
+						}
+					}
+					
+					page.save = function(){
+						for (var i in keys) {
+							bg.lsset(keys[i], get(keys[i]));
+						}
+					};
+					
+					page.reset = load;
+					
+					load();
+				}
+			});
+		</script>
+		
+		<style type="text/css">
+			body {
+				background-color: #ffcccc;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+			}
+			
+			.layout {
+				width: 100%;
+				height: 100%;
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+			
+			.left {
+				text-align: left;
+			}
+			.right {
+				text-align: right;
+			}
+			.center {
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<table class="layout"><tbody><tr><td class="center">
+			<div style="display: inline-block">
+				<table><tbody>
+					<tr>
+						<td class="right">Disable Timers</td>
+						<td class="left"><input id="disableTimers" type="checkbox"/></td>
+					</tr>
+					<tr>
+						<td class="right">Stop Loop</td>
+						<td class="left"><input id="stopLoop" type="checkbox"/></td>
+					</tr>
+					<tr>
+						<td class="right">Test</td>
+						<td class="left"><input id="test" type="checkbox"/></td>
+					</tr>
+					<tr>
+						<td class="right">
+							<button id="submit" onclick="page.save();">Submit</button>
+						</td>
+						<td class="left">
+							<button id="reset" onclick="page.reset();">Reset</button>
+						</td>
+					</tr>
+				</tbody></table>
+			</div>
+		</td></tr></tbody></table>
+	</body>
+</html>

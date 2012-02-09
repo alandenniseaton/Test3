@@ -1,0 +1,69 @@
+.doc {
+	background-color: #eeeeee;
+}
+
+.doc  .sect {
+	margin: 0 0 8px 0;
+	padding: 0;
+	background-color: white;
+}
+
+.doc  .name {
+	font-weight: bold;
+	padding-left: 2px;
+}
+
+.doc  .sect > .name {
+	font-size: 150%;
+	padding: 2px;
+	background-color: #cccccc;
+}
+
+.doc  .func {
+	padding: 16px 0 16px 0;
+	border-color: #b2b2b2;
+	border-width: 0 0 1px 0;
+	border-style: solid;
+}
+.doc  .func > .name {
+	font-size: 125%;
+}
+.doc  .func  .sig {
+	font-weight: bold;
+	background-color: #d2ec9f;
+	border: 1px solid #9db177;
+	padding-left: 2px;
+	margin-top:4px;
+}
+
+.doc  .func  table.params {
+	margin: 4px 0 4px 0;
+	background-color: #ffdfdf;
+	border-spacing: 0;
+	border: 1px solid #bfa7a7;
+}
+.doc  .func  .params td {
+	padding-left: 2px;
+}
+.doc  .func  .params  .desc{
+	padding-left: 20px;
+	width:100%;
+}
+.doc  .func  .result {
+	background-color: #ffbfbf;
+	border-color: #bf8f8f;
+	border-width: 1px;
+	border-style: solid;
+	padding-left: 4px;
+	margin-bottom:4px;
+}
+.doc .func > .desc {
+	padding-left: 4px;
+}
+
+.doc  .func code,
+.doc  .func .sig,
+.doc  .func  .param  .name {
+	color: blue;
+	font-family: monospace;
+}

@@ -1,0 +1,96 @@
+
+remove code marked with // TEST
+
+------------------------------------------------------------
+111216:2015
+	?? move stuff out of background page and into lib/util
+		local storage
+		notifications
+		popup windows
+		launch
+		alarms/timers
+			this actually needs to stay in the background
+		
+111213:0527
+	creating a window
+		see http://code.google.com/chrome/extensions/windows.html
+		chrome.windows.create({
+			url:'Log.html',
+			left:200,
+			top:200,
+			width:400,
+			height:400,
+			type:'popup'
+		});
+
+------------------------------------------------------------
+Guarded Promise
+
+// assumes op does not affect its arguments or that such affect is safe
+gp.apply = function(op /* args */) {
+	p  = this.p;
+	vr = p.then(
+		function(v) {
+			return [v, v[this.op].apply(v, this.args)];
+		},
+		{ op:op, args:slice(arguments, 1) }
+	);
+	
+	this.p = vr.then( function(vr) { return vr[0]; } );
+	
+	return new GPromise(vr.then( function(vr) { return vr[1]; } ));
+};
+
+// not sure that this is correct
+gp.then = function(/* args */) {
+	return new GPromise(this.p.then.apply(this.p, arguments));
+};
+
+------------------------------------------------------------
+110627:2048
+	? Module.resolveSpec needs to be more sophisticated
+	
+110624:0233
+	add to wtk
+		.frame
+			position relative
+			has a body, position absolute, margin ?x
+		.vpage
+			has top, middle, bottom
+		.hpage
+			has left, middle, right
+		.page
+			has top(left, middle, right)
+				middle(left, middle, right)
+				bottom(left, middle, right)
+		.grid(width, height)
+	
+110623:1428
+	(done)add limits for Log
+	add limits for Commandline.History
+	
+110622:1334
+	move timers and progressbar out of test/main and into their own files
+	
+110617:1549
+	btk.Path
+		remove recursion from .resolve and .ensure
+		more efficient without it
+		
+110614:2120
+	TaskQueue.flush
+		the way it is at the moment is probably not good
+		think of better ways
+		
+110602:1626
+	Terminal.write needs to be completed
+		want output concatenated until \n
+		
+110601:0353
+	command line prompt:
+		should it only be a string?
+		setPrompt() sets the inner HTML
+			can be a problem for prompt echoing
+			
+		-->	dom.dElement
+			add .innerHTML(text) to commands

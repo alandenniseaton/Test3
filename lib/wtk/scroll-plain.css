@@ -1,0 +1,38 @@
+/* see
+	http://trac.webkit.org/export/41842/trunk/LayoutTests/scrollbars/overflow-scrollbar-combinations.html
+*/
+.scroll-plain::-webkit-scrollbar {
+	background-color: transparent;
+	border-width: 1px;
+	border-style: solid;
+	border-color: transparent;
+	width: 10px;
+	height: 10px;
+}
+.scroll-plain::-webkit-scrollbar:hover {
+	border-color: rgba(0,0,0,0.250);
+}
+.scroll-plain::-webkit-scrollbar-corner {
+	background-color: transparent;
+}
+.scroll-plain::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+.scroll-plain::-webkit-scrollbar-thumb {
+	background-color: rgba(0,0,0,0.125);
+	border-width: 1px;
+	border-style: solid;
+	border-color: rgba(0,0,0,0.125);
+}
+.scroll-plain::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(0,0,0,0.25);
+}
+.scroll-plain::-webkit-scrollbar-thumb:active {
+	background-color: rgba(0,0,0,0.50);
+}
+.scroll-plain::-webkit-scrollbar-thumb:horizontal {
+	min-width:20px;
+}
+.scroll-plain::-webkit-scrollbar-thumb:vertical {
+	min-height:20px;
+}
