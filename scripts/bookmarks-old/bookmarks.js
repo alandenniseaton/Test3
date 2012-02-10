@@ -26,7 +26,93 @@ btk.define({
 
 
 //-----------------------------------------------------------------
-// the main module
+btk.define({
+name: 'testwidgets@page',
+//load: true,
+libs: {
+	base: 'base@common',
+	de : 'element@wtk',
+	wi : 'menu@wtk'
+},
+when: [ 'xstate::page.loaded' ],
+init: function(libs, exports) {
+
+	var de = libs.de;
+	
+	page.de = de;
+	
+	var y = {};
+	
+	y.sb = btk.document.getElementById('sandbox');
+	
+	function onclick_mi(e) {
+		var text = de('div').child('clicked: ' + this.i).create();
+		y.sb.appendChild(text);
+	}
+	/*
+	y.m = de('wmenu')
+		.theme('myTheme')
+		.title('do some stuff')
+	//	.head('hello there world')
+		.att('style', 'text-align: center; min-width: 5em;')
+		.item('item 1', onclick_mi.bind({i:1}))
+		.item('item 2', onclick_mi.bind({i:2}))
+		.item('item 3', onclick_mi.bind({i:3}))
+		.line()
+		.item('item 4', onclick_mi.bind({i:4}))
+		.item('item 5', onclick_mi.bind({i:5}))
+		.line()
+		.item('item 6', onclick_mi.bind({i:6}))
+	;
+	
+	y.mi = y.m.create();
+	
+	y.sb.appendChild(y.mi);
+	*/
+	
+	function onclick_mb(e) {
+		var menu = this.firstChild;
+		
+		if (menu) {
+			if (menu.classList.contains('hidden')) {
+				menu.classList.remove('hidden');
+			} else {
+				menu.classList.add('hidden');
+			}
+		} else {
+			console.info(this.id + ': no children');
+		}
+	}
+	
+	y.mb = de('wmbox')
+		.theme('myTheme')
+		.title('do some stuff')
+		.klass('below right')
+		.style('width: 1em; height: 1em; margin:50px;')
+		.menu()
+			.title('blah blah')
+			.style('text-align: center; min-width: 5em;')
+			.item('item 1', onclick_mi.bind({i:1}))
+			.item('item 2', onclick_mi.bind({i:2}))
+			.item('item 3', onclick_mi.bind({i:3}))
+			.line()
+			.item('item 4', onclick_mi.bind({i:4}))
+			.item('item 5', onclick_mi.bind({i:5}))
+			.line()
+			.item('item 6', onclick_mi.bind({i:6}))
+		.end()
+	;
+	
+	y.mbi = y.mb.create();
+	
+	y.sb.appendChild(y.mbi);
+	
+	
+	btk.global.y = y;
+}
+});
+
+
 //-----------------------------------------------------------------
 btk.define({
 name: 'main@page',
@@ -34,161 +120,11 @@ load: true,
 libs: {
 	base: 'base@common',
 	log: 'log@util',
-	de : 'element@wtk',
-	menu: 'menu@wtk',
-	Timer: 'timer@btk',
-	DSSMObject: 'dssmObject@util',
-	DSManager: 'dsManager@util',
-	CodeMirror: 'codemirror@util'
-},
-css : [ 'base@wtk', 'scroll-plain@wtk' ],
-when: [ 'state::page.loaded' ],
-init: function(libs, exports) {
-
-	var log = libs.log;
-
-	var DSSMObject = libs.DSSMObject;
-	var DSManager  = libs.DSManager;
-	
-	var de = libs.de;
-	
-	var Timer = libs.Timer;
-	var CodeMirror = libs.CodeMirror;
-	
-	page.log = log;
-	
-	//-------------------------------------------------------------
-	// the initial state of the data space.
-	// this should probably be in an external file.
-	//
-	var initial = {
-		//system elements
-		"0": {
-			"title": "system",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": {
-				// data space parameters
-				"name": "Bookmarks",
-				"tagmapid": 1,
-				"nextid": 100,
-			},
-			"tags": [10,20,21,30,31,32]
-		},
-		
-		"1": {
-			"title": "Tag Map",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": {
-				"@live": 10,
-				"@dead": 11,
-				
-				"@system": 20,
-				"@json": 21,
-				"@tag": 22,
-				
-				"@noview": 30,
-				"@noedit": 31,
-				"@nodelete": 32,
-			},
-			"tags": [10,20,21,30,31,32]
-		},
-		
-		// system tags
-		"10": {
-			"title": "@live",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,22,30,31,32]
-		},
-		
-		"11": {
-			"title": "@dead",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [],
-			"tags": [10,20,21,22,30,31,32]
-		},
-		
-		"20": {
-			"title": "@system",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,30,31,32]
-		},
-		
-		"21": {
-			"title": "@json",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,30,31,32]
-		},
-		
-		"22": {
-			"title": "@tag",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,30,31,32]
-		},
-		
-		"30": {
-			"title": "@noview",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,30,31,32]
-		},
-		
-		"31": {
-			"title": "@noedit",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,30,31,32]
-		},
-		
-		"32": {
-			"title": "@nodelete",
-			"created": Date.now(),
-			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,30,31,32]
-		}
-	};
-
-	var dssm = new DSSMObject(initial);
-	var dsm = new DSManager(dssm);
-
-
-	//-------------------------------------------------------------
-	
-	page.dspace = {};
-	
-	page.dspace.initial = initial;
-	page.dspace.dssm = dssm;
-	page.dspace.dsm = dsm;
-	
-	
-}	// end init
-});	// end define
-
-
-//-----------------------------------------------------------------
-btk.define({
-name: 'xmain@page',
-//load: true,
-libs: {
-	base: 'base@common',
-	log: 'log@util',
 	ls : 'lstorage@btk',
 	de : 'element@wtk',
 	menu: 'menu@wtk',
-	Timer: 'timer@btk'
+	Timer: 'timer@btk',
+	CodeMirror: 'codemirror@util'
 },
 css : [ 'base@wtk', 'scroll-plain@wtk' ],
 when: [ 'state::page.loaded' ],
@@ -201,7 +137,7 @@ init: function(libs, exports) {
 	var Timer = libs.Timer;
 	var CodeMirror = libs.CodeMirror;
 	
-	var lsm = new ls.Manager('bookmarks');
+	var lsm = new ls.Manager('bookmarks-old');
 	page.lsm = lsm;
 	
 	page.log = log;
@@ -891,6 +827,171 @@ init: function(libs, exports) {
 	//-------------------------------------------------------------
 	if (lsm.get('test')) {
 		page.cm = CodeMirror;
+		console.info('---test mode---');
+	}
+	
+}	// end init
+});	// end btk.define
+
+
+//=================================================================
+btk.define({
+name: 'testidb@page',
+load: true,
+libs: {
+	base: 'base@common',
+	ls: 'lstorage@btk',
+	log: 'log@util',
+	idb: 'idb@util'
+},
+when: [ 'xxxstate::page.loaded' ],
+init: function(libs, exports) {
+
+	//-------------------------------------------------------------
+	var ls  = libs.ls;
+	var idb = libs.idb;
+	var log = libs.log;
+	
+	page.idb = idb;
+	page.lsm = new ls.Manager('bookmarks');
+
+
+	var VERSION = '1.0';
+	var DB = 'bookmarks';
+	var STORE = 'bookmarks';
+	var KEYPATH = 'id';
+	
+	//-------------------------------------------------------------
+	// create the database
+	page.opencreate = function(params) {
+		params = params || {};
+		params.name = params.name || DB;
+		params.version = params.version || VERSION;
+		params.store = params.store || STORE;
+		params.keyPath = params.keypath || KEYPATH;
+		
+		idb.open({
+			name: params.name,
+			block: params.block,
+			
+			onversionchange: params.onversionchange,
+			
+			onsuccess: function(db) {
+				if (params.version > db.version) {
+					idb.setVersion({
+						version: params.version,
+						
+						onsuccess: function(e) {
+							log.log.msg('page.opencreate: set version: ' + params.version);
+							var trans = e.target.result;
+							var store = db.createObjectStore(
+								params.store,
+								{	keyPath: params.keyPath,
+									autoIncrement: params.autoIncrement
+								}
+							);
+							log.log.msg('page.opencreate: created store: ' + params.store);
+							
+							idb.current.store = params.store;
+							
+							if (params.onsuccess) {
+								params.onsuccess(e, db, store, params);
+							}
+						},
+						
+						onblocked: function(e) {
+							console.info('page.opencreate: blocked at: ' + params.name);
+							log.log.msg('page.opencreate: blocked at: ' + params.name);
+							
+							if (params.onblocked) {
+								params.onblocked(e, params);
+							}
+						},
+						
+						onerror: function(e) {
+							log.log.error('page.opencreate: failed to set db version');
+							
+							if (params.onerror) {
+								params.onerror(e, params);
+							}
+						}
+					});
+				}
+					
+			},
+			
+			onerror: function(e) {
+				log.log.error('page.opencreate: error opening: ' + params.name);
+				console.info('page.opencreate: error opening: ' + params.name);
+				console.log(e);
+				
+				if (params.onerror) {
+					params.onerror(e, params);
+				}
+			}
+		});
+	};
+	//idb.opencreate();
+	
+	
+	//-------------------------------------------------------------
+	function dump() {
+		if (!idb.current.db) {
+			log.log.error('idb.dump: no db opened');
+			return;
+		}
+		
+		if (!idb.current.store) {
+			log.log.error('idb.dump: no store selected');
+			return;
+		}
+
+		log.log.line();
+		log.log.msg('idb.dump: ' + idb.current.db.name);
+		
+		var trans = idb.current.db.transaction(
+			[STORE],
+			idb.Transaction.READ_ONLY,
+			0
+		);
+		var store = trans.objectStore(STORE);
+		var keyRange = idb.KeyRange.lowerBound(0);
+		var request = store.openCursor(keyRange);
+		//var request = store.openCursor();
+		
+		request.onsuccess = function(e) {
+			var cursor = e.target.result;
+			if (!cursor) {
+				// no more entries
+				return;
+			}
+			
+			var row = cursor.value;
+			log.log.msg(JSON.stringify(row), 'blue');
+			
+			cursor.continue();
+		};
+		
+		request.onerror = function(e) {
+			log.log.error('idb.dump: could not query store');
+		};
+	};
+	
+	idb.dump = function() {
+		if (!idb.current.db) {
+			log.log.error('idb.dump: no db open');
+			return;
+		}
+		
+		dump();
+	};
+	
+	
+	//-------------------------------------------------------------
+	page.idb = idb;
+	
+	if (page.lsm.get('test')) {
+		btk.global.idb = idb;
 		console.info('---test mode---');
 	}
 	
