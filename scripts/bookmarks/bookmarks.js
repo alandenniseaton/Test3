@@ -173,6 +173,28 @@ init: function(libs, exports) {
 	page.dspace.dssm = dssm;
 	page.dspace.dsm = dsm;
 	
+	if (page.test) {
+		btk.global.x = (function(){
+			var x = {};
+			x.pr = btk.require('promise@btk');
+			x.p  = x.pr.Promise;
+			x.r  = x.pr.Result;
+			
+			x.dssm = page.dspace.dssm;
+			x.dsm  = page.dspace.dsm;
+			
+			x.log = function(result) {
+				console.log(result);
+			};
+			
+			x.error = function(result) {
+				console.error('something went wrong');
+			};
+			
+			return x;
+		}());
+	}
+	
 	
 }	// end init
 });	// end define
