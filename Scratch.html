@@ -172,6 +172,82 @@
 					
 					btk.global.x = x;
 					
+					
+					// deferred messages
+					var y = {};
+					
+					y.doc = "a message queue implemented using window.postMessage";
+					
+					// in practice and for security, should not expose q and key
+					y.q = [];
+					
+					y.key = 'defer:' + Date.now();
+					
+					y.origin = btk.document.location.origin;
+					y.source = btk.global;
+					y.target = btk.global;
+					
+					y.send = function send(data) {
+						this.q.push(data);
+						window.postMessage(this.key, this.origin);
+						return this;
+					};
+					
+					y.receive = function receive(event) {
+						if (event.data !== this.key) {
+							return;
+						}
+						
+						if (event.origin !== this.origin) {
+							return;
+						}
+						
+						if (event.source !== this.source) {
+							return;
+						}
+						
+						if (this.running) {
+							if (this.q.length > 0) {
+								console.log(event);
+								console.log(this.q.shift());
+							} else {
+								// short q
+								// how did that happen?
+								console.error('short q!!!');
+							}
+						} else {
+							// just consume the message
+							// so that things do not get out of sync
+							this.q.shift();
+						}
+					};
+					
+					y.breceive = y.receive.bind(y);
+					
+					y.start = function start() {
+						if (!this.running) {
+							this.target.addEventListener('message', this.breceive, false);
+							this.running = true;
+						}
+					};
+					
+					y.stop = function end() {
+						if (this.running) {
+							this.running = false;
+							this.target.removeEventListener('message', this.breceive);
+						}
+					};
+					
+					y.reset = function reset() {
+						this.stop();
+						this.q = [];
+					};
+					
+					btk.global.y = y;
+					
+					y.start();
+					
+					
 					return x;
 				}
 			});

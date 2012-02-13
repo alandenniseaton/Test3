@@ -169,26 +169,64 @@ init: function(libs, exports) {
 	
 	page.dspace = {};
 	
-	page.dspace.initial = initial;
 	page.dspace.dssm = dssm;
 	page.dspace.dsm = dsm;
+
+	
+	//-------------------------------------------------------------
+	// TEST STUFF
 	
 	if (page.test) {
+		page.dspace.initial = initial;
+		
 		btk.global.x = (function(){
 			var x = {};
-			x.pr = btk.require('promise@btk');
-			x.p  = x.pr.Promise;
-			x.r  = x.pr.Result;
+			x.kpr = btk.require('promise@btk');
+			x.P   = x.kpr.Promise;
+			x.R   = x.kpr.Result;
+			x.DSM = DSManager;
+			x.DSE = DSManager.DSElement;
 			
 			x.dssm = page.dspace.dssm;
 			x.dsm  = page.dspace.dsm;
 			
-			x.log = function(result) {
+			function onok(result) {
+				console.info('OK');
 				console.log(result);
 			};
 			
-			x.error = function(result) {
-				console.error('something went wrong');
+			function oninfo(result) {
+				console.info('INFO');
+				console.log(result);
+			};
+			
+			function onelement(result) {
+				console.info('ELEMENT');
+				console.log(result);
+			};
+			
+			function onerror(result) {
+				console.error('ERROR');
+				console.log(result);
+			};
+			
+			function oncancel(result) {
+				console.warn('CANCEL');
+				console.log(result);
+			};
+			
+			function ondefault(result, message) {
+				console.info('DEFAULT: ' + message.type);
+				console.log(result);
+			};
+			
+			x.actions = {
+				'ok'     : onok,
+				'info'   : oninfo,
+				'element': onelement,
+				'cancel' : oncancel,
+				'error'  : onerror,
+				'default': ondefault
 			};
 			
 			return x;

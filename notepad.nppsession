@@ -1,14 +1,14 @@
 <NotepadPlus>
     <Session activeView="0">
-        <mainView activeIndex="7">
+        <mainView activeIndex="5">
             <File firstVisibleLine="0" xOffset="0" scrollWidth="568" startPos="0" endPos="0" selMode="0" lang="Normal Text" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\notes.txt" />
-            <File firstVisibleLine="1284" xOffset="0" scrollWidth="904" startPos="29971" endPos="29971" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\btk.js" />
-            <File firstVisibleLine="274" xOffset="0" scrollWidth="785" startPos="6563" endPos="6563" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\promise.js" />
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="1448" startPos="587" endPos="587" selMode="0" lang="HTML" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\Bookmarks.html" />
-            <File firstVisibleLine="13" xOffset="0" scrollWidth="800" startPos="1168" endPos="1168" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\scripts\bookmarks\bookmarks.js" />
-            <File firstVisibleLine="27" xOffset="0" scrollWidth="800" startPos="1020" endPos="1452" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\util\dssManager.js" />
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="800" startPos="625" endPos="625" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\util\dssmObject.js" />
-            <File firstVisibleLine="91" xOffset="0" scrollWidth="616" startPos="2312" endPos="2319" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\util\dsManager.js" />
+            <File firstVisibleLine="1285" xOffset="0" scrollWidth="904" startPos="29971" endPos="29971" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\btk.js" />
+            <File firstVisibleLine="359" xOffset="0" scrollWidth="785" startPos="8711" endPos="8711" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\promise.js" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1448" startPos="726" endPos="726" selMode="0" lang="HTML" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\Bookmarks.html" />
+            <File firstVisibleLine="152" xOffset="0" scrollWidth="800" startPos="4083" endPos="4083" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\scripts\bookmarks\bookmarks.js" />
+            <File firstVisibleLine="134" xOffset="0" scrollWidth="825" startPos="3283" endPos="3283" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\util\dssManager.js" />
+            <File firstVisibleLine="6" xOffset="0" scrollWidth="800" startPos="992" endPos="992" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\util\dssmObject.js" />
+            <File firstVisibleLine="90" xOffset="0" scrollWidth="616" startPos="2406" endPos="2406" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\util\dsManager.js" />
         </mainView>
         <subView activeIndex="0" />
     </Session>
