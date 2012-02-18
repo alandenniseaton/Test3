@@ -28,6 +28,8 @@ btk.define({
 //-----------------------------------------------------------------
 // the main module
 //-----------------------------------------------------------------
+btk.define.library.prefix('bookmarks', 'scripts/bookmarks/');
+
 btk.define({
 name: 'main@page',
 load: true,
@@ -36,9 +38,10 @@ libs: {
 	log: 'log@util',
 	de : 'element@wtk',
 	menu: 'menu@wtk',
-	Timer: 'timer@btk',
+	page: 'page@wtk',
 	DSSMObject: 'dssmObject@util',
 	DSManager: 'dsManager@util',
+	widgets: 'widgets@bookmarks',
 	CodeMirror: 'codemirror@util'
 },
 css : [ 'base@wtk', 'scroll-plain@wtk' ],
@@ -52,9 +55,15 @@ init: function(libs, exports) {
 	
 	var de = libs.de;
 	
-	var Timer = libs.Timer;
+	var widgets = libs.widgets;
+	
 	var CodeMirror = libs.CodeMirror;
 	
+	var error = widgets.error;
+	
+	
+	page.error = error;
+
 	page.log = log;
 	
 	//-------------------------------------------------------------
@@ -173,22 +182,273 @@ init: function(libs, exports) {
 	page.dspace.dsm = dsm;
 
 	
+	var doc = btk.document;
+	
+	var getElement = function(id) {
+		return doc.getElementById(id);
+	};
+	
+	page.getElement = getElement;
+	
+	
+	//-------------------------------------------------------------
+	// actions (for button clicks etx)
+	
+	var action = {}
+	page.action = action;
+	
+	
+	action.saveall = function() {
+		error('saveall not implemented yet');
+	};
+	
+	action.newbookmark = function() {
+		error('newbookmark not implemented yet');
+	};
+	
+	action.showdead = function() {
+		error('showdead not implemented yet');
+	};
+	
+	action.showlive = function() {
+		error('showlive not implemented yet');
+	};
+	
+	action.transfer = function() {
+		error('transfer not implemented yet');
+	};
+	
+	action.filterchanged = function() {
+		error('filterchanged not implemented yet');
+	};
+	
+	
+	//-------------------------------------------------------------
+	// build interface
+	
+	page.element = {};
+	
+	(function(pel){
+	
+		var doc = btk.document;
+		
+		pel.body = doc.getElementsByTagName('body')[0];
+		
+		function pageControlFilter() {
+			return de('whpage')
+				.klass('filter')
+				.left()
+					.klass('label')
+					.child('Filter')
+				.end()
+				.body()
+					.klass('input')
+					.start('input')
+						.id('filter')
+						.type('text')
+						.on('change', action.filterchanged)
+					.end()
+				.end()
+			;
+		}
+		
+		function pageControlButton(id, title, label) {
+			return de('button')
+				.id(id)
+				.title(title)
+				.on('click', action[id])
+				.child(label)
+			;
+		}
+		
+		function pageControlButtons() {
+			return [
+				pageControlButton('saveall', 'Save any changes', 'save').klass('hidden'),
+				pageControlButton('newbookmark', 'Add a new bookmark', 'new'),
+				pageControlButton('showdead', 'Show the bookmarks that have been deleted', 'trash'),
+				pageControlButton('showlive', 'Show the active bookmarks', 'live').klass('hidden'),
+				pageControlButton('transfer', 'Upload or download the bookmarks', 'transfer')
+			];
+		}
+		
+		function pageControl() {
+			return de('whpage')
+				.klass('controls')
+				.body()
+					.child(pageControlFilter())
+				.end()
+				.right()
+					.children(pageControlButtons())
+				.end()
+			;
+		};
+		
+		pel.page = de('wvpage')
+			.head()
+				.start('h1')
+					.child('not finished yet')
+				.end()
+				.child(pageControl())
+			.end()
+			
+			.body('whpage')
+				.left()
+					.klass('taglist')
+					.start('div')
+						.klass('viewport')
+						.klass('scroll-plain')
+						.start('div')
+							.id('taglist')
+							.klass('view')
+						.end()
+					.end()
+				.end()
+				
+				.body()
+					.start('div')
+						.klass('viewport')
+						.klass('scroll-plain')
+						.start('div')
+							.id('datalist')
+							.klass('view')
+						.end()
+					.end()
+				.end()
+			.end()
+			
+			.create()
+		;
+			
+		pel.body.appendChild(pel.page);
+		pel.taglist = getElement('taglist');
+		pel.datalist = getElement('datalist');
+		
+	}(page.element));
+	
+	
+	//-------------------------------------------------------------
+	// populate interface
+	
+	var DSEView = widgets.DSEView;
+	var DSView  = widgets.DSView;
+	
+	
+	page.dspace.view = new DSView(page.dsm);
+
+	
 	//-------------------------------------------------------------
 	// TEST STUFF
 	
 	if (page.test) {
 		page.dspace.initial = initial;
-		
+
 		btk.global.x = (function(){
 			var x = {};
+			x.de  = de;
 			x.kpr = btk.require('promise@btk');
 			x.P   = x.kpr.Promise;
 			x.R   = x.kpr.Result;
 			x.DSM = DSManager;
-			x.DSE = DSManager.DSElement;
 			
 			x.dssm = page.dspace.dssm;
 			x.dsm  = page.dspace.dsm;
+			
+			x.show = function(filter) {
+				var context =  {
+					'dsm': page.dspace.dsm,
+					'filter': filter,
+					'output': page.element.datalist
+				};
+				
+				context.dsm.open().chain([
+				
+					function(result) {
+						return this.dsm.addTag('my.tag');
+					},
+					
+					function(result) {
+						return this.dsm.addTag('my.other.tag');
+					},
+					
+					function(result) {
+						var dse = this.dsm.newElement();
+						
+						dse.setTitle('a test');
+						dse.setField('f1', 'v1');
+						dse.setField('f2', 'v2');
+						dse.setField('f3', 'v3');
+						dse.setField('f4', 'v4');
+						
+						dse.setLink([
+							'the/first/link.html',
+							'the/second/link.html'
+						]);
+						
+						dse.setData([
+							'hello there world',
+							'how are you today',
+							'i am fine thankyou',
+							'thats good then.'
+						]);
+						
+						this.dse = dse;
+						
+						return this.dsm.addElementToTag(this.dse, 'my.tag');
+					},
+						
+					function(result) {
+						return this.dsm.addElementToTag(this.dse, 'my.other.tag');
+					},
+					
+					function(result) {
+						return this.dsm.addElementToTag(this.dse, '@dead');
+					},
+					
+					function(result) {
+						return this.dsm.putElement(this.dse);
+					},
+					
+					function(result) {
+						var output = page.element.taglist;
+						var tagnames = Object.keys(this.dsm.tagmapName);
+
+						tagnames.sort();
+						tagnames.forEach(function(name){
+							var entry = new widgets.TagItem(name);
+							
+							output.appendChild(entry.create());
+						});
+					},
+					
+					function(result) {
+						return this.dsm.getTagByName('@live');
+					},
+					
+					function(result) {
+						this.live = result.value.getData();
+						
+						return this.dsm.getTagByName('@dead');
+					},
+					
+					function(result) {
+						this.dead = result.value.getData();
+						
+						var ids = this.live.concat(this.dead);
+						
+						return this.dsm.getElements(ids);
+					},
+					
+					{	'element': function(result) {
+							var dseview = new DSEView(result.value);
+							
+							this.output.appendChild(dseview.create());
+						}
+					}
+					
+				], context );
+			};
+			
+			x.show(['@system', '@json']);
 			
 			function onok(result) {
 				console.info('OK');
@@ -236,723 +496,3 @@ init: function(libs, exports) {
 	
 }	// end init
 });	// end define
-
-
-//-----------------------------------------------------------------
-btk.define({
-name: 'xmain@page',
-//load: true,
-libs: {
-	base: 'base@common',
-	log: 'log@util',
-	ls : 'lstorage@btk',
-	de : 'element@wtk',
-	menu: 'menu@wtk',
-	Timer: 'timer@btk'
-},
-css : [ 'base@wtk', 'scroll-plain@wtk' ],
-when: [ 'state::page.loaded' ],
-init: function(libs, exports) {
-
-	var log = libs.log;
-	var ls  = libs.ls;
-	var de  = libs.de;
-	
-	var Timer = libs.Timer;
-	var CodeMirror = libs.CodeMirror;
-	
-	var lsm = new ls.Manager('bookmarks');
-	page.lsm = lsm;
-	
-	page.log = log;
-	
-	//-------------------------------------------------------------
-	
-	var bookmarks = lsm.getset(
-		'bookmarks',
-		{	next: 0,
-			live: [],
-			dead: [],
-			data: {}
-		}
-	);
-	
-	// sort descending by update stamp then creation stamp
-	function order(a,b) {
-		var bma = bookmarks.data[a];
-		var bmb = bookmarks.data[b];
-		
-		if (bma.updated > bmb.updated) { return -1; }
-		if (bma.updated < bmb.updated) { return 1; }
-		if (bma.updated == bmb.updated) {
-			if (bma.created > bmb.created) { return -1; }
-			if (bma.created < bmb.created) { return 1; }
-			return 0;
-		}
-	}
-	
-	bookmarks.live.sort(order);
-	bookmarks.dead.sort(order);
-	
-	page.bookmarks = bookmarks;
-	
-	btk.global.onbeforeunload = function(e) {
-		if (bookmarks.dirty) {
-			return 'There are unsaved changes.';
-		}
-	};
-	
-	//-------------------------------------------------------------
-	// where the bookmarks will be rendered
-	
-	var live = btk.document.querySelector('#bookmarks #live');
-	if (!live) {
-		log.log.msg('could not find #bookmarks #live');
-	}
-	
-	var dead = btk.document.querySelector('#bookmarks #dead');
-	if (!dead) {
-		log.log.msg('could not find #bookmarks #dead');
-	}
-
-	
-	//-------------------------------------------------------------
-	function dataToText(bookmark) {
-		var text;
-		
-		if (bookmark.tags && bookmark.tags['@json']) {
-			try {
-				text = JSON.stringify(bookmark.data, null, 2);
-			} catch(e) {
-				// don't need to do anything
-				// text is already undefined
-				console.error(e);
-			}
-		}
-		else {
-			text = bookmark.data || '';
-		}
-
-		return text;
-	}
-	page.dataToText = dataToText;
-
-	
-	function textToData(bookmark, text) {
-		var data;
-		
-		if (bookmark.tags && bookmark.tags['@json']) {
-			try {
-				data = JSON.parse(text);
-			} catch(e) {
-				// don't need to do anything
-				// data is already undefined
-				console.error(e);
-			}
-		}
-		else {
-			data = text;
-		}
-
-		return data;
-	}
-	page.textToData = textToData;
-
-	
-	//-------------------------------------------------------------
-	// will be populated with event handlers for buttons etc
-	var action = {};
-	page.action = action;
-	
-	page.getElement = (function(){
-		var doc = btk.document;
-		
-		return function(id) {
-			return doc.getElementById(id);
-		}
-	}());
-	
-	action._live = true;
-
-	action._viewport = page.getElement('viewport')
-	action._saveall  = page.getElement('saveall');
-	action._addnew   = page.getElement('addnew');
-	action._showdead = page.getElement('showdead');
-	action._showlive = page.getElement('showlive');
-	
-	action._error = page.getElement('error');
-	
-	
-	function button(name, bookmark, prefix) {
-		prefix = prefix || '';
-		if (prefix) {
-			prefix = prefix + '.';
-		}
-		
-		return de('input')
-			.atts({
-				'type': 'button',
-				'value': name,
-				'onclick': [
-					'page.action.', prefix, 'do', name ,
-					'(', bookmark.id, ');'
-				].join('')
-			})
-	}
-
-	
-	//-------------------------------------------------------------
-	action.error = function(msg) {
-		if (action.error.timer) {
-			action.error.timer.stop();
-		}
-		
-		var node = de('div').create();
-		node.innerHTML = msg;
-		
-		action._error.appendChild(node);
-		action._error.classList.remove('hidden');
-		
-		action.error.timer = new Timer(
-			function(){
-				action._error.innerHTML = '';
-				action._error.classList.add('hidden');
-				
-				delete action.error.timer;
-			},
-			action.error.timeout
-		);
-		
-		action.error.timer.start();
-	}
-	action.error.timeout = 5*Timer.SECOND;
-	
-	
-	//-------------------------------------------------------------
-	action.smudge = function() {
-		bookmarks.dirty = true;
-		action._saveall.classList.remove('hidden');
-	};
-
-	
-	//-------------------------------------------------------------
-	// TODO
-	// saving to local storage is unacceptable
-	// should use file system
-	action.saveAll = function() {
-		if (bookmarks.dirty) {
-			if (action.editor.active) {
-				action.error('Edit in progress.<br /> Cannot save until completed.');
-			} else {
-				delete bookmarks.dirty;
-				lsm.set('bookmarks', bookmarks);
-				action._saveall.classList.add('hidden');
-			}
-		}
-	}
-	
-	
-	//-------------------------------------------------------------
-	action.showLive = function() {
-		if (action._live) { return; }
-		
-		live.classList.remove('hidden');
-		action._addnew.classList.remove('hidden');
-		action._showlive.classList.add('hidden');
-		
-		dead.classList.add('hidden');
-		action._showdead.classList.remove('hidden');
-		
-		action._live = true;
-	};
-	
-	
-	//-------------------------------------------------------------
-	action.showDead = function() {
-		if (!action._live) { return; }
-		
-		live.classList.add('hidden');
-		action._addnew.classList.add('hidden');
-		action._showlive.classList.remove('hidden');
-
-		dead.classList.remove('hidden');
-		action._showdead.classList.add('hidden');
-		
-		action._live = false;
-	};
-	
-	
-	//-------------------------------------------------------------
-	action.editor = {};
-	
-	// only allow one instance at a time
-	action.editor.active = false;
-
-
-	// Changes to editor fields should not dirty
-	// the main store. The user might request a
-	// cancellation. Smudging should only occur
-	// when the edit is complete
-	action.editor.smudge = function() {
-		action.editor.bookmark.dirty = true;
-		action.editor._save.classList.remove('hidden');
-		action.editor._restore.classList.remove('hidden');
-	};
-
-	
-	action.editor.clean = function() {
-		delete action.editor._save;
-		delete action.editor._restore;
-		delete action.editor.bookmark;
-		delete action.editor.title;
-		delete action.editor.link;
-		delete action.editor.data;
-
-		live.removeChild(action.editor.instance);
-		delete action.editor.instance;
-		
-		action.editor.active = false;;
-	};
-	
-
-	action.editor.addBookmark = function(bookmark) {
-		if (bookmark.dirty) {
-			bookmark.updated = Date.now();
-			delete bookmark.dirty;
-			action.smudge();
-			
-			if (!bookmark.created) {
-				// a new bookmark
-				bookmark.id = bookmarks.next;
-				bookmarks.next++;
-				
-				bookmark.created = bookmark.updated;
-				
-				bookmarks.data[bookmark.id] = bookmark;
-				bookmarks.live.unshift(bookmark.id);
-			}
-		}
-		
-		if (bookmark.created) {
-			var bmNode = renderBookmark(bookmark).create();
-
-			if (live.firstChild) {
-				live.insertBefore(bmNode, live.firstChild);
-			} else {
-				live.appendChild(bmNode);
-			}
-			
-			action._viewport.scrollTop = 0;
-		}
-	};
-	
-	
-	action.editor.dorestore = function(id) {
-		var bookmark = action.editor.bookmark;
-		
-		action.editor.title.value = bookmark.title;
-		action.editor.link.value = bookmark.link;
-		action.editor.data.value = dataToText(bookmark);
-		
-		// all clean again!
-		delete bookmark.dirty;
-		action.editor._save.classList.add('hidden');
-		action.editor._restore.classList.add('hidden');
-	};
-	
-	
-	action.editor.dosave = function(id) {
-		var bookmark = action.editor.bookmark;
-		
-		var data = textToData(bookmark, action.editor.data.value);
-		
-		if (btk.isDefined(data)) {
-			bookmark.title = action.editor.title.value;
-			bookmark.link = action.editor.link.value;
-			bookmark.data = data;
-		
-			action.editor.clean();
-			action.editor.addBookmark(bookmark)
-		} else {
-			action.error('invalid JSON String');
-		}
-	};
-	
-	
-	action.editor.docancel = function(id) {
-		var bookmark = action.editor.bookmark;
-		
-		if (bookmark.created) {
-			// existing bookmark
-			// reinstate it
-			delete bookmark.dirty;
-			var bmNode = renderBookmark(bookmark).create();
-			live.insertBefore(bmNode, action.editor.instance);
-		}
-		
-		action.editor.clean();
-	};
-	
-	
-	action.editor.render = function(bookmark) {
-		action.editor.bookmark = bookmark;
-		
-		var title = de('input')
-			.att('type', 'text')
-			.att('value', bookmark.title)
-			.att('onchange', 'page.action.editor.smudge()')
-			.create()
-		action.editor.title = title;
-	
-		var link = de('input')
-			.att('type', 'text')
-			.att('value', bookmark.link)
-			.att('onchange', 'page.action.editor.smudge()')
-			.create()
-		action.editor.link = link;
-			
-		var data = de('textarea')
-			.att('class', 'data scroll-plain')
-			.att('onchange', 'page.action.editor.smudge()')
-			.child(dataToText(bookmark))
-			.create()
-		action.editor.data = data;
-		
-		var save = button('save', bookmark, 'editor').create();
-		var restore = button('restore', bookmark, 'editor').create();
-		var cancel = button('cancel', bookmark, 'editor').create();
-		
-		save.classList.add('hidden');
-		restore.classList.add('hidden');
-		
-		var instance = de('div')
-			.att('class', 'editor')
-			.start('div')
-				.att('class', 'controls')
-				.children([	save, restore, cancel ])
-			.end()
-			.start('div')
-				.att('class', 'fields')
-				.start('table')
-					.att('class', 'fields')
-					.start('tbody')
-						.start('tr')
-							.att('class', 'row')
-							.start('td')
-								.att('class', 'label')
-								.child('Title')
-							.end()
-							.start('td')
-								.att('class', 'input')
-								.child(title)
-							.end()
-						.end()
-						.start('tr')
-							.att('class', 'row')
-							.start('td')
-								.att('class', 'label')
-								.child('Link')
-							.end()
-							.start('td')
-								.att('class', 'input')
-								.child(link)
-							.end()
-						.end()
-						.start('tr')
-							.att('class', 'row')
-							.start('td')
-								.att('class', 'label')
-								.child('Data')
-							.end()
-							.start('td')
-								.att('class', 'input')
-								.child(data)
-							.end()
-						.end()
-					.end()
-				.end()
-			.end()
-			.create()
-			;
-			
-		action.editor._save = save;
-		action.editor._restore = restore;
-		action.editor.instance = instance;
-		
-		return instance;
-	};
-
-	
-	//-------------------------------------------------------------
-	action.newBookmark = function() {
-		if (action.editor.active) {
-			action.error('The editor is already active');
-			return;
-		}
-		
-		var bookmark = {
-			title: '',
-			link: '',
-			data: ''
-		};
-		
-		var editor = action.editor.render(bookmark)
-		
-		if (live.firstChild) {
-			live.insertBefore(editor, live.firstChild);
-		} else {
-			live.appendChild(editor);
-		}
-		
-		action.editor.active = true;
-	};
-	
-	//-------------------------------------------------------------
-	action.doedit = function(id) {
-		if (action.editor.active) {
-			action.error('The editor is already active');
-			return;
-		}
-		
-		var bookmark = bookmarks.data[id];
-		var editor = action.editor.render(bookmark);
-
-		var bmNode = btk.document.getElementById(bookmarkId(bookmark));
-		live.replaceChild(editor, bmNode);
-		
-		action.editor.active = true;
-	};
-	
-	//-------------------------------------------------------------
-	action.dodelete = function(id) {
-		var bookmark = bookmarks.data[id];
-		var bmNode = btk.document.getElementById(bookmarkId(bookmark));
-		
-		if (!bookmark.dead) {
-			// move a live bookmark to the dead list
-			
-			bookmark.dead = true;
-			bookmark.updated = new Date().getTime();
-			
-			live.removeChild(bmNode);
-			bmNode = renderBookmark(bookmark).create();
-			
-			if (dead.firstChild) {
-				dead.insertBefore(bmNode, dead.firstChild);
-			} else {
-				dead.appendChild(bmNode);
-			}
-			
-			bookmarks.dead.unshift(id);
-			bookmarks.live.splice(bookmarks.live.lastIndexOf(id), 1);
-		} else {
-			// totally delete a dead node
-			
-			dead.removeChild(bmNode);
-			
-			delete bookmarks.data[id];
-			bookmarks.dead.splice(bookmarks.dead.lastIndexOf(id), 1);
-		}
-		
-		action.smudge();
-	};
-	
-	//-------------------------------------------------------------
-	action.dorestore = function(id) {
-		var bookmark = bookmarks.data[id];
-		delete bookmark.dead;
-		bookmark.updated = new Date().getTime();
-		
-		var bmNode = btk.document.getElementById(bookmarkId(bookmark));
-		dead.removeChild(bmNode);
-		bmNode = renderBookmark(bookmark).create();
-		
-		if (live.firstChild) {
-			live.insertBefore(bmNode, live.firstChild);
-		} else {
-			live.appendChild(bmNode);
-		}
-		
-		bookmarks.live.unshift(id);
-		bookmarks.dead.splice(bookmarks.dead.lastIndexOf(id), 1);
-		
-		action.smudge();
-	};
-	
-	//-------------------------------------------------------------
-	function pad(t) {
-		if (t < 10) { return '0' + t; }
-		return t.toString();
-	}
-	
-	function timestamp(time) {
-		var date = new Date(time);
-		return [
-			date.getFullYear(),
-			'.',
-			pad(date.getMonth()+1),
-			'.',
-			pad(date.getDate()),
-			' at ',
-			pad(date.getHours()),
-			':',
-			pad(date.getMinutes())
-		].join('');
-	}
-	
-	function timestampDetail(bookmark) {
-		return [
-			'Updated: ' + timestamp(bookmark.updated),
-			'Created: ' + timestamp(bookmark.created)
-		].join('\n');
-	}
-	
-	function dates(bookmark) {
-		return de('span')
-			.att('class', 'date updated')
-			.att('title', timestampDetail(bookmark))
-			.child(timestamp(bookmark.updated))
-		;
-	}
-
-	function bookmarkId(bookmark) {
-		return 'bookmark' + bookmark.id.toString();
-	}
-	
-	function buttons(bookmark) {
-		return de('div')
-			.att( 'class', 'buttons' )
-			.child(
-				bookmark.dead?
-					button('restore', bookmark) :
-					button('edit', bookmark)
-			)
-			.child(button('delete', bookmark))
-	}
-	
-	function pair(left, right, klass) {
-		return de('table')
-			.klass(klass? klass + ' pair': 'pair')
-			.start('tbody')
-				.start('tr')
-					.klass('top row')
-					.start('td')
-						.klass('left cell')
-						.child(left)
-					.end()
-					.start('td')
-						.klass('right cell')
-						.child(right)
-					.end()
-				.end()
-			.end()
-		;
-	}
-	
-	function link(bookmark) {
-		if (bookmark.link) {
-			return de('a')
-				.att('class', 'link')
-				.att('href', bookmark.link)
-				.att('target', '_new')
-				.child(bookmark.link || '');
-			
-		}
-		
-		return '';
-	}
-	
-	function actionButton(bookmark) {
-		return de('wmbox')
-			.klass('below left')
-			.button()
-				.title('actions')
-			.end()
-			.menu()
-				.child(
-					bookmark.dead
-					? de('wmitem')
-						.label('restore')
-						.action(function(e) {
-							action.dorestore(bookmark.id);
-						})
-					: de('wmitem')
-						.label('edit')
-						.action(function(e) {
-							action.doedit(bookmark.id);
-						})
-				)
-				.item(
-					'delete',
-					function(e){
-						action.dodelete(bookmark.id);
-					}
-				)
-			.end()
-		;
-	}
-	
-	function data(bookmark) {
-		var text = dataToText(bookmark);
-		
-		if (btk.isDefined(text)) {
-			return de('div')
-				.att('class', 'data scroll-plain')
-				.child(text)
-			;
-		}
-		
-		return de('div')
-			.att('style', [
-				'font-weight:bold',
-				'font-style:italic',
-				'color:red'
-			].join(';'))
-			.child('invalid bookmark data')
-		;
-	}
-		
-	function renderBookmark(bookmark) {
-		return de('div')
-			.att('id', bookmarkId(bookmark))
-			.att('class', bookmark.dead? 'bookmark dead': 'bookmark')
-			.children([
-				pair(
-					de( 'div' )
-						.start('div')
-							.att('class', 'title')
-							.child(bookmark.title || (bookmark.id).toString())
-						.end()
-						.child(link(bookmark))
-					,
-					de('div')
-						.klass('control')
-						.child(dates(bookmark))
-						.child(actionButton(bookmark))
-					,
-					'head'
-				),
-				data(bookmark)
-			])
-		;
-	}
-	
-	function renderList(where, list) {
-		for (var i=0, j; j=list[i]; i++) {
-			var bookmark = bookmarks.data[j];
-			bookmark.id = j;
-			where.appendChild(renderBookmark(bookmark).create());
-		}
-	}
-	
-	renderList(live, bookmarks.live);
-	renderList(dead, bookmarks.dead);
-	
-	//-------------------------------------------------------------
-	if (lsm.get('test')) {
-		page.cm = CodeMirror;
-		console.info('---test mode---');
-	}
-	
-}	// end init
-});	// end btk.define

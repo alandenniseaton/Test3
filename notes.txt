@@ -4,7 +4,6 @@ remove code marked with // TEST
 ------------------------------------------------------------
 111216:2015
 	?? move stuff out of background page and into lib/util
-		local storage
 		notifications
 		popup windows
 		launch

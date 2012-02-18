@@ -2,7 +2,7 @@
 body {
 	padding: 0;
 	margin: 0;
-	background-color: #ddd;
+	background-color: #eee;
 }
 
 #error {
@@ -11,7 +11,7 @@ body {
 	right: 0;
 	z-index: 100;
 	
-	background-color: pink;
+	background-color: #ffcc00;
 	color: black;
 	
 	padding-left: 0.25em;
@@ -22,28 +22,62 @@ body {
 	border-color: black;
 }
 
-.view {
-	padding-left: 0.25em;
-	padding-right: 0.25em;
+#datalist.trash {
+	background-color: pink;
 }
 
-.pair {
-	width: 100%;
-	border-collapse: collapse;
-	border-spacing: 0;
+.viewport {
+	padding: 0.25em;
 }
 
 .controls {
 	background-color: rgba(0,0,0,0.5);
 	margin-bottom: 0.25em;
 }
-.controls  .left.cell {
-	width: 100%;
-	text-align: left;
-}
-.controls  .right.cell {
-	text-align: right;
+
+.wpage.controls {
 	white-space: nowrap;
+}
+
+.filter {
+	padding: 0.25em;
+}
+.filter .label {
+	margin-right: 0.25em;
+/*	color: #ddd;*/
+	color: rgba(255,255,255,0.75);
+	font-weight: bold;
+}
+.filter  .input {
+	position: relative;
+	margin-right: 0.25em;
+}
+.filter  .input input {
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 1px;
+	outline: none;
+	border-width: 1px;
+	border-color: black;
+	border-style: solid;
+}
+
+.taglist {
+	min-width: 7em;
+	background-color:transparent;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-right-color: black;
+}
+.taglist .tagitem {
+	padding-left: 0.25em;
+	padding-right: 0.25em;
+	cursor: pointer;
+}
+.taglist .tagitem:hover {
+	background-color: rgba(0,0,0,0.125);
 }
 
 .editor {
@@ -95,82 +129,72 @@ body {
 	min-height: 5em;
 }
 
-.bookmark {
+.dataelement {
 	background-color: transparent;
 	
-	border-width: 1px;
 	border-style: solid;
+	border-width: 1px;
 	border-color: transparent;
 	
-	padding: 0;
+	padding: 0.25em;
 }
-.bookmark:hover {
-	border-color: black;
+.dataelement:hover {
+	border-color: #888888;
 }
-.bookmark.dead {
-	background-color: pink;
+.dataelement.dead {
+	background-color: #ffcc00;
 }
-.bookmark  .fields {
-	position: relative;
-	width: 100%;
-	background-color: transparent;
-}
-.bookmark  .head {
+.dataelement  .head {
 	background-color: rgba(0,0,0,0.0675);
+	padding: 0.25em;
 }
-.bookmark  .head  tbody{
-	vertical-align: top;
-}
-.bookmark  .head  tr {
-	width: 100%;
-}
-.bookmark  .head  td {
-	padding: 0;
-	padding-bottom: 0.25em;
-}
-.bookmark  .head  .left.cell {
-	width: 100%;
+.dataelement  .head  .body {
 	text-align: left;
-	padding-left: 0.25em;
 }
-.bookmark  .head  .title {
+.dataelement  .head  .title {
 	font-weight: bold;
 }
-.bookmark  .head  .link {
+.dataelement  .head  .link  .item {
+	display: inline-block;
 	color:blue;
 	padding-left: 2px;
 	padding-right: 2px;
+	cursor: pointer;
 }
-.bookmark  .head  .link:hover {
+.dataelement  .head  .link .item:hover {
 	background-color: rgba(0,0,0,0.125);
 }
-.bookmark  .head  .right.cell {
+.dataelement  .head  .right {
 	text-align: right;
 }
-.bookmark  .head  .control {
+.dataelement  .head  .control {
 	white-space: nowrap;
 }
-.bookmark  .head  .wmbox{
+.dataelement  .head  .wmbox{
 	width: 10px;
 	height: 10px;
 	background-color: #ddd;
 }
-.bookmark  .head  .wmbutton {
+.dataelement  .head  .wmbutton {
 	height: 100%;
 }
-.bookmark  .head  .wmenu {
+.dataelement  .head  .wmenu {
 	text-align: center;
 	min-width: 5em;
 	z-index: 100;
 }
-.bookmark  .head  .date {
+.dataelement  .head  .timestamp {
 	font-size: 75%;
 	padding-right:0.5em;
 }
-.bookmark  .data {
+.dataelement  .data {
 	min-height: 1em;
 	max-height: 10em;
 	padding: 0.25em;
 	white-space: pre;
 	overflow: auto;
+}
+.dataelement  .tags {
+	background-color: rgba(0,0,0,0.0675);
+	padding: 0.25em;
 }

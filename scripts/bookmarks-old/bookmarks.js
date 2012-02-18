@@ -488,7 +488,7 @@ init: function(libs, exports) {
 		action.editor.link = link;
 			
 		var data = de('textarea')
-			.att('class', 'data scroll-plain')
+			.klass('data scroll-plain')
 			.att('onchange', 'page.action.editor.smudge()')
 			.child(dataToText(bookmark))
 			.create()
@@ -502,46 +502,46 @@ init: function(libs, exports) {
 		restore.classList.add('hidden');
 		
 		var instance = de('div')
-			.att('class', 'editor')
+			.klass('editor')
 			.start('div')
-				.att('class', 'controls')
+				.klass('controls')
 				.children([	save, restore, cancel ])
 			.end()
 			.start('div')
-				.att('class', 'fields')
+				.klass('fields')
 				.start('table')
-					.att('class', 'fields')
+					.klass('fields')
 					.start('tbody')
 						.start('tr')
-							.att('class', 'row')
+							.klass('row')
 							.start('td')
-								.att('class', 'label')
+								.klass('label')
 								.child('Title')
 							.end()
 							.start('td')
-								.att('class', 'input')
+								.klass('input')
 								.child(title)
 							.end()
 						.end()
 						.start('tr')
-							.att('class', 'row')
+							.klass('row')
 							.start('td')
-								.att('class', 'label')
+								.klass('label')
 								.child('Link')
 							.end()
 							.start('td')
-								.att('class', 'input')
+								.klass('input')
 								.child(link)
 							.end()
 						.end()
 						.start('tr')
-							.att('class', 'row')
+							.klass('row')
 							.start('td')
-								.att('class', 'label')
+								.klass('label')
 								.child('Data')
 							.end()
 							.start('td')
-								.att('class', 'input')
+								.klass('input')
 								.child(data)
 							.end()
 						.end()
@@ -685,7 +685,7 @@ init: function(libs, exports) {
 	
 	function dates(bookmark) {
 		return de('span')
-			.att('class', 'date updated')
+			.klass('date updated')
 			.att('title', timestampDetail(bookmark))
 			.child(timestamp(bookmark.updated))
 		;
@@ -728,7 +728,7 @@ init: function(libs, exports) {
 	function link(bookmark) {
 		if (bookmark.link) {
 			return de('a')
-				.att('class', 'link')
+				.klass('link')
 				.att('href', bookmark.link)
 				.att('target', '_new')
 				.child(bookmark.link || '');
@@ -773,7 +773,7 @@ init: function(libs, exports) {
 		
 		if (btk.isDefined(text)) {
 			return de('div')
-				.att('class', 'data scroll-plain')
+				.klass('data scroll-plain')
 				.child(text)
 			;
 		}
@@ -791,12 +791,12 @@ init: function(libs, exports) {
 	function renderBookmark(bookmark) {
 		return de('div')
 			.att('id', bookmarkId(bookmark))
-			.att('class', bookmark.dead? 'bookmark dead': 'bookmark')
+			.klass(bookmark.dead? 'bookmark dead': 'bookmark')
 			.children([
 				pair(
 					de( 'div' )
 						.start('div')
-							.att('class', 'title')
+							.klass('title')
 							.child(bookmark.title || (bookmark.id).toString())
 						.end()
 						.child(link(bookmark))

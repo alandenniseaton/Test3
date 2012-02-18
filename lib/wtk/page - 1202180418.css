@@ -1,0 +1,48 @@
+.wpage {
+	width: 100%;
+	height: 100%;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+.wpage  .row {
+	width: 100%;
+}
+.wpage  .cell {
+	vertical-align: top;
+	border: 0;
+	padding: 0;
+}
+.wpage  .cell  .content {
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+.wpage  .top.row  .content {
+	margin-bottom: 2px;
+}
+.wpage  .middle.row {
+	height: 100%;
+}
+.wpage  .middle.row  .left.cell {
+	height: 100%;
+}
+.wpage  .middle.row  .middle.cell {
+	width: 100%;
+	height: 100%;
+}
+.wpage  .middle.row  .right.cell {
+	height: 100%;
+}
+.wpage  .middle.row  .left.cell  .content {
+	margin-right: 2px;
+}
+.wpage  .middle.row  .middle.cell  .content {
+	width: 100%;
+	height: 100%;
+}
+.wpage  .middle.row  .right.cell  .content {
+	margin-left: 2px;
+}
+.wpage  .bottom.row  .content {
+	margin-top: 2px;
+}
