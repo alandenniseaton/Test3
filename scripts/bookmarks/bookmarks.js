@@ -82,7 +82,7 @@ init: function(libs, exports) {
 				"tagmapid": 1,
 				"nextid": 100,
 			},
-			"tags": [10,20,21,30,31,32]
+			"tags": [10,20,22,30,31,32]
 		},
 		
 		"1": {
@@ -90,58 +90,76 @@ init: function(libs, exports) {
 			"created": Date.now(),
 			"updated": Date.now(),
 			"data": {
-				"@live": 10,
-				"@dead": 11,
+				"@@@live": 10,
+				"@@@dead": 11,
 				
-				"@system": 20,
-				"@json": 21,
-				"@tag": 22,
+				"@@system": 20,
+				"@@tag": 21,
+				"@json": 22,
+				"@html": 23,
+				"@code": 24,
 				
 				"@noview": 30,
 				"@noedit": 31,
 				"@nodelete": 32,
 			},
-			"tags": [10,20,21,30,31,32]
+			"tags": [10,20,22,30,31,32]
 		},
 		
 		// system tags
 		"10": {
-			"title": "@live",
+			"title": "@@@live",
 			"created": Date.now(),
 			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
-			"tags": [10,20,21,22,30,31,32]
+			"data": [0,1,10,11,20,21,22,23,24,30,31,32],
+			"tags": [10,20,21,30,31,32]
 		},
 		
 		"11": {
-			"title": "@dead",
+			"title": "@@@dead",
 			"created": Date.now(),
 			"updated": Date.now(),
 			"data": [],
-			"tags": [10,20,21,22,30,31,32]
+			"tags": [10,20,21,30,31,32]
 		},
 		
 		"20": {
-			"title": "@system",
+			"title": "@@system",
 			"created": Date.now(),
 			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
+			"data": [0,1,10,11,20,21,22,23,24,30,31,32],
 			"tags": [10,20,21,30,31,32]
 		},
 		
 		"21": {
-			"title": "@json",
+			"title": "@@tag",
 			"created": Date.now(),
 			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
+			"data": [10,11,20,21,22,23,24,30,31,32],
 			"tags": [10,20,21,30,31,32]
 		},
 		
 		"22": {
-			"title": "@tag",
+			"title": "@json",
 			"created": Date.now(),
 			"updated": Date.now(),
-			"data": [10,11,20,21,22,30,31,32],
+			"data": [0,1,10,11,20,21,22,23,24,30,31,32],
+			"tags": [10,20,21,30,31,32]
+		},
+		
+		"23": {
+			"title": "@html",
+			"created": Date.now(),
+			"updated": Date.now(),
+			"data": [],
+			"tags": [10,20,21,30,31,32]
+		},
+		
+		"24": {
+			"title": "@code",
+			"created": Date.now(),
+			"updated": Date.now(),
+			"data": [],
 			"tags": [10,20,21,30,31,32]
 		},
 		
@@ -149,7 +167,7 @@ init: function(libs, exports) {
 			"title": "@noview",
 			"created": Date.now(),
 			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
+			"data": [0,1,10,11,20,21,22,23,24,30,31,32],
 			"tags": [10,20,21,30,31,32]
 		},
 		
@@ -157,7 +175,7 @@ init: function(libs, exports) {
 			"title": "@noedit",
 			"created": Date.now(),
 			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
+			"data": [0,1,10,11,20,21,22,23,24,30,31,32],
 			"tags": [10,20,21,30,31,32]
 		},
 		
@@ -165,7 +183,7 @@ init: function(libs, exports) {
 			"title": "@nodelete",
 			"created": Date.now(),
 			"updated": Date.now(),
-			"data": [0,1,10,11,20,21,22,30,31,32],
+			"data": [0,1,10,11,20,21,22,23,24,30,31,32],
 			"tags": [10,20,21,30,31,32]
 		}
 	};
@@ -192,35 +210,10 @@ init: function(libs, exports) {
 	
 	
 	//-------------------------------------------------------------
-	// actions (for button clicks etx)
+	// actions (for button clicks etc)
 	
-	var action = {}
+	var action = widgets.action;
 	page.action = action;
-	
-	
-	action.saveall = function() {
-		error('saveall not implemented yet');
-	};
-	
-	action.newbookmark = function() {
-		error('newbookmark not implemented yet');
-	};
-	
-	action.showdead = function() {
-		error('showdead not implemented yet');
-	};
-	
-	action.showlive = function() {
-		error('showlive not implemented yet');
-	};
-	
-	action.transfer = function() {
-		error('transfer not implemented yet');
-	};
-	
-	action.filterchanged = function() {
-		error('filterchanged not implemented yet');
-	};
 	
 	
 	//-------------------------------------------------------------
@@ -230,95 +223,14 @@ init: function(libs, exports) {
 	
 	(function(pel){
 	
-		var doc = btk.document;
-		
 		pel.body = doc.getElementsByTagName('body')[0];
 		
-		function pageControlFilter() {
-			return de('whpage')
-				.klass('filter')
-				.left()
-					.klass('label')
-					.child('Filter')
-				.end()
-				.body()
-					.klass('input')
-					.start('input')
-						.id('filter')
-						.type('text')
-						.on('change', action.filterchanged)
-					.end()
-				.end()
-			;
-		}
-		
-		function pageControlButton(id, title, label) {
-			return de('button')
-				.id(id)
-				.title(title)
-				.on('click', action[id])
-				.child(label)
-			;
-		}
-		
-		function pageControlButtons() {
-			return [
-				pageControlButton('saveall', 'Save any changes', 'save').klass('hidden'),
-				pageControlButton('newbookmark', 'Add a new bookmark', 'new'),
-				pageControlButton('showdead', 'Show the bookmarks that have been deleted', 'trash'),
-				pageControlButton('showlive', 'Show the active bookmarks', 'live').klass('hidden'),
-				pageControlButton('transfer', 'Upload or download the bookmarks', 'transfer')
-			];
-		}
-		
-		function pageControl() {
-			return de('whpage')
-				.klass('controls')
-				.body()
-					.child(pageControlFilter())
-				.end()
-				.right()
-					.children(pageControlButtons())
-				.end()
-			;
-		};
-		
-		pel.page = de('wvpage')
-			.head()
-				.start('h1')
-					.child('not finished yet')
-				.end()
-				.child(pageControl())
-			.end()
-			
-			.body('whpage')
-				.left()
-					.klass('taglist')
-					.start('div')
-						.klass('viewport')
-						.klass('scroll-plain')
-						.start('div')
-							.id('taglist')
-							.klass('view')
-						.end()
-					.end()
-				.end()
-				
-				.body()
-					.start('div')
-						.klass('viewport')
-						.klass('scroll-plain')
-						.start('div')
-							.id('datalist')
-							.klass('view')
-						.end()
-					.end()
-				.end()
-			.end()
-			
+		pel.page = de('wdsmview')
+			.taglist().id('taglist').end()
+			.datalist().id('datalist').end()
 			.create()
 		;
-			
+		
 		pel.body.appendChild(pel.page);
 		pel.taglist = getElement('taglist');
 		pel.datalist = getElement('datalist');
@@ -353,10 +265,9 @@ init: function(libs, exports) {
 			x.dssm = page.dspace.dssm;
 			x.dsm  = page.dspace.dsm;
 			
-			x.show = function(filter) {
+			x.build = function() {
 				var context =  {
 					'dsm': page.dspace.dsm,
-					'filter': filter,
 					'output': page.element.datalist
 				};
 				
@@ -368,6 +279,10 @@ init: function(libs, exports) {
 					
 					function(result) {
 						return this.dsm.addTag('my.other.tag');
+					},
+					
+					function(result) {
+						return this.dsm.addTag('@@@zombie');
 					},
 					
 					function(result) {
@@ -385,10 +300,12 @@ init: function(libs, exports) {
 						]);
 						
 						dse.setData([
-							'hello there world',
-							'how are you today',
-							'i am fine thankyou',
-							'thats good then.'
+							'Hello there <u>world</u>. ',
+							'How <big><b>are</b></big> you today? ',
+							'I am <span style="color:green">fine</span> thankyou. ',
+							'Thats good then. ',
+							'<br>',
+							'This should be on another line. '
 						]);
 						
 						this.dse = dse;
@@ -401,7 +318,11 @@ init: function(libs, exports) {
 					},
 					
 					function(result) {
-						return this.dsm.addElementToTag(this.dse, '@dead');
+						return this.dsm.addElementToTag(this.dse, '@html');
+					},
+					
+					function(result) {
+						return this.dsm.addElementToTag(this.dse, '@@@live');
 					},
 					
 					function(result) {
@@ -414,20 +335,20 @@ init: function(libs, exports) {
 
 						tagnames.sort();
 						tagnames.forEach(function(name){
-							var entry = new widgets.TagItem(name);
+							var entry = de('wdstview', name);
 							
 							output.appendChild(entry.create());
 						});
 					},
 					
 					function(result) {
-						return this.dsm.getTagByName('@live');
+						return this.dsm.getTagByName('@@@live');
 					},
 					
 					function(result) {
 						this.live = result.value.getData();
 						
-						return this.dsm.getTagByName('@dead');
+						return this.dsm.getTagByName('@@@dead');
 					},
 					
 					function(result) {
@@ -438,17 +359,26 @@ init: function(libs, exports) {
 						return this.dsm.getElements(ids);
 					},
 					
-					{	'element': function(result) {
-							var dseview = new DSEView(result.value);
+					{	'ok': function(result) {
+							// all elements retrieved
+						},
+						
+						'element': function(result) {
+							var dseview = de('wdseview', result.value);
 							
 							this.output.appendChild(dseview.create());
+						},
+						
+						'default': function(result, message) {
+							console.info('unrecognised message');
+							console.log(message);
 						}
 					}
 					
 				], context );
 			};
 			
-			x.show(['@system', '@json']);
+			x.build();
 			
 			function onok(result) {
 				console.info('OK');

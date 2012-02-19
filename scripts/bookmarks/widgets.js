@@ -26,6 +26,7 @@ init: function(libs, exports) {
 	
 	
 	//-------------------------------------------------------------
+	// actions (for button clicks etc)
 	
 	var action = {};
 	
@@ -44,6 +45,33 @@ init: function(libs, exports) {
 	action.dodelete = function(id) {
 		error('dodelete not implemented yet');
 	};
+	
+	action.saveall = function() {
+		error('saveall not implemented yet');
+	};
+	
+	action.newbookmark = function() {
+		error('newbookmark not implemented yet');
+	};
+	
+	action.showdead = function() {
+		error('showdead not implemented yet');
+	};
+	
+	action.showlive = function() {
+		error('showlive not implemented yet');
+	};
+	
+	action.transfer = function() {
+		error('transfer not implemented yet');
+	};
+	
+	action.filterchanged = function() {
+		error('filterchanged not implemented yet');
+	};
+	
+	
+	exports.action = action;
 	
 	
 	//-------------------------------------------------------------
@@ -82,7 +110,7 @@ init: function(libs, exports) {
 	
 	
 	//-------------------------------------------------------------
-	// widget to view a data space element timestamp
+	// data space element timestamp
 	
 	function Timestamp(dselement) {
 		Timestamp.SUPERCLASS.call(this, 'span');
@@ -131,7 +159,7 @@ init: function(libs, exports) {
 	
 	
 	//-------------------------------------------------------------
-	// widget to view a data space element action button
+	// data space element action button
 	
 	function ActionButton(dselement) {
 		ActionButton.SUPERCLASS.call(this);
@@ -156,7 +184,7 @@ init: function(libs, exports) {
 				)
 				.item(
 					'delete',
-					function(e){
+					function(e) {
 						action.dodelete(dselement.id);
 					}
 				)
@@ -173,7 +201,7 @@ init: function(libs, exports) {
 	
 	
 	//-------------------------------------------------------------
-	// widget to view a data space element
+	// dataspace element view
 	
 	function DSEView(dselement) {
 		DSEView.SUPERCLASS.call(this, 'div');
@@ -242,10 +270,41 @@ init: function(libs, exports) {
 		
 		p.buildBodyJSON = function() {
 			this.body()
-				.klass('data')
-				.klass('mono')
 				.klass('scroll-plain')
+				.klass('data')
+				.klass('json')
 				.child(JSON.stringify(this._dse.getData(), null, 4))
+			.end();
+		};
+		
+		p.buildBodyCode = function() {
+			var data = this._dse.getData();
+			if (btk.isArray(data)) {
+				data = data.join('\n');
+			}
+			
+			this.body()
+				.klass('scroll-plain')
+				.klass('data')
+				.klass('code')
+				.child(data)
+			.end();
+		};
+		
+		p.buildBodyHTML = function() {
+			var data = this._dse.getData();
+			if (btk.isArray(data)) {
+				data = data.join('');
+			}
+			
+			var div = de('div').create();
+			div.innerHTML = data;
+			
+			this.body()
+				.klass('scroll-plain')
+				.klass('data')
+				.klass('html')
+				.child(div)
 			.end();
 		};
 		
@@ -256,15 +315,26 @@ init: function(libs, exports) {
 			}
 			
 			this.body()
-				.klass('data')
 				.klass('scroll-plain')
+				.klass('data')
+				.klass('text')
 				.child(data)
 			.end();
 		};
 		
 		p.buildBody = function() {
-			if (this._dse.hasTagName('@json')) {
+			if (this._dse.hasTagName('@@tag')) {
 				return this.buildBodyJSON();
+				
+			} else if (this._dse.hasTagName('@json')) {
+				return this.buildBodyJSON();
+				
+			} else if (this._dse.hasTagName('@code')) {
+				return this.buildBodyJSON();
+				
+			} else if (this._dse.hasTagName('@html')) {
+				return this.buildBodyHTML();
+				
 			} else {
 				return this.buildBodyText();
 			}
@@ -278,7 +348,7 @@ init: function(libs, exports) {
 			
 			var tagnames = tags.map(function(id, i, a){
 				return dsm.tagIdToName(id);
-			});
+			}).sort();
 			
 			this.foot()
 				.klass('tags')
@@ -288,12 +358,23 @@ init: function(libs, exports) {
 		};
 		
 		p.build = function() {
-			this.klass('dataelement');
+			this.klass('wdseview');
+			this.att('data-dseid', this._dse.getId().toString());
 			
-			var toid = this._dse.dsm.tagmapName;
+			if (this._dse.hasTagName('@@@live')) {
+				this.klass('live');
+			}
 			
-			if (this._dse.hasTagName('@dead')) {
+			if (this._dse.hasTagName('@@@dead')) {
 				this.klass('dead');
+			}
+			
+			if (this._dse.hasTagName('@@system')) {
+				this.klass('system');
+			}
+			
+			if (this._dse.hasTagName('@@system')) {
+				this.klass('tag');
 			}
 			
 			this.buildHead();
@@ -310,32 +391,244 @@ init: function(libs, exports) {
 
 	
 	//-------------------------------------------------------------
-	function DSView(dsmanager) {
-	}
-
-	exports.DSView = DSView;
-	
-	
-	//-------------------------------------------------------------
-	function TagItem(tagName) {
-		TagItem.SUPERCLASS.call(this, 'div');
+	// dataspace tag view
+	function DSTView(tagName) {
+		DSTView.SUPERCLASS.call(this, 'div');
 		
-		this.klass('tagitem')
+		this.klass('wdstview')
 			.child(tagName)
 			.on('click', action.addtagtofilter)
 		;
 	}
-	btk.inherits(TagItem, de.dElement);
+	btk.inherits(DSTView, de.dElement);
 
 	(function(p){
 	
-		p.className = 'DSEView';
-	}(TagItem.prototype));
+		p.className = 'DSTView';
+		
+	}(DSTView.prototype));
 	
 	
-	de.widgets.wtagitem = TagItem;
+	de.widgets.wdstview = DSTView;
 	
-	exports.TagItem = TagItem;
+	exports.DSTView = DSTView;
+	
+	
+	//-------------------------------------------------------------
+	// dataspace taglist view
+	function DSTLView() {
+		DSTLView.SUPERCLASS.call(this, 'div');
+		
+		this.setList(de('div').klass('view'));
+		
+		this.klass('wdstlview')
+			.start('div')
+				.klass('viewport')
+				.klass('scroll-plain')
+				.child(this.getList())
+			.end()
+		;
+	}
+	btk.inherits(DSTLView, de.dElement);
+
+	(function(p){
+	
+		p.className = 'DSTLView';
+
+		p.getList = function() {
+			return this.getElement('list');
+		};
+		
+		p.setList = function(list) {
+			return this.setElement('list', list);
+		};
+		
+		p.list = function() {
+			return this.selectElement('list');
+		};
+		
+	}(DSTLView.prototype));
+
+	
+	de.widgets.wdstlview = DSTLView;
+	
+	exports.DSTLView = DSTLView;
+	
+	
+	//-------------------------------------------------------------
+	// dataspace view
+	function DSView() {
+		DSView.SUPERCLASS.call(this, 'div');
+
+		this.setList(de('div').klass('view'));
+		
+		this.klass('wdsview')
+			.start('div')
+				.klass('viewport')
+				.klass('scroll-plain')
+				.child(this.getList())
+			.end()
+		;
+	}
+	btk.inherits(DSView, de.dElement);
+
+	(function(p){
+	
+		p.className = 'DSView';
+		
+		p.getList = function() {
+			return this.getElement('list');
+		};
+		
+		p.setList = function(list) {
+			return this.setElement('list', list);
+		};
+		
+		p.list = function() {
+			return this.selectElement('list');
+		};
+		
+	}(DSView.prototype));
+
+	
+	de.widgets.wdsview = DSView;
+	
+	exports.DSView = DSView;
+	
+	
+	//-------------------------------------------------------------
+	// dataspace control view
+		function pageControlFilter() {
+			return de('whpage')
+				.klass('filter')
+				.left()
+					.klass('label')
+					.child('Filter')
+				.end()
+				.body()
+					.klass('input')
+					.start('input')
+						.id('filter')
+						.type('text')
+						.on('change', action.filterchanged)
+					.end()
+				.end()
+			;
+		}
+		
+		function pageControlButton(id, title, label) {
+			return de('button')
+				.id(id)
+				.title(title)
+				.on('click', action[id])
+				.child(label)
+			;
+		}
+		
+		function pageControlButtons() {
+			return [
+				pageControlButton('saveall', 'Save any changes', 'save').klass('hidden'),
+				pageControlButton('newbookmark', 'Add a new bookmark', 'new'),
+				pageControlButton('showdead', 'Show the bookmarks that have been deleted', 'trash'),
+				pageControlButton('showlive', 'Show the active bookmarks', 'live').klass('hidden'),
+				pageControlButton('transfer', 'Upload or download the bookmarks', 'transfer')
+			];
+		}
+		
+	function DSCView() {
+		DSCView.SUPERCLASS.call(this);
+
+		this.klass('wdscview')
+			.klass('controlbar')
+			.body()
+				.child(pageControlFilter())
+			.end()
+			.right()
+				.children(pageControlButtons())
+			.end()
+		;
+	}
+	btk.inherits(DSCView, de.widgets.whpage);
+
+	(function(p){
+	
+		p.className = 'DSCView';
+		
+	}(DSCView.prototype));
+
+	
+	de.widgets.wdscview = DSCView;
+	
+	exports.DSCView = DSCView;
+	
+	
+	//-------------------------------------------------------------
+	// dataspace manager view
+	function DSMView() {
+		DSMView.SUPERCLASS.call(this);
+		
+		this.klass('wdsmview')
+			.klass('root')
+			.head('wdscview').end()
+			.body('whpage')
+				.left('wdstlview').end()
+				.body('wdsview').end()
+			.end()
+		;
+		
+		this.setControl(this.getHead());
+		
+		this.setTagList(this.getBody().getLeft().getList());
+		this.setDataList(this.getBody().getBody().getList());
+	}
+	btk.inherits(DSMView, de.widgets.wvpage);
+
+	(function(p){
+	
+		p.className = 'DSMView';
+		
+		p.getControl = function() {
+			return this.getElement('control');
+		};
+		
+		p.setControl = function(control) {
+			return this.setElement('control', control);
+		};
+		
+		p.control = function() {
+			return this.selectElement('control');
+		};
+		
+		p.getTagList = function() {
+			return this.getElement('taglist');
+		};
+		
+		p.setTagList = function(taglist) {
+			return this.setElement('taglist', taglist);
+		};
+		
+		p.taglist = function() {
+			return this.selectElement('taglist');
+		};
+		
+		p.getDataList = function() {
+			return this.getElement('datalist');
+		};
+		
+		p.setDataList = function(datalist) {
+			return this.setElement('datalist', datalist);
+		};
+		
+		p.datalist = function() {
+			return this.selectElement('datalist');
+		};
+		
+	}(DSMView.prototype));
+
+	
+	de.widgets.wdsmview = DSMView;
+	
+	exports.DSMView = DSMView;
 	
 	
 	//-------------------------------------------------------------

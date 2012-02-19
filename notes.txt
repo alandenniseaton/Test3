@@ -54,10 +54,6 @@ gp.then = function(/* args */) {
 		.frame
 			position relative
 			has a body, position absolute, margin ?x
-		.vpage
-			has top, middle, bottom
-		.hpage
-			has left, middle, right
 		.page
 			has top(left, middle, right)
 				middle(left, middle, right)

@@ -1,6 +1,7 @@
 
 body {
-	padding: 0;
+	padding: 0.25em;
+	padding-bottom: 0;
 	margin: 0;
 	background-color: #eee;
 }
@@ -8,7 +9,7 @@ body {
 #error {
 	position:absolute;
 	bottom: 0;
-	right: 0;
+	left: 0;
 	z-index: 100;
 	
 	background-color: #ffcc00;
@@ -30,12 +31,8 @@ body {
 	padding: 0.25em;
 }
 
-.controls {
+.controlbar {
 	background-color: rgba(0,0,0,0.5);
-	margin-bottom: 0.25em;
-}
-
-.wpage.controls {
 	white-space: nowrap;
 }
 
@@ -50,7 +47,6 @@ body {
 }
 .filter  .input {
 	position: relative;
-	margin-right: 0.25em;
 }
 .filter  .input input {
 	position: absolute;
@@ -64,19 +60,23 @@ body {
 	border-style: solid;
 }
 
-.taglist {
-	min-width: 7em;
+.wdstlview {
+	min-width: 7.5em;
 	background-color:transparent;
 	border-right-width: 1px;
 	border-right-style: solid;
 	border-right-color: black;
 }
-.taglist .tagitem {
+.wdstlview .viewport {
+	padding-left: 0;
+}
+.wdstlview .wdstview {
 	padding-left: 0.25em;
 	padding-right: 0.25em;
 	cursor: pointer;
+	font-family: monospace;
 }
-.taglist .tagitem:hover {
+.wdstlview .wdstview:hover {
 	background-color: rgba(0,0,0,0.125);
 }
 
@@ -129,7 +129,8 @@ body {
 	min-height: 5em;
 }
 
-.dataelement {
+/* dataspace element view */
+.wdseview {
 	background-color: transparent;
 	
 	border-style: solid;
@@ -138,63 +139,80 @@ body {
 	
 	padding: 0.25em;
 }
-.dataelement:hover {
+.wdseview:hover {
 	border-color: #888888;
 }
-.dataelement.dead {
+.wdseview.live {
+	/* just use the defaults for now */
+}
+.wdseview.dead {
 	background-color: #ffcc00;
 }
-.dataelement  .head {
+/*
+.wdseview.tag {
+	background-color: #eeffee;
+}
+.wdseview.system {
+	background-color: #eeeeff;
+}
+*/
+.wdseview  .head {
 	background-color: rgba(0,0,0,0.0675);
 	padding: 0.25em;
 }
-.dataelement  .head  .body {
+.wdseview  .head  .body {
 	text-align: left;
 }
-.dataelement  .head  .title {
+.wdseview  .head  .title {
 	font-weight: bold;
 }
-.dataelement  .head  .link  .item {
+.wdseview  .head  .link  .item {
 	display: inline-block;
 	color:blue;
 	padding-left: 2px;
 	padding-right: 2px;
 	cursor: pointer;
 }
-.dataelement  .head  .link .item:hover {
+.wdseview  .head  .link .item:hover {
 	background-color: rgba(0,0,0,0.125);
 }
-.dataelement  .head  .right {
+.wdseview  .head  .right {
 	text-align: right;
 }
-.dataelement  .head  .control {
+.wdseview  .head  .control {
 	white-space: nowrap;
 }
-.dataelement  .head  .wmbox{
+.wdseview  .head  .wmbox{
 	width: 10px;
 	height: 10px;
-	background-color: #ddd;
 }
-.dataelement  .head  .wmbutton {
+.wdseview  .head  .wmbutton {
 	height: 100%;
 }
-.dataelement  .head  .wmenu {
+.wdseview  .head  .wmenu {
 	text-align: center;
 	min-width: 5em;
 	z-index: 100;
 }
-.dataelement  .head  .timestamp {
+.wdseview  .head  .timestamp {
 	font-size: 75%;
 	padding-right:0.5em;
 }
-.dataelement  .data {
+.wdseview  .data {
 	min-height: 1em;
 	max-height: 10em;
 	padding: 0.25em;
-	white-space: pre;
 	overflow: auto;
 }
-.dataelement  .tags {
+.wdseview  .data.json,
+.wdseview  .data.code {
+	font-family: monospace;
+	white-space: pre;
+}
+.wdseview  .data.text {
+	/* just use the default for now*/
+}
+.wdseview  .tags {
 	background-color: rgba(0,0,0,0.0675);
 	padding: 0.25em;
 }

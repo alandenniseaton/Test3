@@ -1,0 +1,53 @@
+.box {
+	display: box;
+	display: -webkit-box;
+	display: -moz-box;
+}
+
+.horizontal {
+	box-orient: horizontal;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+}
+.vertical {
+	box-orient: vertical;
+	-webkit-box-orient: vertical;
+	-moz-box-orient: vertical;
+}
+
+.stretch {
+	box-align: stretch;
+	-webkit-box-align: stretch;
+	-moz-box-align: stretch;
+}
+
+.flex, .flex1 {
+	box-flex: 1;
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+}
+.flex2 {
+	box-flex: 2;
+	-webkit-box-flex: 2;
+	-moz-box-flex: 2;
+}
+.flex3 {
+	box-flex: 3;
+	-webkit-box-flex: 3;
+	-moz-box-flex: 3;
+}
+.flex4 {
+	box-flex: 4;
+	-webkit-box-flex: 4;
+	-moz-box-flex: 4;
+}
+.flex5 {
+	box-flex: 5;
+	-webkit-box-flex: 5;
+	-moz-box-flex: 5;
+}
+.flex6 {
+	box-flex: 6;
+	-webkit-box-flex: 6;
+	-moz-box-flex: 6;
+}

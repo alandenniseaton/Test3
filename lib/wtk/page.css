@@ -1,32 +1,14 @@
-.box {
-	display: box;
-	display: -webkit-box;
-	display: -moz-box;
-}
-.horizontal {
-	box-orient: horizontal;
-	-webkit-box-orient: horizontal;
-	-moz-box-orient: horizontal;
-}
-.vertical {
-	box-orient: vertical;
-	-webkit-box-orient: vertical;
-	-moz-box-orient: vertical;
-}
-.stretch {
-	box-align: stretch;
-	-webkit-box-align: stretch;
-	-moz-box-align: stretch;
-}
-.flex {
-	box-flex: 1;
-	-webkit-box-flex: 1;
-	-moz-box-flex: 1;
-}
-
 .wpage {
 	position: relative;
 	box-sizing: border-box;
+}
+
+.wpage.horizontal {
+	width: 100%;
+}
+
+.wpage.vertical {
+	height: 100%;
 }
 
 .wpage.root {
