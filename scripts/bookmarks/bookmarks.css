@@ -142,6 +142,9 @@ body {
 .wdseview:hover {
 	border-color: #888888;
 }
+.wdseview.selected {
+	border-color: #0000ff;
+}
 .wdseview.live {
 	/* just use the defaults for now */
 }

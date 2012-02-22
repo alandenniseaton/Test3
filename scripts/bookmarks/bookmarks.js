@@ -36,6 +36,7 @@ load: true,
 libs: {
 	base: 'base@common',
 	log: 'log@util',
+	promise: 'promise@btk',
 	de : 'element@wtk',
 	menu: 'menu@wtk',
 	page: 'page@wtk',
@@ -50,21 +51,30 @@ init: function(libs, exports) {
 
 	var log = libs.log;
 
+	var promise = libs.promise;
+	var Promise = promise.Promise;
+	var wrap    = promise.wrap;
+	
 	var DSSMObject = libs.DSSMObject;
 	var DSManager  = libs.DSManager;
 	
 	var de = libs.de;
 	
 	var widgets = libs.widgets;
+	var error = widgets.error;
 	
 	var CodeMirror = libs.CodeMirror;
 	
-	var error = widgets.error;
+	var g = btk.global;
+	var doc = btk.document;
+	var namespace = btk.namespace;
 	
+	g.page = btk.ifDefined(g.page, {});
 	
 	page.error = error;
 
 	page.log = log;
+
 	
 	//-------------------------------------------------------------
 	// the initial state of the data space.
@@ -188,73 +198,334 @@ init: function(libs, exports) {
 		}
 	};
 
-	var dssm = new DSSMObject(initial);
-	var dsm = new DSManager(dssm);
-
-
-	//-------------------------------------------------------------
-	
-	page.dspace = {};
-	
-	page.dspace.dssm = dssm;
-	page.dspace.dsm = dsm;
-
-	
-	var doc = btk.document;
-	
-	var getElement = function(id) {
-		return doc.getElementById(id);
-	};
-	
-	page.getElement = getElement;
-	
 	
 	//-------------------------------------------------------------
-	// actions (for button clicks etc)
+	// the model
 	
-	var action = widgets.action;
-	page.action = action;
+	namespace('model', page);
 	
+	page.model.initial = initial;
+	page.model.dssm = new DSSMObject(initial);
+	page.model.dsm  = new DSManager(page.model.dssm);
+
 	
 	//-------------------------------------------------------------
-	// build interface
+	// the view
 	
-	page.element = {};
+	namespace('view', page);
 	
-	(function(pel){
+	(function(pv){
 	
-		pel.body = doc.getElementsByTagName('body')[0];
+		pv.body = doc.getElementsByTagName('body')[0];
 		
-		pel.page = de('wdsmview')
-			.taglist().id('taglist').end()
-			.datalist().id('datalist').end()
+		pv.root = de('wdsmview')
+			.taglist().att('data-widgetid','taglist').end()
+			.datalist().att('data-widgetid','datalist').end()
 			.create()
 		;
 		
-		pel.body.appendChild(pel.page);
-		pel.taglist = getElement('taglist');
-		pel.datalist = getElement('datalist');
+		pv.body.appendChild(pv.root);
+
 		
-	}(page.element));
+		var getWidget = function(id) {
+			return pv.root.querySelector('[data-widgetid="' + id + '"]');
+		};
+		pv.getWidget = getWidget;
+		
+		
+		pv.filter = getWidget('filter-input');
+		pv.button = {
+			'saveall': getWidget('saveall'),
+			'newbookmark': getWidget('newbookmark'),
+			'showdead': getWidget('showdead'),
+			'showlive': getWidget('showlive'),
+			'transfer': getWidget('transfer'),
+		};
+		
+		pv.taglist = getWidget('taglist');
+		pv.datalist = getWidget('datalist');
+		
+		pv.getDSElement = function(id) {
+			return pv.datalist.querySelector('[data-dseid="' + id + '"]');
+		};
+		
+	}(page.view));
 	
 	
 	//-------------------------------------------------------------
-	// populate interface
+	// the control
 	
-	var DSEView = widgets.DSEView;
-	var DSView  = widgets.DSView;
-	
-	
-	page.dspace.view = new DSView(page.dsm);
+	namespace('control.datalist', page);
 
+	(function(dl){
+	
+		var dsm = page.model.dsm;
+		
+		function getTagIds(tagNames) {
+			var tagIds = [];
+			var tagId;
+			
+			for (var i=0; i<tagNames.length; i++) {
+				tagId = dsm.tagNameToId(tagNames[i]);
+				if (tagId) {
+					tagIds.push(tagId);
+				}
+			}
+			
+			return tagIds;
+		}
+		
+		// returns a promise since it has to reference tag elements
+		function getElementIds(tagIds) {
+			var context = {
+				'elements': {},
+				'first': true
+			};
+			
+			return dsm.getElements(tagIds).then(
+				{
+					'element': function(result, message) {
+						console.info('from tag ' + result.value.getId());
+						
+						var dseids = result.value.getData();
+						console.info([
+							JSON.stringify(dseids),
+							'(',
+							dseids.length,
+							')'
+						].join(''));
+						
+						var other = {};
+						
+						// make a set
+						dseids.forEach(function(id) {
+							other[id] = true;
+						});
+						
+						if (this.first) {
+							// initial population
+							this.elements = other;
+							this.first = false;
+							
+						} else {
+							// intersection
+							Object.keys(this.elements).forEach(
+								function(id) {
+									if (!other[id]) {
+										delete this.elements[id];
+									}
+								}, this
+							);
+						}
+						
+						// don't want these processed down the chain
+						message.stop();
+					},
+					
+					'ok': function(result) {
+						result.value = Object.keys(this.elements).map(
+							function(id) {
+								return parseInt(id);
+							}
+						);
+					}
+				}, context
+			);
+		}
+		
+		function listToString(list) {
+			return [ JSON.stringify(list), '(', list.length, ')' ].join('');
+		}
+		
+		var rid_next = 0;
+		var rid_last = -1;
+		var lock = wrap(true);
+		var refresh_active = false;
+		
+		dl.dorefresh = function(tagNames,rid, lock) {
+			if (rid != rid_last) {
+				// there are later refreshes pending
+				// let them take care of things
+				console.info('dl.refresh skipped ('+rid+')');
+				lock.ok(true);
+				return;
+			}
+		/*
+			if (refresh_active) {
+				// a refresh is already active
+				// have to wait
+				console.info('dl.refresh deferred ('+rid+')');
+				btk.defer({}, dl.dorefresh, [tagNames, rid]);
+				return;
+			}
+		*/
+			// this is the only remaining refresh
+			console.info('dl.refresh activated ('+rid+')');
+		//	refresh_active = true;
+			
+			var context = {
+				'output': page.view.datalist,
+				'count': 0,
+				'lock': lock
+			};
+			
+			if (tagNames.length === 0) {
+				tagNames = ['@@@live'];
+			}
+			
+			console.info('control.datalist.refresh: ' + listToString(tagNames));
+			
+			var tagIds = getTagIds(tagNames);
+			console.info('control.datalist.refresh: ' + listToString(tagIds));
+			
+			getElementIds(tagIds).chain([
+			
+				function(result) {
+					console.info('all element ids')
+					console.info(listToString(result.value));
+					
+					this.output.innerHTML = '';
+					return dsm.getElements(result.value);
+				},
+				
+				{
+					'element': function(result) {
+						var dseview = de('wdseview', result.value);
+						
+						this.output.appendChild(dseview.create());
+						
+						this.count++;
+					},
+					
+					'ok': function(result) {
+						console.info(this.count + ' elements displayed');
+					//	refresh_active = false;
+						this.lock.ok(true);
+					}
+				}
+				
+			], context );
+		};
+
+		dl.refresh = function(tagNames) {
+			rid_last = rid_next;
+			rid_next++;
+
+			var context = {
+				'tagNames': tagNames,
+				'rid': rid_last,
+				'lock': new Promise()
+			};
+			
+			lock.then(function() {
+				dl.dorefresh(this.tagNames, this.rid, this.lock);
+			}, context);
+			
+			lock = context.lock;
+		};
+		
+	}(page.control.datalist));
+
+	
+	namespace('control.filter', page);
+	
+	(function(f) {
+	
+		var dl = page.control.datalist;
+		
+		var tags = {};
+		
+		f.tags = tags;
+		
+		var filter = page.view.filter;
+		
+		f.refreshValue = function() {
+			filter.value = Object.keys(tags).sort().join(' ');
+		}
+		
+		f.add = function(tagName) {
+			if (!tags[tagName]) {
+				tags[tagName] = true;
+				
+				f.refreshValue();
+				
+				dl.refresh(Object.keys(tags));
+			}
+		};
+		
+		f.remove = function(tagName) {
+			if (tags[tagName]) {
+				delete tags[tagName];
+				
+				f.refreshValue();
+				
+				dl.refresh(Object.keys(tags));
+			}
+		};
+		
+		f.clear = function() {
+			error('control.filter.clear not implemented yet');
+		};
+		
+		// called when filter input field changes
+		f.refresh = function() {
+			tags = {};
+			var value = filter.value;
+			var tagNames = value.split(' ').filter(function(t){ return t !== '';});
+			
+			for (var i=0; i<tagNames.length; i++) {
+				tags[tagNames[i]] = true;
+			}
+			
+			f.refreshValue();
+			
+			dl.refresh(Object.keys(tags));
+		};
+		
+	}(page.control.filter));
+	
+
+	namespace('control.taglist', page);
+	
+	(function(tl){
+	
+		var dsm = page.model.dsm;
+		
+		tl.refresh = function() {
+			if (!dsm.isOpen) { return; }
+			
+			var output = page.view.taglist;
+			var tagnames = Object.keys(dsm.tagmapName);
+
+			output.innerHTML = '';
+			
+			tagnames.sort();
+			tagnames.forEach(function(name){
+				var entry = de('wdstview', name);
+				
+				output.appendChild(entry.create());
+			});
+		};
+		
+	}(page.control.taglist));
+	
+	
+	page.control.init = function() {
+		page.model.dsm.open().chain([
+			page.control.taglist.refresh,
+			page.control.filter.add.bind({},'@@@live')
+		]);
+	};
+	
+	
+	page.control.init();
+	
 	
 	//-------------------------------------------------------------
 	// TEST STUFF
 	
 	if (page.test) {
-		page.dspace.initial = initial;
-
-		btk.global.x = (function(){
+		g.x = (function(){
 			var x = {};
 			x.de  = de;
 			x.kpr = btk.require('promise@btk');
@@ -262,13 +533,25 @@ init: function(libs, exports) {
 			x.R   = x.kpr.Result;
 			x.DSM = DSManager;
 			
-			x.dssm = page.dspace.dssm;
-			x.dsm  = page.dspace.dsm;
+			x.dssm = page.model.dssm;
+			x.dsm  = page.model.dsm;
+
+			x.f = function() {
+				function g() {
+					var a = {
+						'this': this,
+						'args': arguments
+					};
+					console.log(a);
+				}
+				
+				g.apply({'g':'this object'}, arguments);
+			};
 			
 			x.build = function() {
 				var context =  {
-					'dsm': page.dspace.dsm,
-					'output': page.element.datalist
+					'dsm': page.model.dsm,
+					'output': page.view.datalist
 				};
 				
 				context.dsm.open().chain([
@@ -284,6 +567,8 @@ init: function(libs, exports) {
 					function(result) {
 						return this.dsm.addTag('@@@zombie');
 					},
+					
+					page.control.taglist.refresh,
 					
 					function(result) {
 						var dse = this.dsm.newElement();
@@ -322,7 +607,7 @@ init: function(libs, exports) {
 					},
 					
 					function(result) {
-						return this.dsm.addElementToTag(this.dse, '@@@live');
+						return this.dsm.addElementToTag(this.dse, '@@@dead');
 					},
 					
 					function(result) {
@@ -330,17 +615,9 @@ init: function(libs, exports) {
 					},
 					
 					function(result) {
-						var output = page.element.taglist;
-						var tagnames = Object.keys(this.dsm.tagmapName);
-
-						tagnames.sort();
-						tagnames.forEach(function(name){
-							var entry = de('wdstview', name);
-							
-							output.appendChild(entry.create());
-						});
+						page.control.datalist.refresh([]);
 					},
-					
+					/*
 					function(result) {
 						return this.dsm.getTagByName('@@@live');
 					},
@@ -359,7 +636,8 @@ init: function(libs, exports) {
 						return this.dsm.getElements(ids);
 					},
 					
-					{	'ok': function(result) {
+					{	
+						'ok': function(result) {
 							// all elements retrieved
 						},
 						
@@ -374,7 +652,7 @@ init: function(libs, exports) {
 							console.log(message);
 						}
 					}
-					
+					*/
 				], context );
 			};
 			

@@ -8,6 +8,7 @@ name: 'widgets@bookmarks',
 load: true,
 libs: {
 	de : 'element@wtk',
+	dom : 'dom@btk',
 	Timer: 'timer@btk',
 	menu: 'menu@wtk',
 	DSManager: 'dsManager@util'
@@ -20,59 +21,82 @@ init: function(libs, exports) {
 	
 	var de = libs.de;
 	
+	var dom = libs.dom;
+	var stopEvent = dom.stopEvent;
+	
 	var Timer = libs.Timer;
 	
+	var namespace = btk.namespace;
+	
 	var doc = btk.document;
+	
+	var g = btk.global;
+	
+	g.page = btk.ifDefined(g.page, {});
 	
 	
 	//-------------------------------------------------------------
 	// actions (for button clicks etc)
 	
-	var action = {};
+	namespace('view', page);
+	namespace('action', page);
 	
-	action.addtagtofilter = function() {
-		error('addtagtofilter not implemented yet');
+	var action = page.action;
+	
+	action.dseEdit = function(id, e) {
+		error('dseEdit('+id+') not implemented yet');
 	};
 	
-	action.doedit = function(id) {
-		error('doedit not implemented yet');
+	action.dseRestore = function(id, e) {
+		error('dseRestore('+id+') not implemented yet');
 	};
 	
-	action.dorestore = function(id) {
-		error('dorestore not implemented yet');
+	action.dseDelete = function(id, e) {
+		error('dseDelete('+id+') not implemented yet');
 	};
 	
-	action.dodelete = function(id) {
-		error('dodelete not implemented yet');
+	action.dseSelect = function(id, e) {
+		var dse = page.view.getDSElement(id);
+		if (dse) {
+			dse.classList.toggle('selected');
+		}
 	};
 	
-	action.saveall = function() {
+	
+	action.saveall = function(e) {
 		error('saveall not implemented yet');
 	};
 	
-	action.newbookmark = function() {
-		error('newbookmark not implemented yet');
+	action.newdselement = function(e) {
+		error('newdselement not implemented yet');
 	};
 	
-	action.showdead = function() {
-		error('showdead not implemented yet');
+	action.showdead = function(e) {
+		error('showdead test');
+		
+		page.view.button.showlive.classList.remove('hidden');
+		page.control.filter.remove('@@@live');
+		
+		page.view.button.showdead.classList.add('hidden');
+		page.control.filter.add('@@@dead');
 	};
 	
-	action.showlive = function() {
-		error('showlive not implemented yet');
+	action.showlive = function(e) {
+		error('showlive test');
+		
+		page.view.button.showlive.classList.add('hidden');
+		page.control.filter.add('@@@live');
+		
+		page.view.button.showdead.classList.remove('hidden');
+		page.control.filter.remove('@@@dead');
 	};
 	
-	action.transfer = function() {
+	action.transfer = function(e) {
 		error('transfer not implemented yet');
-	};
-	
-	action.filterchanged = function() {
-		error('filterchanged not implemented yet');
 	};
 	
 	
 	exports.action = action;
-	
 	
 	//-------------------------------------------------------------
 	// generic error handler
@@ -101,6 +125,7 @@ init: function(libs, exports) {
 		error.timer.start();
 	}
 	exports.error = error;
+	page.error = error;
 	
 	error.output = de('span').id('error').klass('hidden').create();
 	
@@ -164,28 +189,33 @@ init: function(libs, exports) {
 	function ActionButton(dselement) {
 		ActionButton.SUPERCLASS.call(this);
 		
+		var dseid = dselement.getId();
+		
 		this.klass('below').klass('left')
 			.button()
 				.title('actions')
 			.end()
 			.menu()
 				.child(
-					dselement.hasTagName('@dead')
+					dselement.hasTagName('@@@dead')
 					? de('wmitem')
 						.label('restore')
 						.action(function(e) {
-							action.dorestore(dselement.id);
+							stopEvent(e);
+							action.dseRestore(dseid, e);
 						})
 					: de('wmitem')
 						.label('edit')
 						.action(function(e) {
-							action.doedit(dselement.id);
+							stopEvent(e);
+							action.dseEdit(dseid, e);
 						})
 				)
 				.item(
 					'delete',
 					function(e) {
-						action.dodelete(dselement.id);
+						stopEvent(e);
+						action.dseDelete(dseid, e);
 					}
 				)
 			.end()
@@ -358,8 +388,19 @@ init: function(libs, exports) {
 		};
 		
 		p.build = function() {
-			this.klass('wdseview');
-			this.att('data-dseid', this._dse.getId().toString());
+			var dseid = this._dse.getId();
+			
+			this.klass('wdseview')
+				.att('data-dseid', dseid.toString())
+				.on('click', function(e){
+					stopEvent(e);
+					action.dseSelect(dseid, e);
+				})
+				.on('dblclick', function(e){
+					stopEvent(e);
+					action.dseEdit(dseid, e);
+				})
+			;
 			
 			if (this._dse.hasTagName('@@@live')) {
 				this.klass('live');
@@ -397,7 +438,10 @@ init: function(libs, exports) {
 		
 		this.klass('wdstview')
 			.child(tagName)
-			.on('click', action.addtagtofilter)
+			.on('click', function(e){
+				stopEvent(e);
+				page.control.filter.add(this.innerText);
+			})
 		;
 	}
 	btk.inherits(DSTView, de.dElement);
@@ -498,53 +542,53 @@ init: function(libs, exports) {
 	
 	//-------------------------------------------------------------
 	// dataspace control view
-		function pageControlFilter() {
-			return de('whpage')
-				.klass('filter')
-				.left()
-					.klass('label')
-					.child('Filter')
-				.end()
-				.body()
-					.klass('input')
-					.start('input')
-						.id('filter')
-						.type('text')
-						.on('change', action.filterchanged)
-					.end()
-				.end()
-			;
-		}
-		
-		function pageControlButton(id, title, label) {
-			return de('button')
-				.id(id)
-				.title(title)
-				.on('click', action[id])
-				.child(label)
-			;
-		}
-		
-		function pageControlButtons() {
-			return [
-				pageControlButton('saveall', 'Save any changes', 'save').klass('hidden'),
-				pageControlButton('newbookmark', 'Add a new bookmark', 'new'),
-				pageControlButton('showdead', 'Show the bookmarks that have been deleted', 'trash'),
-				pageControlButton('showlive', 'Show the active bookmarks', 'live').klass('hidden'),
-				pageControlButton('transfer', 'Upload or download the bookmarks', 'transfer')
-			];
-		}
+	function DSCVButton(id, title, label) {
+		return de('button')
+			.att('data-widgetid', id)
+			.title(title)
+			.on('click', action[id])
+			.child(label)
+		;
+	}
+	
+	function DSCVButtons() {
+		return [
+			DSCVButton('saveall', 'Save any changes', 'save').klass('hidden'),
+			DSCVButton('newdselement', 'Add a new bookmark', 'new'),
+			DSCVButton('showdead', 'Show the bookmarks that have been deleted', 'trash'),
+			DSCVButton('showlive', 'Show the active bookmarks', 'live').klass('hidden'),
+			DSCVButton('transfer', 'Upload or download the bookmarks', 'transfer')
+		];
+	}
 		
 	function DSCView() {
 		DSCView.SUPERCLASS.call(this);
 
 		this.klass('wdscview')
 			.klass('controlbar')
-			.body()
-				.child(pageControlFilter())
+			.att('data-widgetid', 'controlbar')
+			.body('whpage')
+				.klass('filter')
+				.att('data-widgetid', 'filter')
+				.left()
+					.att('data-widgetid', 'filter-label')
+					.klass('label')
+					.child('Filter')
+				.end()
+				.body()
+					.klass('input')
+					.start('input')
+						.att('data-widgetid', 'filter-input')
+						.type('text')
+						.on('change', function(e) {
+							stopEvent(e);
+							page.control.filter.refresh();
+						})
+					.end()
+				.end()
 			.end()
 			.right()
-				.children(pageControlButtons())
+				.children(DSCVButtons())
 			.end()
 		;
 	}
@@ -569,6 +613,7 @@ init: function(libs, exports) {
 		
 		this.klass('wdsmview')
 			.klass('root')
+			.att('data-widgetid','root')
 			.head('wdscview').end()
 			.body('whpage')
 				.left('wdstlview').end()
