@@ -26,6 +26,160 @@ btk.define({
 
 
 //-----------------------------------------------------------------
+// an implementation of sets
+//-----------------------------------------------------------------
+btk.define({
+name: 'set@util',
+init: function() {
+
+	var forEach = btk.object.forEach;
+	
+	
+	function Set() {
+		this._element = {};
+		this._size = 0;
+	};
+	
+	(function(p){
+	
+		p.className = 'Set';
+
+		p.isEmpty = function() {
+			return this._size === 0;
+		};
+		
+		p.size = function() {
+			return this._size;
+		};
+		
+		p.elements = function() {
+			return Object.keys(this._element);
+		};
+		
+		p.toArray = p.elements;
+		
+		p.has = function(x) {
+			return this._element[x];
+		};
+		
+		p.add = function(x) {
+			if (!this.has(x)) {
+				this._element[x] = true;
+				this._size++;
+			}
+			
+			return this;
+		};
+
+		p.addArray = function(a) {
+			if (!btk.isArray(a)) {
+				throw new TypeError('Set.addArray: expected a:Array');
+			}
+			
+			for (var i=0, l=a.length; i<l; i++) {
+				this.add(a[i]);
+			}
+			
+			return this;
+		};
+		
+		p.remove = function(x) {
+			if (this.has(x)) {
+				delete this._element[x];
+				this._size--;
+			}
+			
+			return this;
+		};
+		
+		p.apply = function(f, context) {
+			forEach(this._element, function(bool, element) {
+				f.call(this, element);
+			}, context );
+			
+			return this;
+		};
+		
+		p.map = function(f, context) {
+			var result = new Set();
+			
+			this.apply(function(element) {
+				result.add(f.call(this, element));
+			}, context );
+			
+			return result;
+		};
+		
+		p.clone = function() {
+			var result = new Set();
+			
+			this.apply(function(element) {
+				result.add(element);
+			}, result);
+			
+			return result;
+		};
+		
+		p.merge = function(other) {
+			if (!(other instanceof Set)) {
+				throw new TypeError('Set.merge: expected other:Set');
+			}
+			
+			other.apply(function(element){ this.add(element); }, this);
+			
+			return this;
+		};
+		
+		p.union = function(other) {
+			return this.clone().merge(other);
+		};
+
+		p.diff = function(other) {
+			if (!(other instanceof Set)) {
+				throw new TypeError('Set.diff: expected other:Set');
+			}
+			
+			var result = new Set();
+			
+			this.apply(function(element) {
+				if (!other.has(element)) {
+					result.add(element);
+				}
+			}, result);
+			
+			return result;
+		};
+		
+		p.sdiff = function(other) {
+			return this.diff(other).union(other.diff(this));
+		};
+		
+		p.intersect = function(other) {
+			if (!(other instanceof Set)) {
+				throw new TypeError('Set.intersect: expected other:Set');
+			}
+			
+			var result = new Set();
+			
+			this.apply(function(element) {
+				if (other.has(element)) {
+					result.add(element);
+				}
+			});
+			
+			return result;
+		};
+		
+	}(Set.prototype));
+	
+	
+	return Set;
+	
+}	// end init
+});	// end define
+
+	
+//-----------------------------------------------------------------
 // the main module
 //-----------------------------------------------------------------
 btk.define.library.prefix('bookmarks', 'scripts/bookmarks/');
@@ -36,6 +190,7 @@ load: true,
 libs: {
 	base: 'base@common',
 	log: 'log@util',
+	Set: 'set@util',
 	promise: 'promise@btk',
 	de : 'element@wtk',
 	menu: 'menu@wtk',
@@ -50,6 +205,7 @@ when: [ 'state::page.loaded' ],
 init: function(libs, exports) {
 
 	var log = libs.log;
+	var Set = libs.Set;
 
 	var promise = libs.promise;
 	var Promise = promise.Promise;
@@ -65,8 +221,8 @@ init: function(libs, exports) {
 	
 	var CodeMirror = libs.CodeMirror;
 	
-	var g = btk.global;
-	var doc = btk.document;
+	var g         = btk.global;
+	var doc       = btk.document;
 	var namespace = btk.namespace;
 	
 	g.page = btk.ifDefined(g.page, {});
@@ -200,7 +356,8 @@ init: function(libs, exports) {
 
 	
 	//-------------------------------------------------------------
-	// the model
+	// model
+	//-------------------------------------------------------------
 	
 	namespace('model', page);
 	
@@ -210,7 +367,8 @@ init: function(libs, exports) {
 
 	
 	//-------------------------------------------------------------
-	// the view
+	// view
+	//-------------------------------------------------------------
 	
 	namespace('view', page);
 	
@@ -249,119 +407,107 @@ init: function(libs, exports) {
 			return pv.datalist.querySelector('[data-dseid="' + id + '"]');
 		};
 		
+		pv.getDSTag = function(id) {
+			return pv.taglist.querySelector('[data-dseid="' + id + '"]');
+		};
+		
 	}(page.view));
 	
 	
 	//-------------------------------------------------------------
-	// the control
+	// control
+	//-------------------------------------------------------------
+	
+	// builtin parseInt() is not useable in Array.map()
+	function myParseInt(x) {
+		return parseInt(x);
+	}
 	
 	namespace('control.datalist', page);
 
+	namespace('control.taglist', page);
+	
+	namespace('control.filter', page);
+	
 	(function(dl){
 	
 		var dsm = page.model.dsm;
 		
-		function getTagIds(tagNames) {
-			var tagIds = [];
-			var tagId;
-			
-			for (var i=0; i<tagNames.length; i++) {
-				tagId = dsm.tagNameToId(tagNames[i]);
-				if (tagId) {
-					tagIds.push(tagId);
-				}
-			}
-			
-			return tagIds;
+		function listToString(list) {
+			return [ JSON.stringify(list), ' (', list.length, ')' ].join('');
 		}
+		
+		// stuff for synchronising
+		// change to use btk.Sequence
+		var refreshId = new btk.Sequence();
+		dl.Lock = promise.LockClass('datalist');
+
 		
 		// returns a promise since it has to reference tag elements
 		function getElementIds(tagIds) {
 			var context = {
-				'elements': {},
+				'elements': new Set(),
 				'first': true
 			};
 			
-			return dsm.getElements(tagIds).then(
-				{
-					'element': function(result, message) {
-						console.info('from tag ' + result.value.getId());
-						
-						var dseids = result.value.getData();
-						console.info([
-							JSON.stringify(dseids),
-							'(',
-							dseids.length,
-							')'
-						].join(''));
-						
-						var other = {};
-						
-						// make a set
-						dseids.forEach(function(id) {
-							other[id] = true;
-						});
-						
-						if (this.first) {
-							// initial population
-							this.elements = other;
-							this.first = false;
-							
-						} else {
-							// intersection
-							Object.keys(this.elements).forEach(
-								function(id) {
-									if (!other[id]) {
-										delete this.elements[id];
-									}
-								}, this
-							);
-						}
-						
-						// don't want these processed down the chain
-						message.stop();
-					},
+			// dsm.getElements requires an array of Integers
+			// Set.toArray() always returns an array of Strings
+			var ids = tagIds.toArray().map(myParseInt);
+			console.info('tags: ' + listToString(ids));
+			
+			return dsm.getElements(ids).then({
+			
+				'element': function(result, message) {
 					
-					'ok': function(result) {
-						result.value = Object.keys(this.elements).map(
-							function(id) {
-								return parseInt(id);
-							}
-						);
+					var dseids = result.value.getData();
+					
+					var other = new Set().addArray(dseids);
+					console.info([
+						'tag(',
+						result.value.getId(),
+						') ',
+						listToString(other.toArray().map(myParseInt))
+					].join(''));
+					
+					if (this.first) {
+						// initial population
+						this.elements.merge(other);
+						this.first = false;
+						
+					} else {
+						this.elements = this.elements.intersect(other);
 					}
-				}, context
-			);
+					
+					// don't want these processed down the chain
+					message.handled();
+				},
+				
+				'ok': function(result) {
+					this.elements = this.elements || new Set();
+					result.value = this.elements.toArray().map(myParseInt);
+					
+					console.info('intersection ' + listToString(result.value));
+				},
+				
+				'default': function(result, message) {
+					console.info('unrecognised message');
+					console.log(message);
+				}
+				
+			}, context );
 		}
 		
-		function listToString(list) {
-			return [ JSON.stringify(list), '(', list.length, ')' ].join('');
-		}
-		
-		var rid_next = 0;
-		var rid_last = -1;
-		var lock = wrap(true);
-		var refresh_active = false;
-		
-		dl.dorefresh = function(tagNames,rid, lock) {
-			if (rid != rid_last) {
+		dl.dorefresh = function(tagIds, rid, lock) {
+			if (rid != refreshId.current()) {
 				// there are later refreshes pending
 				// let them take care of things
-				console.info('dl.refresh skipped ('+rid+')');
-				lock.ok(true);
+				console.info('dl.dorefresh: (' + rid + ') skipped');
+				lock.open();
 				return;
 			}
-		/*
-			if (refresh_active) {
-				// a refresh is already active
-				// have to wait
-				console.info('dl.refresh deferred ('+rid+')');
-				btk.defer({}, dl.dorefresh, [tagNames, rid]);
-				return;
-			}
-		*/
-			// this is the only remaining refresh
-			console.info('dl.refresh activated ('+rid+')');
-		//	refresh_active = true;
+			
+			// this is the most recent refresh
+			console.info('dl.dorefresh: (' + rid + ') activated');
 			
 			var context = {
 				'output': page.view.datalist,
@@ -369,21 +515,15 @@ init: function(libs, exports) {
 				'lock': lock
 			};
 			
-			if (tagNames.length === 0) {
-				tagNames = ['@@@live'];
+			if (tagIds.isEmpty()) {
+				tagIds.add(dsm.tagNameToId('@@@live'));
 			}
 			
-			console.info('control.datalist.refresh: ' + listToString(tagNames));
-			
-			var tagIds = getTagIds(tagNames);
-			console.info('control.datalist.refresh: ' + listToString(tagIds));
+			console.info('dl.dorefresh: ' + listToString(tagIds.elements()));
 			
 			getElementIds(tagIds).chain([
 			
 				function(result) {
-					console.info('all element ids')
-					console.info(listToString(result.value));
-					
 					this.output.innerHTML = '';
 					return dsm.getElements(result.value);
 				},
@@ -400,67 +540,52 @@ init: function(libs, exports) {
 					'ok': function(result) {
 						console.info(this.count + ' elements displayed');
 					//	refresh_active = false;
-						this.lock.ok(true);
+						this.lock.open();
 					}
 				}
 				
 			], context );
 		};
 
-		dl.refresh = function(tagNames) {
-			rid_last = rid_next;
-			rid_next++;
-
+		dl.refresh = function(tagIds) {
 			var context = {
-				'tagNames': tagNames,
-				'rid': rid_last,
-				'lock': new Promise()
+				'tagIds': tagIds,
+				'rid': refreshId.next(),
+				'lock': new dl.Lock()
 			};
 			
-			lock.then(function() {
-				dl.dorefresh(this.tagNames, this.rid, this.lock);
+			// wait for the old lock to open before initiating
+			// this refresh
+			context.lock.old.then(function() {
+				dl.dorefresh(this.tagIds, this.rid, this.lock);
 			}, context);
-			
-			lock = context.lock;
 		};
 		
 	}(page.control.datalist));
 
 	
-	namespace('control.filter', page);
-	
 	(function(f) {
 	
-		var dl = page.control.datalist;
+		var tl = page.control.taglist;
 		
-		var tags = {};
+		var tags = new Set();
 		
 		f.tags = tags;
 		
 		var filter = page.view.filter;
 		
 		f.refreshValue = function() {
-			filter.value = Object.keys(tags).sort().join(' ');
+			filter.value = tags.elements().sort().join(' ');
 		}
 		
 		f.add = function(tagName) {
-			if (!tags[tagName]) {
-				tags[tagName] = true;
-				
-				f.refreshValue();
-				
-				dl.refresh(Object.keys(tags));
-			}
+			tags.add(tagName);
+			f.refreshValue();
 		};
 		
 		f.remove = function(tagName) {
-			if (tags[tagName]) {
-				delete tags[tagName];
-				
-				f.refreshValue();
-				
-				dl.refresh(Object.keys(tags));
-			}
+			tags.remove(tagName);
+			f.refreshValue();
 		};
 		
 		f.clear = function() {
@@ -469,39 +594,108 @@ init: function(libs, exports) {
 		
 		// called when filter input field changes
 		f.refresh = function() {
-			tags = {};
+			var newtags = new Set();
 			var value = filter.value;
 			var tagNames = value.split(' ').filter(function(t){ return t !== '';});
 			
-			for (var i=0; i<tagNames.length; i++) {
-				tags[tagNames[i]] = true;
-			}
+			newtags.addArray(tagNames);
+			
+			tl.selectSet(newtags.diff(tags));
+			tl.deselectSet(tags.diff(newtags));
+			
+			tags = newtags;
 			
 			f.refreshValue();
-			
-			dl.refresh(Object.keys(tags));
 		};
 		
 	}(page.control.filter));
 	
 
-	namespace('control.taglist', page);
-	
 	(function(tl){
 	
 		var dsm = page.model.dsm;
+		var f   = page.control.filter;
+		var dl  = page.control.datalist;
+		
+		var selected = new Set();
+		
+		tl.setState = function(id, select) {
+			if (!btk.isDefined(id)) { return; }
+			
+			if (!!selected.has(id) === !!select) { return; }
+			
+			var node = page.view.getDSTag(id);
+			if (node) {
+				if (select) {
+					node.classList.add('selected');
+					selected.add(id);
+					f.add(dsm.tagIdToName(id));
+					
+				} else {
+					node.classList.remove('selected');
+					selected.remove(id);
+					f.remove(dsm.tagIdToName(id));
+					
+					// making sure selected is never empty
+					if (selected.isEmpty()) {
+						// has to be defered to avoid confusion
+						btk.defer({}, tl.select, ['@@@live']);
+					}
+				}
+				
+				dl.refresh(selected);
+			}
+		};
+		
+		function toid(x, showError) {
+			if (btk.isString(x)) {
+				var id = dsm.tagNameToId(x);
+				if (!id && showError) {
+					error('undefined tag: ' + String(x));
+				}
+				return id;
+			}
+			
+			return x;
+		}
+		
+		tl.select = function(id) {
+			id = toid(id, true);
+			tl.setState(id, true);
+		};
+		
+		tl.selectSet = function(s) {
+			s.apply(function(e){ tl.select(e); });
+		};
+		
+		tl.deselect = function(id) {
+			id = toid(id, false);
+			tl.setState(id, false);
+		};
+		
+		tl.deselectSet = function(s) {
+			s.apply(function(e){ tl.deselect(e); });
+		};
+		
+		tl.toggle = function(id) {
+			id = toid(id, true);
+			tl.setState(id, !selected.has(id));
+		};
 		
 		tl.refresh = function() {
-			if (!dsm.isOpen) { return; }
-			
 			var output = page.view.taglist;
-			var tagnames = Object.keys(dsm.tagmapName);
+			var tagnames = dsm.tagNames();
 
 			output.innerHTML = '';
 			
 			tagnames.sort();
 			tagnames.forEach(function(name){
-				var entry = de('wdstview', name);
+				var id = dsm.tagNameToId(name)
+				var entry = de('wdstview', name, id);
+				
+				if (selected.has(id)) {
+					entry.klass('selected');
+				}
 				
 				output.appendChild(entry.create());
 			});
@@ -512,8 +706,15 @@ init: function(libs, exports) {
 	
 	page.control.init = function() {
 		page.model.dsm.open().chain([
-			page.control.taglist.refresh,
-			page.control.filter.add.bind({},'@@@live')
+		
+			function(result) {
+				page.control.taglist.refresh();
+			},
+			
+			function(result) {
+				page.control.taglist.select('@@@live');
+			}
+			
 		]);
 	};
 	
@@ -523,6 +724,7 @@ init: function(libs, exports) {
 	
 	//-------------------------------------------------------------
 	// TEST STUFF
+	//-------------------------------------------------------------
 	
 	if (page.test) {
 		g.x = (function(){
@@ -532,6 +734,7 @@ init: function(libs, exports) {
 			x.P   = x.kpr.Promise;
 			x.R   = x.kpr.Result;
 			x.DSM = DSManager;
+			x.Set = Set;
 			
 			x.dssm = page.model.dssm;
 			x.dsm  = page.model.dsm;
@@ -548,13 +751,20 @@ init: function(libs, exports) {
 				g.apply({'g':'this object'}, arguments);
 			};
 			
+			x.dl = page.control.datalist;
+			
 			x.build = function() {
 				var context =  {
 					'dsm': page.model.dsm,
-					'output': page.view.datalist
+					'output': page.view.datalist,
+					'lock': new x.dl.Lock()
 				};
 				
-				context.dsm.open().chain([
+				context.lock.old.chain([
+				
+					function(result) {
+						return this.dsm.open();
+					},
 				
 					function(result) {
 						return this.dsm.addTag('my.tag');
@@ -615,44 +825,13 @@ init: function(libs, exports) {
 					},
 					
 					function(result) {
-						page.control.datalist.refresh([]);
-					},
-					/*
-					function(result) {
-						return this.dsm.getTagByName('@@@live');
+						page.control.datalist.refresh(new Set());
 					},
 					
 					function(result) {
-						this.live = result.value.getData();
-						
-						return this.dsm.getTagByName('@@@dead');
-					},
-					
-					function(result) {
-						this.dead = result.value.getData();
-						
-						var ids = this.live.concat(this.dead);
-						
-						return this.dsm.getElements(ids);
-					},
-					
-					{	
-						'ok': function(result) {
-							// all elements retrieved
-						},
-						
-						'element': function(result) {
-							var dseview = de('wdseview', result.value);
-							
-							this.output.appendChild(dseview.create());
-						},
-						
-						'default': function(result, message) {
-							console.info('unrecognised message');
-							console.log(message);
-						}
+						this.lock.open();
 					}
-					*/
+					
 				], context );
 			};
 			

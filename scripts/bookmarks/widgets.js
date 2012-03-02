@@ -13,7 +13,7 @@ libs: {
 	menu: 'menu@wtk',
 	DSManager: 'dsManager@util'
 },
-css : [ 'base@wtk', 'scroll-plain@wtk' ],
+css : [ 'base@wtk', 'box@wtk', 'scroll-plain@wtk' ],
 when: [ 'state::page.loaded' ],
 init: function(libs, exports) {
 
@@ -72,23 +72,19 @@ init: function(libs, exports) {
 	};
 	
 	action.showdead = function(e) {
-		error('showdead test');
+		page.view.button.showdead.classList.add('hidden');
+		page.control.taglist.select('@@@dead');
 		
 		page.view.button.showlive.classList.remove('hidden');
-		page.control.filter.remove('@@@live');
-		
-		page.view.button.showdead.classList.add('hidden');
-		page.control.filter.add('@@@dead');
+		page.control.taglist.deselect('@@@live');
 	};
 	
 	action.showlive = function(e) {
-		error('showlive test');
-		
 		page.view.button.showlive.classList.add('hidden');
-		page.control.filter.add('@@@live');
+		page.control.taglist.select('@@@live');
 		
 		page.view.button.showdead.classList.remove('hidden');
-		page.control.filter.remove('@@@dead');
+		page.control.taglist.deselect('@@@dead');
 	};
 	
 	action.transfer = function(e) {
@@ -138,7 +134,7 @@ init: function(libs, exports) {
 	// data space element timestamp
 	
 	function Timestamp(dselement) {
-		Timestamp.SUPERCLASS.call(this, 'span');
+		Timestamp.SUPERCLASS.call(this, 'div');
 		
 		this._dse = dselement;
 		
@@ -286,6 +282,9 @@ init: function(libs, exports) {
 		
 		p.buildHeadRight = function() {
 			this.head().right()
+				.klass('box')
+				.klass('horizontal')
+				.klass('align-start')
 				.child(new Timestamp(this._dse))
 				.child(new ActionButton(this._dse))
 			.end().end();
@@ -433,14 +432,15 @@ init: function(libs, exports) {
 	
 	//-------------------------------------------------------------
 	// dataspace tag view
-	function DSTView(tagName) {
+	function DSTView(tagName, id) {
 		DSTView.SUPERCLASS.call(this, 'div');
 		
 		this.klass('wdstview')
+			.att('data-dseid', id.toString())
 			.child(tagName)
 			.on('click', function(e){
 				stopEvent(e);
-				page.control.filter.add(this.innerText);
+				page.control.taglist.toggle(id);
 			})
 		;
 	}

@@ -71,10 +71,17 @@ body {
 	padding-left: 0;
 }
 .wdstlview .wdstview {
+	margin-bottom: 1px;
 	padding-left: 0.25em;
 	padding-right: 0.25em;
-	cursor: pointer;
 	font-family: monospace;
+	border-width: 1px;
+	border-style: solid;
+	border-color: transparent;
+	cursor: pointer;
+}
+.wdstlview .wdstview.selected {
+	border-color: rgba(0,0,0,0.25);
 }
 .wdstlview .wdstview:hover {
 	background-color: rgba(0,0,0,0.125);
@@ -181,13 +188,14 @@ body {
 }
 .wdseview  .head  .right {
 	text-align: right;
+	width: auto;
 }
 .wdseview  .head  .control {
 	white-space: nowrap;
 }
 .wdseview  .head  .wmbox{
-	width: 10px;
-	height: 10px;
+	width: 16px;
+	height: 16px;
 }
 .wdseview  .head  .wmbutton {
 	height: 100%;
