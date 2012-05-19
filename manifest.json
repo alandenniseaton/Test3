@@ -27,7 +27,10 @@
 	
 	"background_page": "background.html",
 	
+	"minimum_chrome_version": "12.0.706.0",
+	
 	"permissions":[
+		"file://*/",
 		"tts",
 		"unlimitedStorage",
 		"tabs",

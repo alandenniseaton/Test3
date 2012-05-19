@@ -783,7 +783,7 @@ init: function(libs, exports) {
 					function(result) {
 						var dse = this.dsm.newElement();
 						
-						dse.setTitle('a test');
+						dse.setTitle('a dead test');
 						dse.setField('f1', 'v1');
 						dse.setField('f2', 'v2');
 						dse.setField('f3', 'v3');
@@ -818,6 +818,37 @@ init: function(libs, exports) {
 					
 					function(result) {
 						return this.dsm.addElementToTag(this.dse, '@@@dead');
+					},
+					
+					function(result) {
+						return this.dsm.putElement(this.dse);
+					},
+					
+					function(result) {
+						var dse = this.dsm.newElement();
+						
+						dse.setTitle('a test');
+						
+						dse.setLink([
+							'http://141.213.232.243/bitstream/2027.42/43180/1/10992_2004_Article_BF00542649.pdf',
+							'file:///C:/users/Alan Dennis/',
+							'notes.txt'
+						]);
+						
+						dse.setData([
+							'Hello there world.',
+							'How are you today?',
+							'I am fine thankyou.',
+							'Thats good then.'
+						]);
+						
+						this.dse = dse;
+						
+						return this.dsm.addElementToTag(this.dse, 'my.tag');
+					},
+						
+					function(result) {
+						return this.dsm.addElementToTag(this.dse, '@@@live');
 					},
 					
 					function(result) {

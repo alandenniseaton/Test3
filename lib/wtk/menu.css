@@ -4,7 +4,10 @@
 	border-width: 1px;
 	border-style: outset;
 	border-color: white;
-	background-color: #ddd;
+	background-color: rgba(255,255,255,0.625);
+/*	background-color: #ddd;*/
+/*	background-color: inherit;*/
+	box-shadow: 3px 3px rgba(0,0,0,0.25);
 }
 
 .wmenu > .wmhead {
@@ -19,11 +22,17 @@
 }
 
 .wmenu > .wmitem {
+	margin: 2px;
+	border-radius: 4px;
+	border-width: 1px;
+	border-style: outset;
+	border-color: transparent;
 	background-color: transparent;
 	cursor: pointer;
 }
 
 .wmenu > .wmitem:hover {
+	border-color: rgba(0,0,0,0.125);
 	background-color: rgba(0,0,0,0.125);
 }
 
@@ -41,6 +50,7 @@
 	border-width: 1px;
 	border-style: outset;
 	border-color: white;
+	border-radius: 4px;
 	background-color: transparent;
 	cursor: pointer;
 	padding: 0!important;

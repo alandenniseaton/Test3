@@ -27,10 +27,6 @@ body {
 	background-color: pink;
 }
 
-.viewport {
-	padding: 0.25em;
-}
-
 .controlbar {
 	background-color: rgba(0,0,0,0.5);
 	white-space: nowrap;
@@ -63,9 +59,8 @@ body {
 .wdstlview {
 	min-width: 7.5em;
 	background-color:transparent;
-	border-right-width: 1px;
-	border-right-style: solid;
-	border-right-color: black;
+	margin: 4px;
+	margin-left: 0px;
 }
 .wdstlview .viewport {
 	padding-left: 0;
@@ -136,83 +131,105 @@ body {
 	min-height: 5em;
 }
 
+.wdsview {
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: black;
+}
+
 /* dataspace element view */
 .wdseview {
 	background-color: transparent;
 	
 	border-style: solid;
 	border-width: 1px;
-	border-color: transparent;
+	border-radius: 4px;
+	border-color: rgba(0,0,0,0.25);
 	
 	padding: 0.25em;
+	
+	margin: 4px;
 }
 .wdseview:hover {
-	border-color: #888888;
+/*	border-color: rgba(0,0,0,0.5);*/
+	border-color: black;
 }
 .wdseview.selected {
-	border-color: #0000ff;
+	border-color: blue;
 }
 .wdseview.live {
 	/* just use the defaults for now */
+	/*background-color: rgba(0,0,0,0.125);*/
 }
-.wdseview.dead {
-	background-color: #ffcc00;
-}
-/*
 .wdseview.tag {
-	background-color: #eeffee;
+	background-color: rgba(0,0,255,0.125);
 }
 .wdseview.system {
-	background-color: #eeeeff;
+	background-color: rgba(255,204,0,0.5);
 }
-*/
-.wdseview  .head {
+.wdseview.system.tag {
+	background-color: rgba(157,241,157,0.5);
+}
+.wdseview.dead {
+	background-color: rgba(255,192,203,0.5);
+}
+
+.wdseview  .banner {
 	background-color: rgba(0,0,0,0.0675);
 	padding: 0.25em;
-}
-.wdseview  .head  .body {
 	text-align: left;
 }
-.wdseview  .head  .title {
+.wdseview   .title {
 	font-weight: bold;
 }
-.wdseview  .head  .link  .item {
-	display: inline-block;
-	color:blue;
-	padding-left: 2px;
-	padding-right: 2px;
-	cursor: pointer;
-}
-.wdseview  .head  .link .item:hover {
-	background-color: rgba(0,0,0,0.125);
-}
-.wdseview  .head  .right {
+.wdseview  .controls {
 	text-align: right;
+	white-space: nowrap;
 	width: auto;
 }
-.wdseview  .head  .control {
-	white-space: nowrap;
-}
-.wdseview  .head  .wmbox{
+.wdseview  .controls  .wmbox {
 	width: 16px;
 	height: 16px;
+	background-image: url(/images/cog-16.png);
+	border-width: 1px;
+	border-style: solid;
+	border-color: transparent;
 }
-.wdseview  .head  .wmbutton {
+.wdseview  .controls  .wmbox:hover {
+	border-color: rgba(0,0,0,0.25);
+	background-color: rgba(0,0,0,0.25);
+}
+.wdseview  .controls  .wmbutton {
 	height: 100%;
 }
-.wdseview  .head  .wmenu {
+.wdseview  .controls  .wmenu {
 	text-align: center;
-	min-width: 5em;
+	min-width: 4em;
 	z-index: 100;
 }
-.wdseview  .head  .timestamp {
+.wdseview  .controls  .timestamp {
 	font-size: 75%;
 	padding-right:0.5em;
 }
+.wdseview  .links {
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: rgba(0,0,0,0.25);
+}
+.wdseview  .link {
+	display: block;
+	color:blue;
+	cursor: pointer;
+}
+.wdseview  .link:hover {
+	background-color: rgba(0,0,0,0.125);
+}
 .wdseview  .data {
+	margin-bottom: 2px;
+	margin-top: 2px;
+	padding: 0.25em;
 	min-height: 1em;
 	max-height: 10em;
-	padding: 0.25em;
 	overflow: auto;
 }
 .wdseview  .data.json,
@@ -223,7 +240,17 @@ body {
 .wdseview  .data.text {
 	/* just use the default for now*/
 }
-.wdseview  .tags {
+.wdseview  .taglist {
 	background-color: rgba(0,0,0,0.0675);
 	padding: 0.25em;
+}
+.wdseview .banner,
+.wdseview .taglist,
+.wdseview .wmenu {
+/*	border-style: outset!important;*/
+	border-style: solid!important;
+	border-width: 1px!important;
+	border-radius: 4px!important;
+/*	border-color: rgba(255,255,255,0.75)!important;*/
+	border-color: rgba(0,0,0,0.125)!important;
 }

@@ -1,0 +1,17 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="9">
+            <File firstVisibleLine="33" xOffset="0" scrollWidth="1" startPos="1348" endPos="1348" selMode="0" lang="Normal Text" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\notes.txt" />
+            <File firstVisibleLine="964" xOffset="0" scrollWidth="904" startPos="22985" endPos="22985" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\btk.js" />
+            <File firstVisibleLine="24" xOffset="0" scrollWidth="380" startPos="342" endPos="342" selMode="0" lang="CSS" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\wtk\base.css" />
+            <File firstVisibleLine="558" xOffset="0" scrollWidth="835" startPos="12626" endPos="12626" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\promise.js" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1448" startPos="486" endPos="486" selMode="0" lang="HTML" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\Bookmarks.html" />
+            <File firstVisibleLine="200" xOffset="0" scrollWidth="440" startPos="4401" endPos="4401" selMode="0" lang="CSS" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\scripts\bookmarks\bookmarks.css" />
+            <File firstVisibleLine="804" xOffset="0" scrollWidth="904" startPos="17961" endPos="17961" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\scripts\bookmarks\bookmarks.js" />
+            <File firstVisibleLine="274" xOffset="0" scrollWidth="800" startPos="6741" endPos="6741" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\scripts\bookmarks\widgets.js" />
+            <File firstVisibleLine="350" xOffset="0" scrollWidth="800" startPos="6787" endPos="6787" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\util\dsManager.js" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="968" startPos="794" endPos="794" selMode="0" lang="HTML" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\Messages.html" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>

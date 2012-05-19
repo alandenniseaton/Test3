@@ -189,7 +189,7 @@ init: function(libs, exports) {
 		
 		this.klass('below').klass('left')
 			.button()
-				.title('actions')
+		//		.title('actions')
 			.end()
 			.menu()
 				.child(
@@ -230,7 +230,7 @@ init: function(libs, exports) {
 	// dataspace element view
 	
 	function DSEView(dselement) {
-		DSEView.SUPERCLASS.call(this, 'div');
+		DSEView.SUPERCLASS.call(this);
 		
 		this._dse = dselement;
 		
@@ -244,18 +244,22 @@ init: function(libs, exports) {
 
 		p.buildLink = function(link) {
 			return de('a')
-				.klass('item')
+				.klass('link')
 				.att('href', link)
 				.att('target', '_new')
 				.child(link)
 			;
 		};
 		
-		p.buildLinks = function() {
+		p.xbuildLinks = function() {
 			var links = this._dse.getLink();
 			var links = btk.ifArray(links, links?[links]:[]);
 			
-			var element = de('div').klass('link');
+			if (links.length === 0) {
+				return null;
+			}
+			
+			var element = de('div');
 
 			var first = true;
 			links.forEach(function(link){
@@ -270,34 +274,52 @@ init: function(libs, exports) {
 			return element;
 		};
 		
-		p.buildHeadBody = function() {
-			this.head().body()
-				.start('div')
-					.klass('title')
-					.child(this._dse.getTitle() || '*** no title ***')
-				.end()
-				.child(this.buildLinks())
-			.end().end();
-		};
-		
-		p.buildHeadRight = function() {
-			this.head().right()
-				.klass('box')
-				.klass('horizontal')
-				.klass('align-start')
-				.child(new Timestamp(this._dse))
-				.child(new ActionButton(this._dse))
-			.end().end();
-		};
-		
-		p.buildHead = function() {
-			this.head('whpage').end();
+		p.buildLinks = function() {
+			var links = this._dse.getLink();
+			var links = btk.ifArray(links, links?[links]:[]);
 			
-			this.buildHeadBody();
-			this.buildHeadRight();
+			if (links.length === 0) {
+				return null;
+			}
+			
+			var element = de('div');
+
+			links.forEach(function(link){
+				element.child(this.buildLink(link));
+			}, this);
+			
+			return element;
 		};
 		
-		p.buildBodyJSON = function() {
+		p.buildBanner = function() {
+			this.head('wvpage')
+				.klass('banner')
+				.head('whpage')
+					.klass('titlebar')
+					.body()
+						.klass('title')
+						.child(this._dse.getTitle() || '*** no title ***')
+					.end()
+					.right()
+						.klass('controls')
+						.klass('box')
+						.klass('align-start')
+						.child(new Timestamp(this._dse))
+						.child(new ActionButton(this._dse))
+					.end()
+				.end()
+			.end();
+			
+			var links = this.buildLinks();
+			if (links) {
+				this.head().body()
+					.klass('links')
+					.child(links)
+				.end();
+			}
+		};
+		
+		p.buildContentJSON = function() {
 			this.body()
 				.klass('scroll-plain')
 				.klass('data')
@@ -306,7 +328,7 @@ init: function(libs, exports) {
 			.end();
 		};
 		
-		p.buildBodyCode = function() {
+		p.buildContentCode = function() {
 			var data = this._dse.getData();
 			if (btk.isArray(data)) {
 				data = data.join('\n');
@@ -320,7 +342,7 @@ init: function(libs, exports) {
 			.end();
 		};
 		
-		p.buildBodyHTML = function() {
+		p.buildContentHTML = function() {
 			var data = this._dse.getData();
 			if (btk.isArray(data)) {
 				data = data.join('');
@@ -337,41 +359,47 @@ init: function(libs, exports) {
 			.end();
 		};
 		
-		p.buildBodyText = function() {
+		p.buildContentText = function() {
 			var data = this._dse.getData();
 			if (btk.isArray(data)) {
-				data = data.join('\n');
+				var content = [];
+				for (var i=0, line; line=data[i]; i++) {
+					content.push(line);
+					content.push(de('br'));
+				}
+			} else {
+				var content = [data];
 			}
 			
 			this.body()
 				.klass('scroll-plain')
 				.klass('data')
 				.klass('text')
-				.child(data)
+				.children(content)
 			.end();
 		};
 		
-		p.buildBody = function() {
+		p.buildContent = function() {
 			if (this._dse.hasTagName('@@tag')) {
-				return this.buildBodyJSON();
+				return this.buildContentJSON();
 				
 			} else if (this._dse.hasTagName('@json')) {
-				return this.buildBodyJSON();
+				return this.buildContentJSON();
 				
 			} else if (this._dse.hasTagName('@code')) {
-				return this.buildBodyJSON();
+				return this.buildContentJSON();
 				
 			} else if (this._dse.hasTagName('@html')) {
-				return this.buildBodyHTML();
+				return this.buildContentHTML();
 				
 			} else {
-				return this.buildBodyText();
+				return this.buildContentText();
 			}
 			
 			// will probably require some other formats
 		};
 		
-		p.buildFoot = function() {
+		p.buildTagList = function() {
 			var dsm = this._dse.dsm;
 			var tags = this._dse.getTags();
 			
@@ -380,9 +408,9 @@ init: function(libs, exports) {
 			}).sort();
 			
 			this.foot()
-				.klass('tags')
+				.klass('taglist')
 				.klass('mono')
-				.child(tagnames.join(' '))
+				.child(tagnames.join(','))
 			.end();
 		};
 		
@@ -392,8 +420,16 @@ init: function(libs, exports) {
 			this.klass('wdseview')
 				.att('data-dseid', dseid.toString())
 				.on('click', function(e){
-					stopEvent(e);
-					action.dseSelect(dseid, e);
+					if (e.target === this) {
+						// NOTE: this does not work
+						//srcElement
+						//toElement
+						//fromElement
+						stopEvent(e);
+						action.dseSelect(dseid, e);
+					}
+					console.log(this);
+					console.log(e);
 				})
 				.on('dblclick', function(e){
 					stopEvent(e);
@@ -413,13 +449,13 @@ init: function(libs, exports) {
 				this.klass('system');
 			}
 			
-			if (this._dse.hasTagName('@@system')) {
+			if (this._dse.hasTagName('@@tag')) {
 				this.klass('tag');
 			}
 			
-			this.buildHead();
-			this.buildBody();
-			this.buildFoot();
+			this.buildBanner();
+			this.buildContent();
+			this.buildTagList();
 		};
 		
 	}(DSEView.prototype));
