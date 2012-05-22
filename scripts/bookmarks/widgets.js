@@ -14,7 +14,6 @@ libs: {
 	DSManager: 'dsManager@util'
 },
 css : [ 'base@wtk', 'box@wtk', 'scroll-plain@wtk' ],
-when: [ 'state::page.loaded' ],
 init: function(libs, exports) {
 
 	var DSManager  = libs.DSManager;
@@ -251,29 +250,6 @@ init: function(libs, exports) {
 			;
 		};
 		
-		p.xbuildLinks = function() {
-			var links = this._dse.getLink();
-			var links = btk.ifArray(links, links?[links]:[]);
-			
-			if (links.length === 0) {
-				return null;
-			}
-			
-			var element = de('div');
-
-			var first = true;
-			links.forEach(function(link){
-				if (first) {
-					first = false;
-				} else {
-					element.child(de('br'));
-				}
-				element.child(this.buildLink(link));
-			}, this);
-			
-			return element;
-		};
-		
 		p.buildLinks = function() {
 			var links = this._dse.getLink();
 			var links = btk.ifArray(links, links?[links]:[]);
@@ -303,7 +279,7 @@ init: function(libs, exports) {
 					.right()
 						.klass('controls')
 						.klass('box')
-						.klass('align-start')
+						.klass('align-center')
 						.child(new Timestamp(this._dse))
 						.child(new ActionButton(this._dse))
 					.end()
@@ -363,10 +339,11 @@ init: function(libs, exports) {
 			var data = this._dse.getData();
 			if (btk.isArray(data)) {
 				var content = [];
-				for (var i=0, line; line=data[i]; i++) {
-					content.push(line);
+				for (var i=0; i < data.length; i++) {
+					content.push(data[i]);
 					content.push(de('br'));
 				}
+				content.pop();
 			} else {
 				var content = [data];
 			}
@@ -410,7 +387,7 @@ init: function(libs, exports) {
 			this.foot()
 				.klass('taglist')
 				.klass('mono')
-				.child(tagnames.join(','))
+				.child(tagnames.join(' '))
 			.end();
 		};
 		

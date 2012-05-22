@@ -14,6 +14,9 @@ btk.define.library.path('scripts', 'scripts/');
 btk.define.library.path('common', 'scripts/common/');
 
 
+btk.define.library.path('bookmarks', 'scripts/bookmarks/');
+
+
 btk.define.library.prefix('gchrome', 'lib/platform/chrome');
 
 

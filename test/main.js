@@ -292,12 +292,12 @@ init: function(libs) {
 	terminal.setPlaceholder('enter commands here');
 	
 	var body = de('div')
-		.att('class', 'body')
+		.klass('body')
 		.child(terminal);
 		
 	var view = de('div')
 		.att('id', 'logView')
-		.att('class', 'frame')
+		.klass('frame')
 		.child(body)
 		.create();
 
@@ -379,7 +379,7 @@ var eActual = de('div')
 	.create();
 */
 var eTimers = de('div')
-	.att("class","frame")
+	.klass("frame")
 	.att("style", [
 		"text-align:center",
 		"margin-bottom:2px",

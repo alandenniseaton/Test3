@@ -51,8 +51,8 @@ var eTime = de('div')
 	.create();
 	
 var eDay = de('div')
-	.att("class","frame")
-	.att("style", [
+	.klass("frame")
+	.style([
 		"font-size: 125%",
 		"padding:2px",
 		"background:transparent",
@@ -62,12 +62,12 @@ var eDay = de('div')
 	.create();
 	
 var eDate = de('div')
-	.att("style","font-size: 100%;")
+	.style("font-size: 100%;")
 	.create();
 	
 var eClock = de('div')
-	.att("class","frame")
-	.att("style", [
+	.klass("frame")
+	.style([
 		"text-align:center",
 		"margin-bottom:2px",
 		"padding:4px",

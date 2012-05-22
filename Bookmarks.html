@@ -20,11 +20,25 @@
 			};
 		</script>
 
+		<script type="text/javascript" btkid="page::btk.config">
+			btk = {
+				config: {
+					//useCacheFrom: "Dec 31, 9999, GMT+1000",
+					// disable debug messages (there are LOTS!) (defaults to false anyway)
+					debug: false,
+					// just so I know :)
+					test:"TEST.TEST.TEST"
+				}
+			};
+		</script>
+		
 		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
 		
 		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
 		
 		<script type="text/javascript" btkid="page::main" src="scripts/bookmarks/bookmarks.js"></script>
+		
+		<script type="text/javascript" btkid="bookmarks::test" src="scripts/bookmarks/test.js"></script>
 		
 		<link rel="stylesheet" type="text/css" btkid="page::css" href="scripts/bookmarks/bookmarks.css">
 		
@@ -56,8 +70,8 @@
 	</head>
 	<body class="fill">
 		<div id="output" class="fill hidden" style="z-index:1000;">
+			<!-- this is for testing -->
 			<div id="output" class="modal outer box vertical align-center">
-				<!-- this is for testing -->
 				<div class="modal inner box horizontal align-center">
 					<div class="modal body">
 						<div class="viewport scroll-plain"><div class="view">

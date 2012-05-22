@@ -16,20 +16,39 @@
 				load: true,
 				libs: {
 					base: 'base@common',
+					de: 'element@wtk',
+					page: 'page@wtk',
 					Log: 'log@wtk'
 				},
 				css : ['scroll-plain@wtk'],
 				when: [ 'state::page.loaded' ],
 				init: function(libs, exports) {
 				
+					var de = libs.de;
+					
 					var link = page.link;
 					var Log  = libs.Log;
 					
 					var output = new Log();
-					var view = output.create();
-					var wrap = document.getElementById('wrap');
+					var body = document.body;
 					
-					wrap.appendChild(view);
+					var view = de('wvpage')
+						.body()
+							.id('wrap')
+							.klass('scroll-plain')
+							.child(output)
+						.end()
+						.foot('button')
+							.on('click', function(e) {
+									btk.require('alarms@page').clear();
+							})
+							.child('Clear')
+						.end()
+					;
+					
+					body.appendChild(view.create());
+					
+					var wrap = document.getElementById('wrap');
 					
 					var scrolling = false;
 	
@@ -75,9 +94,14 @@
 			body {
 				background-color: #ffcccc;
 				margin: 0.5em;
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
 			}
 			
-			.wrap {
+			#wrap {
 				overflow: auto;
 				border-width: 1px;
 				border-style: solid;
@@ -88,14 +112,6 @@
 		</style>
 		
 	</head>
-	<body class="fill">
-		<table class="layout"><tbody>
-			<tr class="row middle"><td style="position: relative;">
-				<div id="wrap" class="wrap fill scroll-plain"></div>
-			</td></tr>
-			<tr class="row bottom"><td>
-				<button onclick="btk.require('alarms@page').clear();">Clear</button>
-			</td></tr>
-		</tbody></table>
+	<body>
 	</body>
 </html>
