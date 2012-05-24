@@ -35,65 +35,6 @@ init: function(libs, exports) {
 	
 	
 	//-------------------------------------------------------------
-	// actions (for button clicks etc)
-	
-	namespace('view', page);
-	namespace('action', page);
-	
-	var action = page.action;
-	
-	action.dseEdit = function(id, e) {
-		error('dseEdit('+id+') not implemented yet');
-	};
-	
-	action.dseRestore = function(id, e) {
-		error('dseRestore('+id+') not implemented yet');
-	};
-	
-	action.dseDelete = function(id, e) {
-		error('dseDelete('+id+') not implemented yet');
-	};
-	
-	action.dseSelect = function(id, e) {
-		var dse = page.view.getDSElement(id);
-		if (dse) {
-			dse.classList.toggle('selected');
-		}
-	};
-	
-	
-	action.saveall = function(e) {
-		error('saveall not implemented yet');
-	};
-	
-	action.newdselement = function(e) {
-		error('newdselement not implemented yet');
-	};
-	
-	action.showdead = function(e) {
-		page.view.button.showdead.classList.add('hidden');
-		page.control.taglist.select('@@@dead');
-		
-		page.view.button.showlive.classList.remove('hidden');
-		page.control.taglist.deselect('@@@live');
-	};
-	
-	action.showlive = function(e) {
-		page.view.button.showlive.classList.add('hidden');
-		page.control.taglist.select('@@@live');
-		
-		page.view.button.showdead.classList.remove('hidden');
-		page.control.taglist.deselect('@@@dead');
-	};
-	
-	action.transfer = function(e) {
-		error('transfer not implemented yet');
-	};
-	
-	
-	exports.action = action;
-	
-	//-------------------------------------------------------------
 	// generic error handler
 	
 	var error = function(msg) {
@@ -128,6 +69,132 @@ init: function(libs, exports) {
 
 	doc.body.appendChild(error.output);
 	
+	
+	//-------------------------------------------------------------
+	// actions (for button clicks etc)
+	
+	namespace('view', page);
+	namespace('action', page);
+	
+	var action = page.action;
+	
+	action.dseEdit = function(id, e) {
+		error('dseEdit('+id+') not implemented yet');
+	};
+	
+	action.dseRestore = function(id, e) {
+		page.view.datalist.removeChild(page.view.getDSElement(id));
+		
+		var dsm = page.model.dsm;
+		
+		dsm.getElement(id).chain([
+		
+			function(result) {
+				this.dse = result.value;
+				return dsm.removeElementFromTag(this.dse, '@@@dead');
+			},
+			
+			function(result) {
+				return dsm.addElementToTag(this.dse, '@@@live');
+			}
+			
+		], {} );
+		
+	};
+	
+	action.dseDelete = function(id, e) {
+		page.view.datalist.removeChild(page.view.getDSElement(id));
+		
+		var dsm = page.model.dsm;
+		
+		dsm.getElement(id).then(
+			function(result) {
+				var dse = result.value;
+				
+				if (dse.hasTagName('@@@dead')) {
+					console.log('action.dseDelete: full delete: ' + dse.getId());
+					return dsm.removeElement(dse);
+				}
+				
+				return dsm.removeElementFromTag(dse, '@@@live').then(
+					function() {
+						console.log('action.dseDelete: move to @@@dead: ' + dse.getId());
+						return dsm.addElementToTag(dse, '@@@dead');
+					}
+				)
+			}	
+		).then({
+		
+			'ok': function(result) {
+				console.log('action.dseDelete: ok');
+				console.log(result);
+			},
+			
+			'error': function(result) {
+				console.log('action.dseDelete: error');
+				console.log(result);
+				error(result.data);
+			},
+			
+			'default': function(result) {
+				console.log('action.dseDelete: default');
+				console.log(result);
+			}
+			
+		});
+		
+	};
+	
+	action.dseSelect = function(id, e) {
+		var dse = page.view.getDSElement(id);
+		if (dse) {
+			dse.classList.toggle('selected');
+		}
+	};
+	
+	
+	action.saveall = function(e) {
+		error('saveall not implemented yet');
+	};
+	
+	action.newdselement = function(e) {
+		error('newdselement not implemented yet');
+	};
+	
+	action.showtags = function(e) {
+		page.view.button.showtags.classList.add('hidden');
+		page.view.button.hidetags.classList.remove('hidden');
+		page.view.datalist.classList.toggle('hidetags');
+	};
+	
+	action.hidetags = function(e) {
+		page.view.button.hidetags.classList.add('hidden');
+		page.view.button.showtags.classList.remove('hidden');
+		page.view.datalist.classList.toggle('hidetags');
+	};
+	
+	action.showdead = function(e) {
+		page.view.button.showdead.classList.add('hidden');
+		page.control.taglist.select('@@@dead');
+		
+		page.view.button.showlive.classList.remove('hidden');
+		page.control.taglist.deselect('@@@live');
+	};
+	
+	action.showlive = function(e) {
+		page.view.button.showlive.classList.add('hidden');
+		page.control.taglist.select('@@@live');
+		
+		page.view.button.showdead.classList.remove('hidden');
+		page.control.taglist.deselect('@@@dead');
+	};
+	
+	action.transfer = function(e) {
+		error('transfer not implemented yet');
+	};
+	
+	
+	exports.action = action;
 	
 	//-------------------------------------------------------------
 	// data space element timestamp
@@ -187,9 +254,6 @@ init: function(libs, exports) {
 		var dseid = dselement.getId();
 		
 		this.klass('below').klass('left')
-			.button()
-		//		.title('actions')
-			.end()
 			.menu()
 				.child(
 					dselement.hasTagName('@@@dead')
@@ -205,13 +269,15 @@ init: function(libs, exports) {
 							stopEvent(e);
 							action.dseEdit(dseid, e);
 						})
+						.disable(dselement.hasTagName('@noedit'))
 				)
 				.item(
 					'delete',
 					function(e) {
 						stopEvent(e);
 						action.dseDelete(dseid, e);
-					}
+					},
+					dselement.hasTagName('@nodelete')
 				)
 			.end()
 		;
@@ -258,13 +324,13 @@ init: function(libs, exports) {
 				return null;
 			}
 			
-			var element = de('div');
+			var children = [];
 
 			links.forEach(function(link){
-				element.child(this.buildLink(link));
+				children.push(this.buildLink(link));
 			}, this);
 			
-			return element;
+			return children;
 		};
 		
 		p.buildBanner = function() {
@@ -288,10 +354,11 @@ init: function(libs, exports) {
 			
 			var links = this.buildLinks();
 			if (links) {
-				this.head().body()
-					.klass('links')
-					.child(links)
-				.end();
+				this.head()
+					.body()
+						.klass('links')
+						.children(links)
+					.end();
 			}
 		};
 		
@@ -358,22 +425,33 @@ init: function(libs, exports) {
 		
 		p.buildContent = function() {
 			if (this._dse.hasTagName('@@tag')) {
-				return this.buildContentJSON();
+				this.buildContentJSON();
 				
 			} else if (this._dse.hasTagName('@json')) {
-				return this.buildContentJSON();
+				this.buildContentJSON();
 				
 			} else if (this._dse.hasTagName('@code')) {
-				return this.buildContentJSON();
+				this.buildContentJSON();
 				
 			} else if (this._dse.hasTagName('@html')) {
-				return this.buildContentHTML();
+				this.buildContentHTML();
 				
 			} else {
-				return this.buildContentText();
+				this.buildContentText();
 			}
 			
 			// will probably require some other formats
+			
+			var dseid = this._dse.getId();
+			
+			this.body()
+				.on('dblclick', function(e){
+					console.log('dblclick dse: ' + dseid.toString());
+					stopEvent(e);
+					action.dseEdit(dseid, e);
+					console.log(e);
+				})
+			;
 		};
 		
 		p.buildTagList = function() {
@@ -386,7 +464,7 @@ init: function(libs, exports) {
 			
 			this.foot()
 				.klass('taglist')
-				.klass('mono')
+			//	.klass('mono')
 				.child(tagnames.join(' '))
 			.end();
 		};
@@ -397,20 +475,17 @@ init: function(libs, exports) {
 			this.klass('wdseview')
 				.att('data-dseid', dseid.toString())
 				.on('click', function(e){
-					if (e.target === this) {
+				//	if (e.target === this) {
 						// NOTE: this does not work
 						//srcElement
 						//toElement
 						//fromElement
+					if (e.target.tagName !== 'A') {
+						console.log('click dse: ' + dseid.toString());
 						stopEvent(e);
 						action.dseSelect(dseid, e);
+						console.log(e);
 					}
-					console.log(this);
-					console.log(e);
-				})
-				.on('dblclick', function(e){
-					stopEvent(e);
-					action.dseEdit(dseid, e);
 				})
 			;
 			
@@ -568,6 +643,8 @@ init: function(libs, exports) {
 		return [
 			DSCVButton('saveall', 'Save any changes', 'save').klass('hidden'),
 			DSCVButton('newdselement', 'Add a new bookmark', 'new'),
+			DSCVButton('showtags', 'show the bookmark tags', 'tags on'),
+			DSCVButton('hidetags', 'hide the bookmark tags', 'tags off').klass('hidden'),
 			DSCVButton('showdead', 'Show the bookmarks that have been deleted', 'trash'),
 			DSCVButton('showlive', 'Show the active bookmarks', 'live').klass('hidden'),
 			DSCVButton('transfer', 'Upload or download the bookmarks', 'transfer')
@@ -638,6 +715,8 @@ init: function(libs, exports) {
 		
 		this.setTagList(this.getBody().getLeft().getList());
 		this.setDataList(this.getBody().getBody().getList());
+		
+		this.getDataList().klass('hidetags').end();
 	}
 	btk.inherits(DSMView, de.widgets.wvpage);
 

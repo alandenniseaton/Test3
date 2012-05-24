@@ -1,7 +1,7 @@
 <NotepadPlus>
     <Session activeView="0">
         <mainView activeIndex="0">
-            <File firstVisibleLine="33" xOffset="0" scrollWidth="584" startPos="1348" endPos="1348" selMode="0" lang="Normal Text" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\notes.txt" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="584" startPos="0" endPos="0" selMode="0" lang="Normal Text" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\notes.txt" />
             <File firstVisibleLine="964" xOffset="0" scrollWidth="904" startPos="22985" endPos="22985" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\btk.js" />
             <File firstVisibleLine="0" xOffset="0" scrollWidth="280" startPos="0" endPos="0" selMode="0" lang="CSS" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\wtk\box.css" />
             <File firstVisibleLine="382" xOffset="0" scrollWidth="835" startPos="8284" endPos="8289" selMode="0" lang="Javascript" encoding="-1" filename="D:\Everyone\Documents\HTML\Test\Test3\lib\btk\promise.js" />

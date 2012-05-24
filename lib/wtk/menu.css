@@ -29,6 +29,12 @@
 	border-color: transparent;
 	background-color: transparent;
 	cursor: pointer;
+	color: black;
+}
+
+.wmenu > .wmitem.disabled {
+	color: grey;
+	font-style: italic;
 }
 
 .wmenu > .wmitem:hover {

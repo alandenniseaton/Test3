@@ -274,6 +274,17 @@ init: function(libs, exports) {
 		return popup;
 	}());
 	
+	/*
+	chrome.windows.onRemoved.addListener(function(wid){
+		console.log('background: onRemoved: ' + wid);
+		
+		chrome.windows.get(wid, null, function(w){
+			console.log('background: onRemoved: ' + wid + ' : get');
+			console.log(w);
+		});
+	});
+	*/
+	
 	//--------------------------------------------------------
 	function launch(pageUrl) {
 		chrome.tabs.create({url:pageUrl});

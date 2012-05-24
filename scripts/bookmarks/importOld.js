@@ -167,13 +167,14 @@ init: function(libs, exports) {
 			it.done = function() {
 				return !this.d;
 			};
-			
+		/*	
 			var put = function(value, pwhile) {
-			//	console.log('importOld@bookmarks: supposed to add element: ' + value.id);
+				console.log('importOld@bookmarks: supposed to add element: ' + value.id);
 				return addElement(value);
 			};
-			
-			var pwhile = new PWhile(it, put);
+		*/	
+		//	var pwhile = new PWhile(it, put);
+			var pwhile = new PWhile(it, addElement);
 			
 			return pwhile.start().then({
 
@@ -181,11 +182,13 @@ init: function(libs, exports) {
 					console.log('importOld@bookmarks: done');
 				},
 				
+				// prevent propagation
 				'step': function(result, message) {
 				//	console.log('importOld@bookmarks: step: new id: ' + result.value.id);
 					message.stop();
 				},
 				
+				// prevent propagation
 				'default': function(result, message) {
 					console.log('importOld@bookmarks: default');
 					message.stop();

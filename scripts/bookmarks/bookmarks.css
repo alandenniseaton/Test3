@@ -4,6 +4,7 @@ body {
 	padding-bottom: 0;
 	margin: 0;
 	background-color: #eee;
+	font-size: 16px;
 }
 
 #error {
@@ -57,26 +58,30 @@ body {
 }
 
 .wdstlview {
-	min-width: 7.5em;
-	background-color:transparent;
 	margin: 4px;
 	margin-left: 0px;
+	min-width: 7.5em;
+	background-color:transparent;
 }
 .wdstlview .viewport {
 	padding-left: 0;
 }
 .wdstlview .wdstview {
 	margin-bottom: 1px;
-	padding-left: 0.25em;
-	padding-right: 0.25em;
-	font-family: monospace;
 	border-width: 1px;
 	border-style: solid;
 	border-color: transparent;
+	padding-left: 0.25em;
+	padding-right: 0.25em;
+/*	font-family: monospace;
+	font-size: 0.875em;*/
 	cursor: pointer;
 }
 .wdstlview .wdstview.selected {
 	border-color: rgba(0,0,0,0.25);
+}
+.wdstlview .wdstview.rejected {
+	text-decoration: line-through;
 }
 .wdstlview .wdstview:hover {
 	background-color: rgba(0,0,0,0.125);
@@ -150,9 +155,6 @@ body {
 	
 	margin: 4px;
 }
-.wdseview.selected {
-	border-color: blue;
-}
 .wdseview.live {
 	/* just use the defaults for now */
 	/*background-color: rgba(0,0,0,0.125);*/
@@ -220,9 +222,11 @@ body {
 	padding-right:0.5em;
 }
 .wdseview  .links {
+	margin-top: 0.25em;
 	border-top-width: 1px;
 	border-top-style: solid;
 	border-top-color: rgba(0,0,0,0.25);
+	padding-top: 0.25em;
 }
 .wdseview  .link {
 	display: block;
@@ -254,13 +258,18 @@ body {
 	background-color: transparent;
 	padding: 0.25em;
 }
+[data-widgetid='datalist'].hidetags  .wdseview  .taglist{
+	display: none;
+}
+
 .wdseview .banner,
 .wdseview .taglist,
 .wdseview .wmenu {
-/*	border-style: outset!important;*/
-	border-style: solid!important;
-	border-width: 1px!important;
-	border-radius: 4px!important;
-/*	border-color: rgba(255,255,255,0.75)!important;*/
-	border-color: rgba(0,0,0,0.125)!important;
+	border-style: solid;
+	border-width: 1px;
+	border-radius: 4px;
+	border-color: rgba(0,0,0,0.125);
+}
+.wdseview.selected  .banner {
+	border-color: blue;
 }

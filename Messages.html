@@ -86,6 +86,22 @@
 						output.clear();
 						message.clear();
 					};
+					
+					
+					window.onresize = function(e){
+						console.log('page::alarm.messages: onresize');
+						
+						function dumpPoint(w,h) {
+							console.log(JSON.stringify({
+								'w':w,
+								'h':h
+							}));
+						}
+						var t = e.target;
+						dumpPoint(t.innerWidth, t.innerHeight);
+						dumpPoint(t.outerWidth, t.outerHeight);
+						// outer dimensions are what i want
+					};
 				}
 			});
 		</script>

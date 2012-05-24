@@ -63,6 +63,8 @@
 					];
 					
 					x.appId = chrome.app.getDetails().id
+					x.ei = chrome.i18n.getMessage('@@extension_id');
+						// same as appId
 					x.BlobBuilder = WebKitBlobBuilder;
 					x.URL = webkitURL;
 					x.output = document.querySelector('#output');
@@ -243,9 +245,46 @@
 						this.q = [];
 					};
 					
-					btk.global.y = y;
+					x.y = y;
 					
 					y.start();
+					
+
+					var z = {};
+					
+					z.input  = document.querySelector('#fileinput1');
+					z.output = document.querySelector('#fileoutput1');
+					
+					z.input.onchange = function(e){
+						var files = this.files;
+						var out = document.createElement('span');
+						var detail = [];
+						var fields;
+						
+						detail.push('<ul>');
+						for (var i = 0, f; i < files.length; i++) {
+							detail.push('<li>');
+							f = files[i];
+							ff = Object.keys(f);
+							detail.push('<ul>');
+							for (var j=0; j<ff.length; j++) {
+								detail.push('<li>');
+								detail.push(ff[j] + ': ');
+								detail.push('<span style="color:purple;">');
+								detail.push(f[ff[j]]);
+								detail.push('</span>');
+								detail.push('</li>');
+							}
+							detail.push('</ul>');
+							detail.push('</li>');
+						}
+						detail.push('</ul>');
+						
+						out.innerHTML = detail.join('');
+						z.output.appendChild(out);
+					};
+					
+					x.z = z;
 					
 					
 					return x;
@@ -298,16 +337,20 @@
 		</details>
 		<div class="fill">
 			<table class="layout"><tbody>
-				<tr><td id="output" style="text-align: center; font-size:200%;">
-					<a href="file://alan-pc/html/Test/Test2/notes.txt" download="notes">click this</a>
+				<tr><td id="output" style="text-align: center; font-size:100%;">
+					<a href="file://alan-pc/html/Test/Test2/notes.txt" download="notes">click this(download: improper path)</a>
+					<p>did nothing</p>
 					<p>no permission in extension?. check console</p>
-					<a href="file:///D:/Everyone/Documents/HTML/Test/Test2/notes.txt" download="notes">try this one</a>
+					<a href="file:///D:/Everyone/Documents/HTML/Test/Test2/notes.txt" download="notes">try this one(download: full path)</a>
 					<p>no permission in extension?. check console</p>
-					<a href="notes.txt" download="notes" dragable>what about this?</a>
-					<p>it worked</p>
+					<a href="notes.txt" download="notes" draggable>what about this (download: drag)?</a>
+					<p>download works but drag does not</p>
 					<a href="template/*" download="template">trying a dir</a>
 					<p>did not work</p>
 					<a href="filesystem:file:///persistent/log.txt">fs</a>
+					<p>no filesystem stuff available</p>
+					<input type="file" id="fileinput1" multiple></input></br>
+					<div id="fileoutput1" style="display: inline-block; text-align: left;"></div>
 					<p></p>
 				</td></tr>
 			</tbody></table>

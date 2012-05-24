@@ -23,6 +23,16 @@
 		"default_popup": "Popup.html"
 	},
 	
+	"content_scripts": [
+		{	
+			"matches": [
+				"https://groups.google.com/*",
+				"https://groups.google.com/*"
+			],
+			"css": ["scripts/content/googlegroups.css"]
+		}
+	],
+	
 	"options_page": "Options.html",
 	
 	"background_page": "background.html",

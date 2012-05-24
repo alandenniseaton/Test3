@@ -42,6 +42,50 @@
 		
 		<link rel="stylesheet" type="text/css" btkid="page::css" href="scripts/bookmarks/bookmarks.css">
 		
+		<script type="text/javascript" btkid="bookmarks::log">
+			btk.define({
+				name: 'log@bookmarks',
+				load: true,
+				libs: {
+					main: 'main@page'
+				},
+				init: function(libs, exports) {
+					var g = btk.global;
+					var p = g.page;
+					var log = p.log;
+					var vlog = document.querySelector('#output');
+					
+					log.show = function() {
+						vlog.classList.remove('hidden');
+					};
+				
+					log.hide = function() {
+						vlog.classList.add('hidden');
+					};
+				
+					log.fill = function() {
+						btk.message.buffer.forEach(function(line) {
+							if (line) {
+								if (line.charAt(0) === '$') {
+									this.msg(line.substr(1));
+								} else {
+									this.msg(line);
+								}
+							} else {
+								this.msg('<br/>');
+							}
+						}, log.log);
+					};
+					
+					log.reshow = function() {
+						log.clear();
+						log.show();
+						log.fill();
+					};
+				}
+			});
+		</script>
+		
 		<style type="text/css">
 			.modal {
 				box-sizing: border-box;
@@ -65,13 +109,53 @@
 				border-style: solid;
 				padding: 0.25em;
 			}
+			
+			.modal .view {
+				padding: 0.25em;
+				font-family: mono;
+			}
+			
+			.log > div:hover {
+				background-color: rgba(0,0,0,0.125);
+			}
+			
+			table.showProps {
+				max-width: 100%;
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+			table.showProps > tbody {
+				max-width: 100%;
+			}
+			table.showProps > tbody > tr {
+				max-width: 100%;
+			}
+			table.showProps > tbody > tr:hover {
+				background-color: #aaaa00
+			}
+			table.showProps > tbody > tr > td {
+				border-style: solid;
+				border-width: 1px;
+				border-color: grey;
+				padding: 2px;
+				vertical-align: top;
+			}
+			table.showProps > tbody > tr > td:hover {
+				background-color: #aacc00
+			}
+			table.showProps > tbody > tr > td > span {
+				max-width: 100%;
+			}
+			table.showProps > tbody > tr > td > span.code {
+				white-space: pre-wrap;
+			}
 		</style>
 		
 	</head>
 	<body class="fill">
 		<div id="output" class="fill hidden" style="z-index:1000;">
 			<!-- this is for testing -->
-			<div id="output" class="modal outer box vertical align-center">
+			<div class="modal outer box vertical align-center">
 				<div class="modal inner box horizontal align-center">
 					<div class="modal body">
 						<div class="viewport scroll-plain"><div class="view">

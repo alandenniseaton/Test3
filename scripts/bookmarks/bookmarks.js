@@ -43,7 +43,6 @@ libs: {
 	DSManager: 'dsManager@util',
 	widgets: 'widgets@bookmarks',
 	initial: 'initial@bookmarks',
-//	test: 'test@bookmarks',
 	CodeMirror: 'codemirror@util'
 },
 css : [ 'base@wtk', 'scroll-plain@wtk' ],
@@ -121,6 +120,8 @@ init: function(libs, exports) {
 		pv.button = {
 			'saveall': getWidget('saveall'),
 			'newbookmark': getWidget('newbookmark'),
+			'showtags': getWidget('showtags'),
+			'hidetags': getWidget('hidetags'),
 			'showdead': getWidget('showdead'),
 			'showlive': getWidget('showlive'),
 			'transfer': getWidget('transfer'),
