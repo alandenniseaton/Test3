@@ -1,11 +1,23 @@
 /* content script */
 
-.GGK3P1UOY.GGK3P1UDEB{
-	border-top: 1px solid black!important;
-	background-color: rgba(255,204,0,0.5)!important;
-	font-family: "courier new"!important;
+/*	classnames change in google products
+	somewhat annoying
+ */
+
+div[role="list"] div[tabindex="0"] {
+	background-color: hsl(48,100%,40%);
+/*	border-top: 1px solid black; */
+	font-family: "courier new";
+}
+div[role="list"] div[role="button"] {
+	background-color: white;
+}
+div[role="list"] div[role="menubar"] {
+/*	border: 0; */
 }
 
+/*
 .GGK3P1UDEB  .GGK3P1UKY{
 	border-bottom: 1px solid black!important;
 }
+*/

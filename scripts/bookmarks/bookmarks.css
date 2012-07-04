@@ -3,7 +3,7 @@ body {
 	padding: 0.25em;
 	padding-bottom: 0;
 	margin: 0;
-	background-color: #eee;
+	background-color: hsl(0,0%,95%);
 	font-size: 16px;
 }
 
@@ -136,6 +136,7 @@ body {
 	min-height: 5em;
 }
 
+/* dataspace view */
 .wdsview {
 	border-left-width: 1px;
 	border-left-style: solid;
@@ -144,41 +145,38 @@ body {
 
 /* dataspace element view */
 .wdseview {
-	background-color: transparent;
-	
 	border-style: solid;
 	border-width: 1px;
 	border-radius: 4px;
-	border-color: transparent;
+	border-color: rgba(0,0,0,0.25);
 	
 	padding: 0.25em;
-	
-	margin: 4px;
+	margin: 0.25em;
 }
-.wdseview.live {
-	/* just use the defaults for now */
-	/*background-color: rgba(0,0,0,0.125);*/
+.wdseview.live.system {
+/*	background-color: hsl(48,100%,75%);*/
+	background-color: hsl(60,100%,90%); /* faint yellow */
 }
-.wdseview.tag {
-	background-color: rgba(0,0,255,0.125);
+.wdseview.live.system.tag {
+	background-color: hsl(120,100%,90%); /* faint green */
+}
+.wdseview.live.user {
+	background-color: hsl(0,0%,95%); /* very light grey */
+	border-color: transparent;
+}
+.wdseview.live.user.tag {
+	background-color: hsl(240,100%,90%); /* faint blue */
 	border-color: rgba(0,0,0,0.25);
 }
 .wdseview.tag  .data{
 	max-height: 10em;
 }
-.wdseview.system {
-	background-color: rgba(255,204,0,0.5);
-	border-color: rgba(0,0,0,0.25);
-}
-.wdseview.system.tag {
-	background-color: rgba(157,241,157,0.5);
-}
 .wdseview.dead {
-	background-color: rgba(255,192,203,0.5);
-	border-color: rgba(0,0,0,0.25);
+	background-color: hsl(0,100%,90%); /* faint red */
 }
-.wdseview:hover {
-	border-color: black;
+.wdseview.live:hover,
+.wdseview.dead:hover {
+	border-color: black!important;
 }
 
 .wdseview  .banner {
@@ -237,10 +235,14 @@ body {
 	background-color: rgba(0,0,0,0.125);
 }
 .wdseview  .data {
-	margin-bottom: 2px;
+/*	margin-bottom: 2px;
 	margin-top: 2px;
 	padding: 0.25em;
-	min-height: 1em;
+*/
+	margin-top: 0.25em;
+	padding-left: 0.25em;
+	padding-right: 0.25em;
+/*	min-height: 1em;*/
 /*	max-height: 10em;*/
 	overflow: auto;
 }
@@ -253,9 +255,9 @@ body {
 	/* just use the default for now*/
 }
 .wdseview  .taglist {
-/*	display: none;*/
 /*	background-color: rgba(0,0,0,0.0675);*/
 	background-color: transparent;
+	margin-top: 0.25em;
 	padding: 0.25em;
 }
 [data-widgetid='datalist'].hidetags  .wdseview  .taglist{

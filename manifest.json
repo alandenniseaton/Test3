@@ -16,23 +16,31 @@
 			"local_path":"Main.html"
 		}
 	},
-*/	
+*/
 	"browser_action": {
 		"default_icon": "images/vm16.png",
 		"default_title": "VM",
 		"default_popup": "Popup.html"
 	},
 	
+
 	"content_scripts": [
 		{	
 			"matches": [
-				"https://groups.google.com/*",
+				"http://groups.google.com/*",
 				"https://groups.google.com/*"
 			],
 			"css": ["scripts/content/googlegroups.css"]
+		},
+		{	
+			"matches": [ "http://www.google.com/robots.txt*" ],
+		/*	"matches": [ "https://accounts.google.com/o/oauth2/auth*" ],	*/
+			"js": ["scripts/content/oauthcatch.js"],
+			"run_at": "document_start"
 		}
 	],
 	
+
 	"options_page": "Options.html",
 	
 	"background_page": "background.html",
@@ -41,9 +49,16 @@
 	
 	"permissions":[
 		"file://*/",
+		"*://*.google.com/*",
 		"tts",
 		"unlimitedStorage",
 		"tabs",
-		"notifications"
+		"notifications",
+		"webRequest",
+		"http://xxx.yyy.com/*",
+		"http://oauth.example.com/blank.html*",
+		"http://example.com/oauth/blank.html*",
+		"webRequestBlocking",
+		"idle"
 	]
 }

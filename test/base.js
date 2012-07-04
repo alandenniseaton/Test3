@@ -47,38 +47,48 @@ function showProps(name, obj) {
 	name = name || NONAME;
 	
 	var table =
-		kde("table", { "class":"showProps" },
-		[	kde("thead", {},
-			[	kde("tr", {}, 
-				[	kde("th", {}, ["Name"]),
-					kde("th", {}, ["Type"]),
-					kde("th", {}, ["Value"])
-				])
-			]),
-			kde("caption", {},
-			[	kde("h2", {},
-				[	"Properties of " + name + ": type '" + typeof obj + "'"
-				])
-			])
-		]);
+		kde("table")
+			.klass("showProps")
+			.start("thead")
+				.start("tr") 
+					.children([
+						kde("th", {}, ["Name"]),
+						kde("th", {}, ["Type"]),
+						kde("th", {}, ["Value"])
+					])
+				.end()
+			.end()
+			.start("caption")
+				.start("h2")
+					.child("Properties of " + name + ": type '" + typeof obj + "'")
+				.end()
+			.end()
+		;
 	
 	var body = kde("tbody");
 	table.child(body);
 	
 	function tr(children) {
-		body.child(kde("tr", {}, children));
+		body.start("tr")
+			.children(children)
+		.end();
 	}
 	
 	function td(content) {
-		return kde("td").child(kde('span').child(content));
+		return kde("td")
+			.start('span')
+				.child(content)
+			.end()
+		;
 	}
 	
 	function tdcode(content) {
-		return kde("td").child(
-			kde('span')
-				.att("class", "code")
+		return kde("td")
+			.start('span')
+				.klass("code")
 				.child(content)
-		);
+			.end()
+		;
 	}
 	
 	if (obj === null) {

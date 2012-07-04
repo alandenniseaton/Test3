@@ -489,16 +489,18 @@ init: function(libs, exports) {
 				})
 			;
 			
+			if (this._dse.hasTagName('@@system')) {
+				this.klass('system');
+			} else {
+				this.klass('user');
+			}
+			
 			if (this._dse.hasTagName('@@@live')) {
 				this.klass('live');
 			}
 			
 			if (this._dse.hasTagName('@@@dead')) {
 				this.klass('dead');
-			}
-			
-			if (this._dse.hasTagName('@@system')) {
-				this.klass('system');
 			}
 			
 			if (this._dse.hasTagName('@@tag')) {

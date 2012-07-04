@@ -6,6 +6,8 @@
 		
 		<title>Scratch Page</title>
 		
+		<!--script type="text/javascript" src="https://apis.google.com/js/client.js?onload=OnLoadCallback""></script-->
+		
 		<script type="text/javascript" btkid="page::information">
 			var pageInformation = {
 				title: "Scratch Page",
@@ -51,7 +53,10 @@
 			btk.define({
 				name: 'test@page',
 				load: true,
-				libs: { base: 'base@common' },
+				libs: {
+					base: 'base@common',
+					gdrive: 'gdrive@test',
+				},
 				css : [ 'base@wtk' ],
 				when: [ 'state::page.loaded' ],
 				init: function() {

@@ -84,7 +84,7 @@ name: 'base@common',
 load: true,
 libs: {
 	link: 'link@common',
-	unload: 'unload@common',
+	unload: 'unload@common'
 },
 when: [
 	'state::window.loaded',
