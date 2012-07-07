@@ -10,7 +10,8 @@
 btk.define({
 name: 'gdrive@test',
 libs: {
-	btk: 'btk@btk'
+	btk: 'btk@btk',
+    ls: 'lstorage@btk'
 },
 when: [ 'state::page.loaded' ],
 init: function(libs, exports) {
@@ -18,46 +19,13 @@ init: function(libs, exports) {
 
 //------------------------------------------------------------
 var btk = libs.btk;
-var inherits = btk.inherits;
+var ls = libs.ls;
 
 btk.appDetails = chrome.app.getDetails();
 
 
 //------------------------------------------------------------
-//------------------------------------------------------------
-var oa = btk.namespace('oa');
-
-btk.namespace('auth', oa);
-
-oa.auth.requestURI = 'https://accounts.google.com/o/oauth2/auth';
-oa.auth.successURI = 'https://accounts.google.com/o/oauth2/approval';
-oa.auth.errorURI = 'https://accounts.google.com/o/oauth2approval';	// same as success
-oa.auth.tokenURI = 'https://accounts.google.com/o/oauth2/token';
-//oa.auth.scope = 'https://www.googleapis.com/auth/userinfo.email';
-//oa.auth.scope = 'https://www.googleapis.com/auth/userinfo.profile';
-oa.auth.scope = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
-
-//oa.auth.scope = 'https://www.google.com/m8/feeds';
-
-oa.auth.validateURI = 'https://www.googleapis.com/oauth2/v1/tokeninfo';
-oa.auth.userinfoURI = 'https://www.googleapis.com/oauth2/v1/userinfo';
-
-
-//------------------------------------------------------------
-oa.testfile = 'notes.txt';
-oa.async = true;
-oa.responsetype = '';
-//oa.responseType = 'text';
-//oa.responseType = 'arraybuffer';
-//oa.responseType = 'blob';
-//oa.responseType = 'document';
-
-
-oa.test = true;
-
-
-//------------------------------------------------------------
-oa.openWindow = function(params) {
+btk.openWindow = function(params) {
 	params = params || {};
 	
 	params.url = params.url || null;
@@ -80,7 +48,7 @@ btk.showReminders = function(newState) {
 	
 	if (newState !== 'active') return null;
 	
-	var w = oa.openWindow({
+	var w = btk.openWindow({
 		url:null,
 		atts:"toolbar=0,scrollbars=0,menubar=0,resizable=0,width=350,height=250"
 	});
@@ -102,9 +70,54 @@ btk.showReminders = function(newState) {
 chrome.idle.onStateChanged.addListener(
 	btk.showReminders
 );
-btk.showReminders('active');
+//btk.showReminders('active');
 
 
+//------------------------------------------------------------
+//------------------------------------------------------------
+var oa = btk.namespace('oa');
+
+btk.namespace('auth', oa);
+
+oa.auth.requestURI = 'https://accounts.google.com/o/oauth2/auth';
+oa.auth.successURI = 'https://accounts.google.com/o/oauth2/approval';
+oa.auth.errorURI = 'https://accounts.google.com/o/oauth2approval';	// same as success
+oa.auth.tokenURI = 'https://accounts.google.com/o/oauth2/token';
+//oa.auth.scope = 'https://www.googleapis.com/auth/userinfo.email';
+//oa.auth.scope = 'https://www.googleapis.com/auth/userinfo.profile';
+oa.auth.scopes = [
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email',
+    
+    'https://docs.google.com/feeds/',
+    'https://docs.googleusercontent.com/',
+    'https://spreadsheets.google.com/feeds/',
+    
+    //'https://www.googleapis.com/auth/drive.file'    // per file access
+    'https://www.googleapis.com/auth/drive'       // gives FULL access
+];
+oa.auth.scope = oa.auth.scopes.join(' ');
+
+//oa.auth.scope = 'https://www.google.com/m8/feeds';
+
+oa.auth.validateURI = 'https://www.googleapis.com/oauth2/v1/tokeninfo';
+oa.auth.userinfoURI = 'https://www.googleapis.com/oauth2/v1/userinfo';
+
+
+//------------------------------------------------------------
+oa.testfile = 'notes.txt';
+oa.async = true;
+oa.responsetype = '';
+//oa.responseType = 'text';
+//oa.responseType = 'arraybuffer';
+//oa.responseType = 'blob';
+//oa.responseType = 'document';
+
+
+oa.test = true;
+
+
+//------------------------------------------------------------
 //------------------------------------------------------------
 oa.userinfo = function(token) {
 	token = token || oaw.token;
@@ -113,13 +126,13 @@ oa.userinfo = function(token) {
 	var xhr = new XMLHttpRequest();
 
 	xhr.onreadystatechange = function(e){
-		console.log('gdrive.userinfo@test: onreadystatechange:', xhr.readyState);
+		console.log('gdrive.oa.userinfo@test: onreadystatechange:', xhr.readyState);
 		
 		if (xhr.readyState == 4 ) {
 			if (xhr.status == 200 ) {
 				console.log('success processing the token');
-				oa.auth.validationResponse = xhr.response;
-				
+				console.log(JSON.parse(xhr.response));
+                
 			} else if (xhr.status == 400) {
 				console.log('received error (400) processing the token');
 				
@@ -141,6 +154,61 @@ oa.userinfo = function(token) {
 	
 	return xhr;
 };
+
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+window.addEventListener(
+	'message',
+	function(event) {
+		console.log('oa.onmessage');
+		console.log(event);
+	},
+	false
+);
+
+
+chrome.extension.onConnect.addListener(function(port){
+	console.log('oa.onconnect');
+	console.log(port);
+	port.onMessage.addListener(function(msg){
+		console.log('oa.onmessage: line: ' + port.name);
+		console.log('message');
+	});
+});
+
+
+chrome.extension.onConnectExternal.addListener(function(port){
+	console.log('oa.onconnectExternal');
+	console.log(port);
+	port.onMessage.addListener(function(msg){
+		console.log('oa.onmessageExternal: line: ' + port.name);
+		console.log('message');
+	});
+});
+
+
+
+chrome.extension.onRequest.addListener(
+	function(request, sender, sendResponse){
+		console.log('oa.onRequest');
+		console.log(request);
+		console.log(sender);
+
+		sendResponse({done:true});
+	}
+);
+
+
+chrome.extension.onRequestExternal.addListener(
+	function(request, sender, sendResponse){
+		console.log('oa.onRequestExternal');
+		console.log(request);
+		console.log(sender);
+
+		sendResponse({done:true});
+	}
+);
 
 
 //------------------------------------------------------------
@@ -167,6 +235,11 @@ oai.auth.apikey = 'AIzaSyBWDSteALEpuET94Wd_Eb57bcDXrHTWA7s';
 oai.auth.clientid = '569863883099.apps.googleusercontent.com';
 oai.auth.secret = 'jaQXfOko5-JFINsDnN96sJIZ';
 oai.auth.redirect = 'urn:ietf:wg:oauth:2.0:oob';
+
+
+oai.lsm = new ls.Manager('oauth.i');
+
+oai.token = oai.lsm.getset('token',oai.token);
 
 
 oai.exchange = function() {
@@ -286,24 +359,29 @@ oai.authorise = function() {
 	//		head:	<title>Denied error=access_denied&amp;state=NoteSpaceAuthorisationCode</title>
 	//		node:	<p id="access_denied">You denied access to the application.</p>
 
-	var url = [
-		oa.auth.requestURI,
-		'?response_type=',oai.auth.responsetype,
-		'&client_id=', oai.auth.clientid,
-		'&redirect_uri=', oai.auth.redirect,
-		'&scope=', encodeURIComponent(oai.auth.scope),
-		'&state=NoteSpaceOAuthI'
-	].join('');
+    var options = {
+		'response_type':oai.auth.responsetype,
+		'client_id':oai.auth.clientid,
+		'redirect_uri':oai.auth.redirect,
+		'scope':oa.auth.scope,
+		'state':'NoteSpaceOAuthI'
+    };
+	var url = oa.auth.requestURI + '?' + btk.xhr.objectToOptionString(options);
 	
 	oai.permissionURL = url;
 	
-	return oa.openWindow({url:url, name:'NoteSpaceOAuthI'});
+	return btk.openWindow({url:url, name:'NoteSpaceOAuthI'});
 };
+
+
+btk.global.oa = oa;
+btk.global.oai = oai;
 
 
 //------------------------------------------------------------
 //------------------------------------------------------------
 // Gapi Project: API Web App Project
+// client-side
 //----------------------------------
 
 btk.namespace('w.token', oa);
@@ -313,36 +391,12 @@ var oaw = oa.w;
 
 oaw.robots = 'http://www.google.com/robots.txt'
 
-// see http://code.google.com/chrome/extensions/webRequest.html
-chrome.webRequest.onBeforeRequest.addListener(
-	function(details) {
-		console.log('gdrive@test: onBeforeRequest');
-		console.log(details);
-		// details.url has the goodies
-		// ??? which to use
-		//		chrome.tabs.remove(details.tabId);
-		//		cancel:true
-		//			requires "webRequestBlocking" permission in manifest
-		//			required for redirect anyway!!!
-		return {
-		//	'cancel':true,
-			'redirectUrl':chrome.extension.getURL('Blank.html')
-		};
-	},
-	{	urls:[
-			"http://example.com/oauth/blank.html*",
-			"http://oauth.example.com/blank.html*",
-			"http://www.google.com/robots.txt*"
-		]
-	},
-	["blocking"]
-);
-
-
 // these should be set programatically
-oaw.token.access = 'ya29.AHES6ZTX7ejMF661FG4O5haiBv3_BAQA3i0jCbsiE3BltHc';
+oaw.token.access = 'ya29.AHES6ZRJbde7siJHBNhk_WUHYNIv5zbm9st1es_k-5d17_g';
 oaw.token.type = 'Bearer';
-oaw.token.expiration = '3600';
+oaw.token.start = 1341448460862.478;
+oaw.token.duration = '3600';  // seconds
+oaw.token.end = 1341452060862.478;
 
 oaw.auth.api_key = 'AIzaSyB8NJH163gJC2kRYnX6xCMZqIMpOIMO-NQ';
 oaw.auth.client_id = '774996004010.apps.googleusercontent.com';
@@ -353,28 +407,65 @@ oaw.auth.redirect_uri = 'http://example.com/oauth/blank.html';
 //oaw.auth.redirect_uri = oaw.robots;
 oaw.auth.secret = '8wXIs1DdNTr4FRmsvgAQm_MH';
 oaw.auth.email = '774996004010@developer.gserviceaccount.com';
-oaw.auth.js_origin = 'https://localhost';
+oaw.auth.js_origin = document.location.origin;
 
-//	<input type="hidden" id="response-form-encoded" value="state=NoteSpaceOAuthW&amp;access_token=ya29.AHES6ZQ4dYmWcXBNx3A6JvdDvwHzfHwts6JrJlH5C3ODScU&amp;token_type=Bearer&amp;expires_in=3600">
-// got the following
-//
-//	<input
-//		type="hidden"
-//		id="response-form-encoded"
-//		value="
-//			state=NoteSpaceOAuthW &amp;
-//			access_token=ya29.AHES6ZSxBMTKDrAbPk1DlJC2FJl8WllTBoMz-eNqo14eeg &amp;
-//			token_type=Bearer &amp;
-//			expires_in=3600
-//		"
-//	>
-//	<input
-//		type="hidden"
-//		id="relay-endpoint"
-//		value="https://accounts.google.com/o/oauth2/postmessageRelay"
-//	>
-//
-// but the page froze.
+
+oaw.lsm = new ls.Manager('oauth');
+
+oaw.token = oaw.lsm.getset('token',oaw.token);
+
+
+oaw.parse_response = function(url) {
+	console.log('gdrive@test: oaw.parse_response: ' + url);
+        
+    var i = url.indexOf('#');
+    var hash = url.substring(i+1);
+    var regex = /([^&=]+)=([^&]*)/g;
+    var params = {};
+    var m;
+    
+    m = regex.exec(hash);
+    while (m) {
+        params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        m = regex.exec(hash);
+    }
+    
+    oaw.token.access = params.access_token;
+    oaw.token.type = params.token_type;
+    oaw.token.duration = params.expires_in;
+
+    console.log(params);
+};
+
+
+// see http://code.google.com/chrome/extensions/webRequest.html
+chrome.webRequest.onBeforeRequest.addListener(
+	function(details) {
+		console.log('gdrive@test: onBeforeRequest');
+		console.log(details);
+        
+		// details.url has the goodies
+        oaw.parse_response(details.url);
+        oaw.token.start = details.timeStamp;
+        oaw.token.end = oaw.token.start + oaw.token.duration*1000;
+        
+        oaw.lsm.set('token', oaw.token);
+        
+        console.log(oaw.token);
+		// ??? which to use
+		//		chrome.tabs.remove(details.tabId);
+		//		cancel:true
+		//			requires "webRequestBlocking" permission in manifest
+		//			required for redirect anyway!!!
+		return {
+		//	'cancel':true,
+			'redirectUrl':chrome.extension.getURL('Blank.html')
+		};
+	},
+	{urls:[ "http://example.com/oauth/blank.html*" ]},
+	["blocking"]
+);
+
 
 oaw.authorise = function() {
 	var url = [
@@ -395,63 +486,52 @@ oaw.authorise = function() {
 	
 	oaw.permissionURL = url;
 	
-	return oa.openWindow({url:url, name:'NoteSpaceOAuthW'});
+	return btk.openWindow({url:url, name:'NoteSpaceOAuthW'});
 };
 
 
-//------------------------------------------------------------
-//------------------------------------------------------------
-window.addEventListener(
-	'message',
-	function(event) {
-		console.log('oaw.onmessage');
-		console.log(event);
-	},
-	false
-);
+oaw.validate = function(token) {
+	token = token || oaw.token;
+	token.type = token.type || 'Bearer';
+	
+	var url = [
+		oa.auth.validateURI,
+		'?access_token=', encodeURIComponent(oaw.token.access)
+	].join('');
+	
+	oaw.validateURL = url;
+	
+	var xhr = new XMLHttpRequest();
 
-
-chrome.extension.onConnect.addListener(function(port){
-	console.log('oaw.onconnect');
-	console.log(port);
-	port.onMessage.addListener(function(msg){
-		console.log('oaw.onmessage: line: ' + port.name);
-		console.log('message');
-	});
-});
-
-
-chrome.extension.onConnectExternal.addListener(function(port){
-	console.log('oaw.onconnectExternal');
-	console.log(port);
-	port.onMessage.addListener(function(msg){
-		console.log('oaw.onmessageExternal: line: ' + port.name);
-		console.log('message');
-	});
-});
-
-
-
-chrome.extension.onRequest.addListener(
-	function(request, sender, sendResponse){
-		console.log('oaw.onRequest');
-		console.log(request);
-		console.log(sender);
-
-		sendResponse({done:true});
-	}
-);
-
-
-chrome.extension.onRequestExternal.addListener(
-	function(request, sender, sendResponse){
-		console.log('oaw.onRequestExternal');
-		console.log(request);
-		console.log(sender);
-
-		sendResponse({done:true});
-	}
-);
+	xhr.onreadystatechange = function(e){
+		console.log('gdrive.oaw.validate@test: onreadystatechange:', xhr.readyState);
+		
+		if (xhr.readyState == 4 ) {
+			if (xhr.status == 200 ) {
+				console.log('success processing the token');
+				oaw.auth.validationResponse = JSON.parse(xhr.response || '{}');
+                // should check .audience = my client id
+                oaw.lsm.set('validation',oaw.auth.validationResponse);
+				
+			} else if (xhr.status == 400) {
+				console.log('received error (400) processing the token');
+				oaw.auth.validationResponse = JSON.parse(xhr.response || '{}');
+				
+			} else {
+				console.log('received error (' + xhr.status + ') processing the token');
+				oaw.auth.validationResponse = JSON.parse(xhr.response || '{}');
+			}
+		}
+	};
+	
+	xhr.open('GET',oaw.validateURL,oa.async);
+    
+	xhr.send();
+	
+	oaw.xhr = xhr;
+	
+	return xhr;
+};
 
 
 //------------------------------------------------------------
@@ -491,12 +571,474 @@ ga.authorise = function () {
 
 //------------------------------------------------------------
 //------------------------------------------------------------
+btk.xhr = function(params) {
+    params = params || {};
 
+    var defaults = btk.xhr.defaultParams;
+    
+    for (var key in defaults) {
+        params[key] = params[key] || defaults[key];
+    }
+    
+    params.info.fname = params.info.fname || defaults.info.fname;
+    params.info.desc = params.info.desc || defaults.info.desc;
+    
+    btk.xhr.execute(params);
+};
+btk.xhr.defaultParams = {
+    'method':'GET',
+    'url':'http://example.com',
+    'options':{},
+    'head':{},
+    'body':'',
+    'responseType':'xml',
+    'async': true,
+    'on':{},
+    'info':{
+        'fname':'xhr',
+        'desc': "the xhr response"
+    }
+};
+
+
+btk.xhr.objectToOptionString = function(object) {
+    object = object || {};
+    
+    if (typeof(object) === 'string') return object;
+    
+    var sobject = [];
+
+    for(var k in object) {
+        sobject.push(k + '=' + encodeURIComponent(object[k]));
+    }
+
+    return sobject.join('&');
+};
+
+
+btk.xhr.objectToForm = function(object) {
+    object = object || {};
+    
+    if (typeof(object) === 'string') return object;
+    
+    if (object instanceof XMLDocument) return object;
+    
+    var fobject = new FormData();
+
+    for(var k in object) {
+        fobject.append(k,object[k]);
+    }
+    
+    return fobject;
+}
+
+
+btk.xhr.parseResponse = function(xhr, params) {
+    var response;
+    
+    if (params.responseType == 'json') {
+        try {
+            response = JSON.parse(xhr.response);
+        } catch(e) {
+        }
+    }
+    
+    else if (params.responseType == 'text') {
+        response = xhr.responseText;
+    }
+    
+    else if (params.responseType == 'xml') {
+        if (xhr.responseXML) {
+            response = xhr.responseXML;
+        }
+    }
+    
+    return response || xhr.response;
+}
+
+
+// NOTE this function assumes its parameters are correct
+btk.xhr.execute = function(params) {
+	var token = params.token;
+    delete params.token;
+	
+	var xhr = new XMLHttpRequest();
+
+    var info = params.info;
+    delete params.info;
+    
+    info.token = token;
+    info.params = params;
+    info.xhr = xhr;
+    
+	xhr.onreadystatechange = function(){
+		console.log('gdrive.' + info.fname + '@test: onreadystatechange:' + this.readyState);
+		
+		if (this.readyState == 4 ) {
+            info.output = btk.xhr.parseResponse(this, info.params);
+			console.log(info);
+            
+			if (this.status == 200 ) {
+				console.log('success getting ' + info.desc);
+                if (params.callback) {
+                    params.callback(info)
+                }
+			} else {
+				console.log('received error (' + this.status + ') getting ' + info.desc);
+                if (params.on[this.status]) {
+                    params.on[this.status](info);
+                }
+			}
+		}
+	};
+
+    var options = btk.xhr.objectToOptionString(params.options);
+    
+    var url = params.url;
+    
+    if (options) {
+        url = url + '?' + options;
+    }
+    info.url = url;
+    
+   if (token) {
+        params.head['Authorization'] = token.type + ' ' + token.access;
+        
+        // this is for google docs
+        // it does not seem to harm gdrive
+        // downloads do not allow it
+        // params.head['GData-Version'] = '3.0';
+   }
+    
+	xhr.open(params.method, url, params.async);
+    
+    for(var key in params.head) {
+        xhr.setRequestHeader(key, params.head[key]);
+    }
+    
+	xhr.send(params.body);
+};
+
+
+//------------------------------------------------------------
+//------------------------------------------------------------
 console.log('gdrive test module started');
 
 var gd = btk.namespace('gdrive');
 
 gd.baseURI = 'https://www.googleapis.com/drive/v2';
+gd.uploadURI = 'https://www.googleapis.com/upload/drive/v2/files';
+gd.updateURI = gd.uploadURI;
+//the documentation has the following URI for update
+//the documentation is WRONG
+//gd.updateURI = 'https://www.googleapis.com/upload/drive/files/v2';
+
+gd.scopes = oa.auth.scopes;
+gd.token = oaw.token;
+
+gd.authorise = oaw.authorise;
+gd.validate = oaw.validate;
+
+gd.invalid = function(){
+    return gd.token.end < Date.now();
+};
+
+
+//------------------------------------------------------------
+gd.apicall = function(params) {
+    params = params || {};
+    
+    var defaults = gd.apicall.defaultParams;
+    
+    for(var key in defaults) {
+        params[key] = params[key] || defaults[key];
+    }
+    params.info.fname = params.info.fname || defaults.info.fname;
+    params.info.desc = params.info.desc || defaults.info.desc;
+    
+    if (params.jbody) {
+        try {
+            params.body = JSON.stringify(params.jbody);
+            params.head['content-type'] = 'application/json';
+        } catch (e) {}
+    }
+    
+    if (!params.url) {
+        if (params.upload) {
+            params.url = gd.uploadURI;
+            if (params.method !== 'POST') {
+                // making sure it is correct
+                params.method = 'PUT';
+            }
+        } else {
+            params.url = gd.baseURI + '/' + params.apimode;
+        }
+
+        if (params.qualifier) {
+            params.url = params.url + '/' + params.qualifier;
+        }
+    }
+    
+    btk.xhr(params)
+}
+gd.apicall.fname = 'apicall';
+gd.apicall.desc = 'the api response';
+gd.apicall.defaultParams = {
+    'method':'GET',
+    'apimode':'files',
+    'qualifier':'',
+    'upload':false,
+    'options':{},
+    'head':{},
+    'body':'',
+    'responseType':'json',
+    'async': true,
+    'token':gd.token,
+    'info':{
+        'fname':'apicall',
+        'desc':'the apicall info'
+    }
+};
+
+gd.apiget = function(params) {
+    params.method = 'GET';
+    gd.apicall(params);
+}
+
+gd.apipost = function(params) {
+    params.method = 'POST';
+    gd.apicall(params);
+}
+
+gd.apiput = function(params) {
+    params.method = 'PUT';
+    gd.apicall(params);
+}
+
+gd.apidelete = function(params) {
+    params.method = 'DELETE';
+    gd.apicall(params);
+}
+
+
+
+//------------------------------------------------------------
+// umongst other things, returns the root folder id
+gd.about = function(callback, on) {
+    gd.apiget({
+        'apimode':'about',
+        'callback':callback,
+        'on':on,
+        'info':{
+            'fname':'about',
+            'desc':'the about information'
+        }
+    });
+}
+
+
+// run this AFTER ad.about
+gd.setRoot = function(callback) {
+    gd.root = {};
+    gd.about(function(info) {
+        gd.root.about = info.output;
+        gd.root.id = info.output.rootFolderId;
+        gd.children.list(gd.root.id, function(info) {
+            gd.root.children = info.output.items;
+            if (callback) {
+                callback(gd.root);
+            }
+        });
+    });
+};
+
+
+//------------------------------------------------------------
+gd.files = {};
+
+gd.files.list = function(params, callback, on){
+    params = params || {};
+
+    /*
+    params.maxResults = params.maxResults || 50;
+
+    if (params.next) {
+        delete params.next;
+        if (gd.files.list.output) {
+            params.pageToken = gd.files.list.output.nextPageToken;
+        }
+    }
+
+    if (params.projection !== 'FULL') {
+        params.projection = 'BASIC';
+    }
+    */
+    gd.apiget({
+        'options':params,
+        'callback':callback,
+        'on':on,
+        'info':{
+            'fname':'files.list',
+            'desc':'the file list'
+        }
+    });
+};
+
+
+// get the metadata for a particular file
+gd.files.get = function(params, callback, on) {
+    if (typeof(params) === 'string') {
+        params = {'fileId':params};
+    }
+    params = params || {};
+    
+    if (!params.fileId) {
+        console.log('gdrive.files.get@test: expected fileId');
+        return;
+    }
+    
+    var fileId = params.fileId;
+    delete params.fileId;
+    /*
+    if (params.projection !== 'FULL') {
+        params.projection = 'BASIC';
+    }
+    */
+    gd.apiget({
+        'qualifier':fileId,
+        'options':params,
+        'callback':callback,
+        'on':on,
+        'info':{
+            'fname':'files.get',
+            'desc':'the file metadata'
+        }
+    });
+};
+
+
+gd.util = {};
+
+gd.util.moveField = function(field, from, to) {
+    if (from[field]) {
+        to[field] = from[field];
+        delete from[field];
+    }
+};
+
+
+gd.files.insert = function(params, callback, on) {
+    if (typeof(params) === 'string') {
+        params = {
+            'title':params,
+            'mimeType':'text/plain'
+        };
+    }
+    params = params || {};
+    
+    var jbody = {
+        'kind':'drive#file'
+    };
+
+    gd.util.moveField('title', params, jbody);
+    gd.util.moveField('description', params, jbody);
+    gd.util.moveField('mimeType', params, jbody);
+    
+
+    //need to do more work to set these up
+    //gd.util.moveField('parents', params, jbody)
+    
+    gd.apipost({
+        'options':params,
+        'jbody':jbody,
+        'callback':callback,
+        'on':on,
+        'info':{
+            'fname':'files.insert',
+            'desc':'the insert response'
+        }
+    });
+};
+
+
+gd.files.insertFolder = function(params, callback, on) {
+    if (typeof(params) === 'string') {
+        params = { 'title':params };
+    }
+    params = params || {};
+    
+    params.mimeType = 'application/vnd.google-apps.folder';
+    
+    gd.files.insert(params, callback, on);
+};
+
+
+//------------------------------------------------------------
+gd.children = {};
+
+gd.children.list = function(params, callback, on) {
+    if (typeof(params) === 'string') {
+        params = { 'folderId':params };
+    }
+    params = params || {};
+    
+    if (!params.folderId) {
+        console.log('gdrive.children.list@test: expected folderId');
+        return;
+    }
+    
+    var folderId = params.folderId;
+    
+    delete params.folderId;
+    
+     if (params.next) {
+        delete params.next;
+        if (gd.children.list.output) {
+            params.pageToken = gd.children.list.output.nextPageToken;
+        }
+    }
+
+   gd.apiget({
+        'qualifier':folderId + '/children',
+        'options':params,
+        'callback':callback,
+        'on':on,
+        'info':{
+            'fname':'children.list',
+            'desc':'the children'
+        }
+    });
+};
+
+
+// only gets the drive#childReference
+// that is just one of the entries returned by gd.children
+// .childLink is the link to the corresponding entry in gd.list
+gd.children.get = function(folderId, childId, callback, on) {
+    if (!folderId) {
+        console.log('gdrive.children.get@test: expected folderId');
+        return;
+    }
+    
+    if (!childId) {
+        console.log('gdrive.children.get@test: expected childId');
+        return;
+    }
+    
+    gd.apiget({
+        'qualifier':folderId + '/children/' + childId,
+        'callback':callback,
+        'on':on,
+        'info':{
+            'fname':'children.get',
+            'desc':'the child'
+        }
+    });
+};
+
+
+//------------------------------------------------------------
+btk.global.gd = gd;
 
 
 //------------------------------------------------------------
@@ -551,10 +1093,10 @@ oa.go = function(command) {
 oa.onreadystatechange = function(e) {
 	console.info('gdrive@test: onreadystatechange: ' + this.readyState);
 };
-oa.onabort = function(e) { console.error('gdrive@test: onabort'); console.log(e);};
-oa.onerror = function(e) { console.error('gdrive@test: onerror');  console.log(e);};
-oa.onloadstart = function(e) { console.info('gdrive@test: onloadstart'); };
-oa.onprogress = function(){ console.info('gdrive@test: onprogress'); };
+oa.onabort = function(e) {console.error('gdrive@test: onabort');console.log(e);};
+oa.onerror = function(e) {console.error('gdrive@test: onerror');console.log(e);};
+oa.onloadstart = function(e) {console.info('gdrive@test: onloadstart');};
+oa.onprogress = function(){console.info('gdrive@test: onprogress');};
 oa.onload = function(e) {
 	console.info('gdrive@test: onload');
 };

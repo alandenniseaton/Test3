@@ -1,11 +1,15 @@
 
 chrome.extension.sendRequest(
-	{ 'oauthcatch':document.location.hash },
-	function(response){
-		window.close();
-	}
+    { 'oauthcatch':{
+        'hash':document.location.hash,
+        'search':document.location.search
+    }},
+    function(response){
+        //window.close();
+        console.log(respons);
+    }
 );
-
+    
 
 oauthcatch = (function(){
 

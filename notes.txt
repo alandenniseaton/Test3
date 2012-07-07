@@ -2,6 +2,13 @@
 remove code marked with // TEST
 
 ------------------------------------------------------------
+120705:0837
+    btk: improve task manager
+        recognise short and long tasks
+        run short tasks in batches (of 100 maybe)
+        run long tasks one at a time
+
+------------------------------------------------------------
 111216:2015
 	?? move stuff out of background page and into lib/util
 		notifications

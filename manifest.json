@@ -34,7 +34,7 @@
 		},
 		{	
 			"matches": [ "http://www.google.com/robots.txt*" ],
-		/*	"matches": [ "https://accounts.google.com/o/oauth2/auth*" ],	*/
+			"matches": [ "https://accounts.google.com/o/oauth2/auth*" ],	
 			"js": ["scripts/content/oauthcatch.js"],
 			"run_at": "document_start"
 		}
@@ -50,6 +50,7 @@
 	"permissions":[
 		"file://*/",
 		"*://*.google.com/*",
+		"*://*.googleapis.com/*",
 		"tts",
 		"unlimitedStorage",
 		"tabs",
