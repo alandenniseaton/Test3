@@ -31,13 +31,15 @@
 				"https://groups.google.com/*"
 			],
 			"css": ["scripts/content/googlegroups.css"]
-		},
+		}
+        /*
 		{	
 			"matches": [ "http://www.google.com/robots.txt*" ],
 			"matches": [ "https://accounts.google.com/o/oauth2/auth*" ],	
 			"js": ["scripts/content/oauthcatch.js"],
 			"run_at": "document_start"
 		}
+        */
 	],
 	
 

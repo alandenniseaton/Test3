@@ -6,12 +6,12 @@ chrome.extension.sendRequest(
     }},
     function(response){
         //window.close();
-        console.log(respons);
+        console.log(response);
     }
 );
     
 
-oauthcatch = (function(){
+var oauthcatch = (function(){
 
 	var log = [];
 	
@@ -20,7 +20,7 @@ oauthcatch = (function(){
 	
 	var broadcast = function(msg) {
 		if (typeof(msg) !== 'string') {
-			msg = {oauthcatch:{big:'input'}};
+			msg = {big:'input'};
 		}
 		
 		chrome.extension.sendRequest({oauthcatch:msg}, function(response){});

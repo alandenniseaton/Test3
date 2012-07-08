@@ -607,6 +607,14 @@ init: function(libs, exports) {
 	var createTimer = alarms.createTimer;
 	
 	
+    if (!bg.lsget('userAlarms')) {
+        console.log('alarms.user@page: disabled');
+        return;
+    } else{
+        console.log('alarms.user@page: enabled');
+    }
+    
+    
 	//--------------------------------------------------------
 	// hourly alarm
 	createTimer({
