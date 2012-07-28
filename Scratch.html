@@ -1,6 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		
@@ -8,318 +7,15 @@
 		
 		<!--script type="text/javascript" src="https://apis.google.com/js/client.js?onload=OnLoadCallback""></script-->
 		
-		<script type="text/javascript" btkid="page::information">
-			var pageInformation = {
-				title: "Scratch Page",
-				version: {
-					date: new Date("January 26, 2012, GMT+1000"),
-					number: {major: 0, minor: 0, patch: 0}
-				},
-				extensions: {}
-			};
-		</script>
-
-		<script type="text/javascript" btkid="page::btk.config">
-			var btk = {
-				config: {
-					useCacheFrom: "Dec 31, 9999, GMT+1000",
-					// disable debug messages (there are LOTS!) (defaults to false anyway)
-					debug: false,
-					// just so I know :)
-					test:"TEST.TEST.TEST"
-				}
-			};
-		</script>
+		<script type="text/javascript" data-btkid="page::config" src="scripts/scratch/config.js"></script>
 		
-		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		<script type="text/javascript" data-btkid="btk::btk" src="lib/btk/btk.js"></script>
 		
-		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		<script type="text/javascript" data-btkid="common::package" src="scripts/common/package.js"></script>
 		
-		<script type="text/plain" id="plaintext" btkid="page::test.plain">
-			btk.define({
-				name: 'test.plain@page',
-				load: true,
-				when: [ 'state::page.loaded' ],
-				init: function() {
-					// will this get executed???
-					
-					alert("text/plain was executed");
-					
-					// it was not!
-				}});
-		</script>
-		
-		<script type="text/javascript" btkid="page::test">
-			btk.define({
-				name: 'test@page',
-				load: true,
-				libs: {
-					base: 'base@common',
-					gdrive: 'gdrive@test',
-				},
-				css : [ 'base@wtk' ],
-				when: [ 'state::page.loaded' ],
-				init: function() {
-					var x = {};
-					
-					x.doc = [
-						"BlobBuilder = WebKitBlobBuilder",
-						"URL = webkitURL",
-					];
-					
-					x.appId = chrome.app.getDetails().id
-					x.ei = chrome.i18n.getMessage('@@extension_id');
-						// same as appId
-					x.BlobBuilder = WebKitBlobBuilder;
-					x.URL = webkitURL;
-					x.output = document.querySelector('#output');
-					
-					x.html_h = [
-						'<html>',
-						'  <head>',
-						'    <link rel="stylesheet" type="text/css" href="'
-							+ 'chrome-extension://'
-							+ x.appId
-							+ '/lib/wtk/scroll-plain.css">',
-						'  </head>',
-						'  <body class="scroll-plain">'
-					].join('\n');
-						
-					x.html_t = [
-						'  </body>',
-						'</html>'
-					].join('\n');
-					
-					x.create = function(n) {
-					
-						x.reset();
-						
-						n = btk.ifNumber(n, 0);
-						
-						if (n < 0) { n = 0; }
-						if (n > 1) { n = 1; }
-						
-						if (n === 0) {
-							x.html = [
-								x.html_h,
-								'hello there world',
-								x.html_t
-							].join('\n');
-						} else if (n === 1) {
-							x.html = [
-								x.html_h,
-								'    <pre>',
-								document.querySelector('#plaintext').textContent,
-								'    </pre>',
-								x.html_t
-							].join('\n');
-						}
-						
-						x.bb = new x.BlobBuilder();
-						x.bb.append(x.html);
-						
-						x.b = x.bb.getBlob('text/html');
-						
-						x.url = x.URL.createObjectURL(x.b);
-						
-						x.i = document.createElement('iframe');
-						x.i.setAttribute('style', 'width: 50%;');
-						x.i.src = x.url;
-						
-						x.created = true;
-						
-						return x;
-					};
-					
-					x.append = function(n) {
-						if (!!x.appended) {
-							console.error('already appended');
-							return x;
-						}
-						
-						if (!x.created) {
-							console.info('needed to create first');
-							x.create(n);
-						}
-						
-						if (!!x.output && !!x.i) {
-							x.j = x.output.appendChild(x.i);
-							x.appended = true;
-						}
-						
-						return x;
-					};
-					
-					x.reset = function() {
-						if (!!x.appended && !!x.output && !!x.i) {
-							x.output.removeChild(x.i);
-							
-							delete x.appended;
-						}
-						
-						if (!!x.created) {
-							delete x.j;
-							delete x.i;
-							
-							if (!!x.url) {
-								x.URL.revokeObjectURL(x.url);
-							}
-							delete x.url;
-							
-							delete x.b;
-							delete x.bb;
-							
-							delete x.html;
-							
-							delete x.created;
-						}
-						
-						return x;
-					};
-					
-					btk.global.x = x;
-					
-					
-					// deferred messages
-					var y = {};
-					
-					y.doc = "a message queue implemented using window.postMessage";
-					
-					// in practice and for security, should not expose q and key
-					y.q = [];
-					
-					y.key = 'defer:' + Date.now();
-					
-					y.origin = btk.document.location.origin;
-					y.source = btk.global;
-					y.target = btk.global;
-					
-					y.send = function send(data) {
-						this.q.push(data);
-						window.postMessage(this.key, this.origin);
-						return this;
-					};
-					
-					y.receive = function receive(event) {
-						if (event.data !== this.key) {
-							return;
-						}
-						
-						if (event.origin !== this.origin) {
-							return;
-						}
-						
-						if (event.source !== this.source) {
-							return;
-						}
-						
-						if (this.running) {
-							if (this.q.length > 0) {
-								console.log(event);
-								console.log(this.q.shift());
-							} else {
-								// short q
-								// how did that happen?
-								console.error('short q!!!');
-							}
-						} else {
-							// just consume the message
-							// so that things do not get out of sync
-							this.q.shift();
-						}
-					};
-					
-					y.breceive = y.receive.bind(y);
-					
-					y.start = function start() {
-						if (!this.running) {
-							this.target.addEventListener('message', this.breceive, false);
-							this.running = true;
-						}
-					};
-					
-					y.stop = function end() {
-						if (this.running) {
-							this.running = false;
-							this.target.removeEventListener('message', this.breceive);
-						}
-					};
-					
-					y.reset = function reset() {
-						this.stop();
-						this.q = [];
-					};
-					
-					x.y = y;
-					
-					y.start();
-					
-
-					var z = {};
-					
-					z.input  = document.querySelector('#fileinput1');
-					z.output = document.querySelector('#fileoutput1');
-					
-					z.input.onchange = function(e){
-						var files = this.files;
-						var out = document.createElement('span');
-						var detail = [];
-						var fields;
-						
-						detail.push('<ul>');
-						for (var i = 0, f; i < files.length; i++) {
-							detail.push('<li>');
-							f = files[i];
-							ff = Object.keys(f);
-							detail.push('<ul>');
-							for (var j=0; j<ff.length; j++) {
-								detail.push('<li>');
-								detail.push(ff[j] + ': ');
-								detail.push('<span style="color:purple;">');
-								detail.push(f[ff[j]]);
-								detail.push('</span>');
-								detail.push('</li>');
-							}
-							detail.push('</ul>');
-							detail.push('</li>');
-						}
-						detail.push('</ul>');
-						
-						out.innerHTML = detail.join('');
-						z.output.appendChild(out);
-					};
-					
-					x.z = z;
-					
-					
-					return x;
-				}
-			});
-		</script>
-		
-		<style type="text/css">
-			.details.root {
-				position: relative;
-				display: inline-block;
-				z-index: 100;
-				border-style: solid;
-				border-width: 1px;
-				border-radius: 3px;
-				border-color: grey;
-				padding: 4px;
-			}
-			.details.root:hover {
-				border-color: black;
-			}
-			
-			.details > summary{
-				cursor: pointer;
-			}
-			.details > .content {
-				margin-left: 1em;
-				cursor: normal;
-			}
-		</style>
+		<script type="text/javascript" data-btkid="common::base" src="scripts/common/base.js"></script>
+        
+        <script type="text/javascript" data-btkid="page::main" src="scripts/scratch/main.js"></script>
 		
 	</head>
 	<body>
@@ -350,16 +46,19 @@
 					<p>no permission in extension?. check console</p>
 					<a href="notes.txt" download="notes" draggable>what about this (download: drag)?</a>
 					<p>download works but drag does not</p>
-					<a href="template/*" download="template">trying a dir</a>
+					<a href="template/*" download="template">trying a directory</a>
 					<p>did not work</p>
 					<a href="filesystem:file:///persistent/log.txt">fs</a>
-					<p>no filesystem stuff available</p>
-					<input type="file" id="fileinput1" multiple></input></br>
+					<p>no file system stuff available</p>
+					<input type="file" id="fileinput1" multiple /></br>
 					<div id="fileoutput1" style="display: inline-block; text-align: left;"></div>
 					<p></p>
 				</td></tr>
 			</tbody></table>
-			
 		</div>
+        <div>
+            <div class="log" data-name="log"></div>
+            <div class="log" data-name="db"></div>
+        </div>
 	</body>
 </html>

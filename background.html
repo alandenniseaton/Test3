@@ -5,62 +5,17 @@
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		<title>Background</title>
 
-		<script type="text/javascript" btkid="page::information">
-			var pageInformation = {
-				title: "Test2 Background Page",
-				version: {
-					date: new Date("December 15, 2011, GMT+1000"),
-					number: {major: 0, minor: 0, patch: 0}
-				},
-				extensions: {}
-			};
-		</script>
-
-		<script type="text/javascript" btkid="page::btk.config">
-			btk = {
-				config: {
-					test: true
-				}
-			};
-		</script>
+        <script type="text/javascript" data-btkid="page::config" src="scripts/background/config.js"></script>
 		
-		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		<script type="text/javascript" data-btkid="btk::btk" src="lib/btk/btk.js"></script>
 		
-		<script type="text/javascript" btkid="scripts::common" src="scripts/common/package.js"></script>
+		<script type="text/javascript" data-btkid="scripts::common" src="scripts/common/package.js"></script>
 		
-		<script type="text/javascript" btkid="page::background" src="scripts/background.js"></script>
-		
-		<script type="text/javascript" btkid="page::loading">
-			function listen(topic) {
-				var client = new btk.Publisher.Client();
-				
-				client.on(
-					btk.Publisher.DEFAULT,
-					function (data, message) {
-						btk.message("#heard " + this.topic);
-						btk.defer(
-							{sub:this.sub},
-							function(){ this.sub.cancel(); },
-							[]
-						);
-					}
-				);
-				
-				client.setContext({
-					sub:btk.subscribe(topic, client),
-					topic:topic
-				});
-			}
-			
-			listen("state::window.loaded");
-			listen("state::dom.content.loaded");
-			listen("state::document.ready");
-			listen("state::document.loaded");
-		</script>
+		<script type="text/javascript" data-btkid="page::main" src="scripts/background/main.js"></script>
 		
 	</head>
 	
-	<body onload="btk.trigger.state('document.loaded');">
+	<body>
 		<div id="Audio">
 			<audio id="pips1" src="audio/pips1.wav" preload>No Audio</audio>
 			<audio id="pips3" src="audio/pips3.wav" preload>No Audio</audio>

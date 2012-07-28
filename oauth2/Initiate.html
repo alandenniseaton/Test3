@@ -5,12 +5,72 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link rel="stylesheet" type="text/css" href="../lib/wtk/base.css"/>
         <script type="text/javascript">
-            window.name = 'bob';
-            console.log('Initiate.html: self: ',window.name);
-            console.log('Initiate.html: parent: ',window.parent.name);
+            var authorise = (function(){
+                var accountsURI = 'https://accounts.google.com/';
+                var serviceURI = accountsURI + 'ServiceLogin';
+                var requestURI = accountsURI + 'o/oauth2/auth';
+
+                var search = document.location.search;
+                var targetURL = requestURI + search;
+                
+                var currentTabId;
+
+                var onerroroccurred = function(details) {
+                    console.log('oauth2/Initiate.html/onerroroccurred');
+                    console.log(details);
+
+                    if (details.tabId == currentTabId) {
+                        console.log('oauth2/Initiate.html/onerroroccurred: tab ids agree');
+                        console.log('oauth2/Initiate.html/onerroroccurred: navigating away');
+                        /*
+                        //redirects the tab to the target URL
+                        chrome.tabs.update(currentTabId,{
+                            'url': targetURL
+                        });
+                        */
+                        // creates a completely new window
+                        chrome.windows.create({
+                            'url': details.url,
+                            'width':700,
+                            'height':500,
+                            'type':'popup'
+                        });
+                        // close the original window
+                        window.close();
+                    }
+                };
+
+                chrome.webRequest.onErrorOccurred.addListener(
+                    onerroroccurred,
+                    { 'urls':[accountsURI + '*'] }
+                );
+
+                var startAuthorisation = function(tabDetails) {
+                    console.log('oauth2/Initiate.html: startAuthorisation');
+
+                    currentTabId = tabDetails.id;
+
+                    var iframe = document.getElementById('oauth2');
+                
+                    iframe.src = targetURL;
+                };
+
+                var authorise = function() {
+                    console.log('oauth2/Initiate.html: authorise');
+
+                    chrome.tabs.getCurrent(startAuthorisation);
+                };
+
+                return authorise;
+            })();
         </script>
     </head>
-    <body>
-        <iframe id="oauth2" src="../Blank.html" class="fill" style="border:0;"></iframe>
+    <body onload="authorise();">
+		<div class="fill">
+			<table class="layout"><tbody>
+				<tr><td style="text-align: center; font-size:200%;">Authorising</td></tr>
+			</tbody></table>
+		</div>
+        <iframe id="oauth2" class="fill" style="border:0; z-index:1000;"></iframe>
     </body>
 </html>

@@ -1,9 +1,11 @@
 {
-	"name":"test3",
+    //"manifest_version" :2,
+    
+	"name": "test3",
 	
-	"description":"a test",
+	"description": "a test",
 	
-	"version":"0.1",
+	"version": "0.1",
 
 	"icons": {
 		"16": "images/vm16.png",
@@ -24,6 +26,7 @@
 	},
 	
 
+    /*better colours for google groups*/
 	"content_scripts": [
 		{	
 			"matches": [
@@ -32,36 +35,42 @@
 			],
 			"css": ["scripts/content/googlegroups.css"]
 		}
-        /*
-		{	
-			"matches": [ "http://www.google.com/robots.txt*" ],
-			"matches": [ "https://accounts.google.com/o/oauth2/auth*" ],	
-			"js": ["scripts/content/oauthcatch.js"],
-			"run_at": "document_start"
-		}
-        */
 	],
 	
 
 	"options_page": "Options.html",
 	
-	"background_page": "background.html",
-	
+    "background_page": "background.html",
+	/*
+    "background": {
+        "page": "background.html"
+    },
+	*/
 	"minimum_chrome_version": "12.0.706.0",
 	
 	"permissions":[
-		"file://*/",
+		"file://*/*",
 		"*://*.google.com/*",
 		"*://*.googleapis.com/*",
+        
 		"tts",
 		"unlimitedStorage",
 		"tabs",
 		"notifications",
+        
+        /*needed for oauth2 stuff*/
 		"webRequest",
-		"http://xxx.yyy.com/*",
-		"http://oauth.example.com/blank.html*",
-		"http://example.com/oauth/blank.html*",
 		"webRequestBlocking",
+        
+        /*redirect url for Google API project*/
+		"http://example.com/oauth/blank.html*",
+        
+        /*test globs for simple page server*/
+        /*needs webRequest api*/
+        "*://*.local/*",
+        
+        //"*://news.eternal-september.org:119/*",
+        
 		"idle"
 	]
 }

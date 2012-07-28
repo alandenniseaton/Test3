@@ -1,66 +1,41 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-		
 		<title>Empty</title>
 		
-		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		
-		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		<script type="text/javascript" data-btkid="btk::btk" src="lib/btk/btk.js"></script>
 		
-		<script type="text/javascript" btkid="page::common" src="scripts/common/base.js"></script>
+		<script type="text/javascript" data-btkid="common::package" src="scripts/common/package.js"></script>
 		
-		<style type="text/css">
-			body {
-				margin: 0;
-				padding: 0;
-			}
-			.links {
-				min-width: 100px;
-				border: 1px solid #ccc;
-				padding: 2px;
-				background-color: #eee;
-			}
-			.links hr {
-				margin: 0;
-			}
-			.link {
-				border: 1px solid transparent;
-				border-radius: 4px;
-				padding-left: 8px;
-				padding-right: 8px;
-				text-align: center;
-			}
-			.link:hover {
-				border-color: #aabbff;
-				background-color: #cfdfff;
-				cursor: pointer;
-			}
-		</style>
+		<script type="text/javascript" data-btkid="page::common" src="scripts/common/base.js"></script>
+		
+		<script type="text/javascript" data-btkid="page::main" src="scripts/popup/main.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="scripts/popup/style.css"/>
 		
 	</head>
 	<body>
 		<div class="links">
-			<div class="link" onclick="page.bg.launch('Test.html');">Test</div>
-			<div class="link" onclick="page.bg.popup({url:'Bookmarks-old.html', width:850,height:800});">Bookmarks-old</div>
-			<div class="link" onclick="page.bg.popup({url:'Bookmarks.html', width:850,height:800});">Bookmarks</div>
-			<div class="link" onclick="page.bg.launch('Bookmarks.html');">Bookmarks(tab)</div>
+			<div class="link" data-name="Test">Test</div>
+			<div class="link" data-name="Bookmarks-old-p">Bookmarks-old</div>
+			<div class="link" data-name="Bookmarks-p">Bookmarks</div>
+			<div class="link" data-name="Bookmarks">Bookmarks(tab)</div>
 			<hr />
-			<div class="link" onclick="page.link.alarms.showMessages();">Messages</div>
-			<div class="link" onclick="page.bg.launch('Log.html');">Log</div>
-			<div class="link" onclick="page.bg.launch('Topics.html');">Topics</div>
-			<div class="link" onclick="page.bg.launch('doc/btkdoc.html');">Documentation</div>
+			<div class="link" data-name="Messages">Messages</div>
+			<div class="link" data-name="Log">Log</div>
+			<div class="link" data-name="Topics">Topics</div>
+			<div class="link" data-name="doc/btkdoc">Documentation</div>
 			<hr />
-			<div class="link" onclick="page.bg.launch('Terminal.html');">Terminal</div>
-			<div class="link" onclick="page.bg.launch('Scratch.html');">Scratch</div>
-			<div class="link" onclick="page.bg.launch('Blank.html');">Blank</div>
+			<div class="link" data-name="Terminal">Terminal</div>
+			<div class="link" data-name="Scratch">Scratch</div>
+			<div class="link" data-name="Blank">Blank</div>
 			<hr />
-			<div class="link" onclick="page.bg.launch('XMLNote.html');">XMLNote</div>
+			<div class="link" data-name="XMLNote">XMLNote</div>
 			<hr />
-			<!--div class="link" onclick="page.bg.launch('Options.html');">Options</div-->
-			<div class="link" onclick="page.bg.popup.center({url:'Options.html', width:300, height:200});">Options</div>
+			<!--div class="link" data-name="Options">Options</div-->
+			<div class="link" data-name="Options-p">Options</div>
 		</div>
 	</body>
 </html>

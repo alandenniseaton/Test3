@@ -6,11 +6,11 @@
 		
 		<title>Log</title>
 		
-		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		<script type="text/javascript" data-btkid="btk::btk" src="lib/btk/btk.js"></script>
 		
-		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		<script type="text/javascript" data-btkid="common::package" src="scripts/common/package.js"></script>
 		
-		<script type="text/javascript" btkid="page::logview">
+		<script type="text/javascript" data-btkid="page::logview">
 			btk.define({
 				name: 'logview@page',
 				load: true,
@@ -64,7 +64,7 @@
 						if (scrolling) { return; }
 						
 						scrolling = true;
-						btk.defer({}, doScroll, []);
+						btk.defer(doScroll, []);
 					}
 
 					output.onappend = scroll;
@@ -81,7 +81,7 @@
 			});
 		</script>
 					
-		<script type="text/javascript" btkid="page::loading">
+		<script type="text/javascript" data-btkid="page::loading">
 			window.onunload = function(event) {
 				btk.require('logview@page').unload();
 			};

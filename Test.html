@@ -1,12 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!--DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"-->
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 		
 		<title>Test2</title>
 
-		<script type="text/javascript" btkid="page::information">
+		<script type="text/javascript" data-btkid="page::information">
 			var pageInformation = {
 				title: "Test2",
 				version: {
@@ -23,7 +22,7 @@
 			};
 		</script>
 
-		<script type="text/javascript" btkid="page::btk.config">
+		<script type="text/javascript" data-btkid="page::btk.config">
 			btk = {
 				config: {
 					useCacheFrom: "Dec 31, 9999, GMT+1000",
@@ -35,11 +34,11 @@
 			};
 		</script>
 		
-		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		<script type="text/javascript" data-btkid="btk::btk" src="lib/btk/btk.js"></script>
 		
-		<script type="text/javascript" btkid="test::package" src="test/package.js"></script>
+		<script type="text/javascript" data-btkid="test::package" src="test/package.js"></script>
 		
-		<script type="text/javascript" btkid="test::main" src="test/main.js" async="true"></script>
+		<script type="text/javascript" data-btkid="test::main" src="test/main.js" async="true"></script>
 		
 		<style type="text/css">
 			#javascriptWarning {
@@ -171,7 +170,7 @@
 			}
 		</style>
 		
-		<script type="text/javascript" btkid="test::terminal.inline">
+		<script type="text/javascript" data-btkid="test::terminal.inline">
 			btk.define({
 				name: 'terminal.inline@test',
 				load: true,
@@ -220,13 +219,13 @@
 			});
 		</script>
 		
-		<script type="text/javascript" btkid="test::loading">
+		<script type="text/javascript" data-btkid="test::loading">
 			function listen(topic) {
 				var s = btk.subscribe(
 					topic,
 					function (data, message) {
 						btk.message("#heard " + topic);
-						btk.defer({}, function(s){ s.cancel(); }, [s]);
+						btk.defer(function(s){ s.cancel(); }, [s]);
 					}
 				);
 			}

@@ -366,7 +366,7 @@ init: function(libs, exports) {
 					// making sure selected is never empty
 					if (selected.isEmpty()) {
 						// has to be defered to avoid confusion
-						btk.defer({}, tl.select, ['@@@live']);
+						btk.defer(tl.select, ['@@@live'], {});
 					}
 				}
 				

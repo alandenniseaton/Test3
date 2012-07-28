@@ -1,0 +1,31 @@
+/* 
+    Document   : style
+    Created on : 11/07/2012, 6:23:06 AM
+    Author     : Alan Dennis
+*/
+
+body {
+    margin: 0;
+    padding: 0;
+}
+.links {
+    min-width: 100px;
+    border: 1px solid #ccc;
+    padding: 2px;
+    background-color: #eee;
+}
+.links hr {
+    margin: 0;
+}
+.link {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    text-align: center;
+}
+.link:hover {
+    border-color: #aabbff;
+    background-color: #cfdfff;
+    cursor: pointer;
+}

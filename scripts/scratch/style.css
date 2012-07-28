@@ -1,0 +1,33 @@
+/* 
+    Document   : style
+    Created on : 12/07/2012, 1:48:18 AM
+    Author     : Alan Dennis
+*/
+
+.details.root {
+    position: relative;
+    display: inline-block;
+    z-index: 100;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: grey;
+    padding: 4px;
+}
+.details.root:hover {
+    border-color: black;
+}
+.details > summary{
+    cursor: pointer;
+}
+.details > .content {
+    margin-left: 1em;
+    cursor: normal;
+}
+
+.log {
+    border: 1px solid black;
+    margin-top: 2px;
+    width: 33%;
+    padding: 2px;
+}

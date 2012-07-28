@@ -23,7 +23,7 @@ btk.define({
 
 
         //------------------------------------------------------------
-        btk.openWindow = function(params) {
+        btk.xopenWindow = function(params) {
             if (typeof(params) === 'string') {
                 params = {'url':params};
             }
@@ -35,6 +35,28 @@ btk.define({
             //	params.atts = params.atts || 'toolbar=0,scrollbars=0,menubar=0,resizable=0,width=700,height=500,status=no';
 	
             return window.open(params.url, params.name, params.atts);
+        };
+
+        btk.openWindow = function(params) {
+            if (typeof(params) === 'string') {
+                params = {'url':params};
+            }
+            params = params || {};
+	
+            btk.object.safeMixin(params, btk.openWindow.defaultParams);
+            
+            chrome.windows.create({
+                'url': params.url,
+                'width':params.width,
+                'height':params.height,
+                'type':'popup'
+            });
+        };
+        btk.openWindow.defaultParams = {
+            'url':'blank://',
+            'width':700,
+            'height':500,
+            'type':'popup'
         };
 
 
@@ -49,7 +71,7 @@ btk.define({
 	
             if (newState !== 'active') return null;
 	
-            var w = btk.openWindow({
+            var w = btk.xopenWindow({
                 url:null,
                 atts:"toolbar=0,scrollbars=0,menubar=0,resizable=0,width=350,height=250"
             });
@@ -88,6 +110,12 @@ btk.define({
             params.info.fname = params.info.fname || defaults.info.fname;
             params.info.desc = params.info.desc || defaults.info.desc;
     
+            if (params.parseType) {
+                if (params.parseType !== 'json') {
+                    params.responseType = params.parseType;
+                }
+            }
+            
             btk.xhr.execute(params);
         };
         btk.xhr.defaultParams = {
@@ -96,7 +124,8 @@ btk.define({
             'options':{},
             'head':{},
             'body':'',
-            'responseType':'xml',
+            'responseType':'',
+            'parseType':'',
             'async': true,
             'on':{},
             'info':{
@@ -156,18 +185,18 @@ btk.define({
         btk.xhr.parseResponse = function(xhr, request) {
             var response = {};
     
-            if (request.responseType == 'json') {
+            if (request.parseType == 'json') {
                 try {
                     response.body = JSON.parse(xhr.response);
                 } catch(e) {
                 }
             }
     
-            else if (request.responseType == 'text') {
+            else if (request.parseType == 'text') {
                 response.body = xhr.responseText;
             }
     
-            else if (request.responseType == 'xml') {
+            else if (request.parseType == 'xml') {
                 if (xhr.responseXML) {
                     response.body = xhr.responseXML;
                 }
@@ -208,7 +237,7 @@ btk.define({
             info.xhr = xhr;
     
             xhr.onreadystatechange = function(){
-                console.log(info.fname + 't: onreadystatechange:' + this.readyState);
+                console.log(info.fname + ': onreadystatechange:' + this.readyState);
 		
                 if (this.readyState == 4 ) {
                     info.response = btk.xhr.parseResponse(this, request);
@@ -244,6 +273,8 @@ btk.define({
                 xhr.setRequestHeader(key, request.head[key]);
             }
     
+            xhr.responseType = request.responseType;
+            
             xhr.send(request.body);
         };
 
@@ -282,11 +313,11 @@ btk.define({
         //------------------------------------------------------------
         oa.testfile = 'notes.txt';
         oa.async = true;
-        oa.responsetype = '';
-        //oa.responseType = 'text';
-        //oa.responseType = 'arraybuffer';
-        //oa.responseType = 'blob';
-        //oa.responseType = 'document';
+        oa.parseType = '';
+        //oa.parseType = 'text';
+        //oa.parseType = 'arraybuffer';
+        //oa.parseType = 'blob';
+        //oa.parseType = 'document';
 
 
         oa.test = true;
@@ -409,7 +440,7 @@ btk.define({
         oai.token.access = '';
         oai.token.refresh = '';
 
-        oai.auth.responsetype = 'code';
+        oai.auth.parseType = 'code';
         oai.auth.apikey = 'AIzaSyBWDSteALEpuET94Wd_Eb57bcDXrHTWA7s';
         oai.auth.clientid = '569863883099.apps.googleusercontent.com';
         oai.auth.secret = 'jaQXfOko5-JFINsDnN96sJIZ';
@@ -523,7 +554,7 @@ btk.define({
 	
             // received this access_token on first successful authorisation
             //		4/VhBWtl8ff4r6jsQ2ug6ehd-NrfEQ.cgiJvZ67N4gUgrKXntQAax3MYGuIcAI
-            // needed the right responseType and scope parameters
+            // needed the right parseType and scope parameters
             // result is on a page as an input field and in the document title
             // note: i have changed the state parameter
             //		url:	https://accounts.google.com/o/oauth2/approval?as=79b086f3080e6baa&hl=en&xsrfsign=APsBz4gAAAAAT_C4DRaA62axsvGTVhW2K0rf21UMa3G5
@@ -542,7 +573,7 @@ btk.define({
             //		node:	<p id="access_denied">You denied access to the application.</p>
 
             var options = {
-                'response_type':oai.auth.responsetype,
+                'response_type':oai.auth.parseType,
                 'client_id':oai.auth.clientid,
                 'redirect_uri':oai.auth.redirect,
                 'scope':oa.auth.scope,
@@ -607,10 +638,11 @@ btk.define({
             var params = btk.xhr.optionStringToObject(hash);
             
             oaw.token.error = params.error;
-            oaw.token.access = params.access_token;
-            oaw.token.type = params.token_type;
-            oaw.token.duration = params.expires_in;
-            oaw.token.state = params.state;
+            
+            oaw.token.access = params.access_token || oaw.token.access;
+            oaw.token.type = params.token_type || oaw.token.type;
+            oaw.token.duration = params.expires_in || oaw.token.duration;
+            oaw.token.state = params.state || oaw.token.state;
 
             console.log(params);
             console.log(oaw.token);
@@ -638,13 +670,6 @@ btk.define({
                     oaw.lsm.set('token', oaw.token);
                 }
                 
-        
-                console.log(oaw.token);
-                // ??? which to use
-                //		chrome.tabs.remove(details.tabId);
-                //		cancel:true
-                //			requires "webRequestBlocking" permission in manifest
-                //			required for redirect anyway!!!
                 return {
                     //	'cancel':true,
                     'redirectUrl':chrome.extension.getURL(redirect)
@@ -674,17 +699,34 @@ btk.define({
                 //'approval_prompt':'auto', //default: the user does not get prompted unless scope has changed
                 'state':'NoteSpaceOAuthW'
             });
-            var url = oa.auth.requestURI + '?' + optionString;
-            //var url = 'oauth2/Initiate.html' + '?' + optionString;
+            
+            oaw.authorise.ilaunch(optionString);
+        };
+        
+        oaw.authorise.wlaunch = function(options) {
+            var url = oa.auth.requestURI + '?' + options;
             
             oaw.permissionURL = url;
 	
-            return btk.openWindow({
-                url:url, 
-                name:'NoteSpaceOAuthW'
-            });
+            btk.openWindow({'url':url});
         };
-
+        
+        oaw.authorise.ilaunch = function(options) {
+            var url = 'oauth2/Initiate.html' + '?' + options;
+            
+            var id = 'oauth2Initiator';
+            var iframe = btk.document.getElementById(id);
+            
+            if (!iframe) {
+                iframe = btk.document.createElement('iframe');
+                iframe.id = id;
+                //iframe.style.display = 'none';
+                btk.document.body.appendChild(iframe);
+            }
+            
+            iframe.src = url;
+        };
+        
 
         oaw.validate = function(token) {
             token = token || oaw.token;
@@ -841,7 +883,7 @@ btk.define({
             'options':{},
             'head':{},
             'body':'',
-            'responseType':'json',
+            'parseType':'json',
             'async': true,
             'token':gd.token,
             'info':{
@@ -890,7 +932,7 @@ btk.define({
         }
 
 
-        // run this AFTER ad.about
+        // run this AFTER gd.about
         gd.setRoot = function(callback) {
             gd.root = {};
             gd.about(function(info) {
@@ -1136,7 +1178,7 @@ btk.define({
                 xhr.setRequestHeader("secret", oa.auth.secret);
             }
 	
-            xhr.responseType = oa.responsetype;
+            xhr.parseType = oa.parseType;
 	
             // iff POST
             // xhr.setRequestHeader("Content-Type", "mime/type");

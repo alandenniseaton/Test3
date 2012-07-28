@@ -6,11 +6,11 @@
 		
 		<title>Messages</title>
 		
-		<script type="text/javascript" btkid="btk::btk" src="lib/btk/btk.js"></script>
+		<script type="text/javascript" data-btkid="btk::btk" src="lib/btk/btk.js"></script>
 		
-		<script type="text/javascript" btkid="common::package" src="scripts/common/package.js"></script>
+		<script type="text/javascript" data-btkid="common::package" src="scripts/common/package.js"></script>
 		
-		<script type="text/javascript" btkid="page::alarm.messages">
+		<script type="text/javascript" data-btkid="page::alarm.messages">
 			btk.define({
 				name: 'alarms@page',
 				load: true,
@@ -65,7 +65,7 @@
 						// deferred so that a sequence of appends within a
 						// single execution unit causes a single scroll
 						// if not deferred then var scrolling gets repeatedly toggled
-						btk.defer({}, doScroll, []);
+						btk.defer(doScroll, []);
 					}
 
 					output.onappend = scroll;
