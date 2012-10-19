@@ -11,6 +11,7 @@ btk.define({
     name: 'test@page',
     load: true,
     libs: {
+        base: 'base@common',
         gdrive: 'gdrive@test',
         server: 'server@test',
         idb: 'idb@util'

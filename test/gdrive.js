@@ -59,7 +59,44 @@ btk.define({
             'type':'popup'
         };
 
+        btk.view = function(txt) {
+            var URL = window.URL || window.webkitURL;
+            
+            var page = [
+                //'<!DOCTYPE html>',
+                '<html>',
+                '<head>',
+                '<title>Text Viewer</title>',
+                '</head>',
+                '<body>',
+                '<pre style="word-wrap: break-word; white-space: pre-wrap;">',
+                txt,
+                '</pre>',
+                '</body>',
+                '</html>',
+            ];
+            
+            var bp = new Blob(page, {type:'text/html'});
+            
+            var url = URL.createObjectURL(bp);
+            
+            btk.openWindow(url);
+            //URL.revokeObjectURL(b);
+        };
 
+        btk.view.plain = function(txt, type) {
+            type = type || 'text/plain';
+            
+            var URL = window.URL || window.webkitURL;
+            
+            var b = new Blob([txt], {type:type});
+            
+            var url = URL.createObjectURL(b);
+            
+            btk.openWindow(url);
+            //URL.revokeObjectURL(b);
+        };
+        
         btk.reminders = [
         "",
         "consider what happens when the authorisation",
@@ -933,7 +970,7 @@ btk.define({
 
 
         // run this AFTER gd.about
-        gd.setRoot = function(callback) {
+        gd.getRoot = function(callback) {
             gd.root = {};
             gd.about(function(info) {
                 gd.root.about = info.output;
@@ -964,9 +1001,13 @@ btk.define({
                 }
             }
 
+            // deprecated
             if (params.projection !== 'FULL') {
                 params.projection = 'BASIC';
             }
+            
+            // searching
+            // params.q='title="old.txt"'
             */
             gd.apiget({
                 'options':params,
@@ -1138,6 +1179,72 @@ btk.define({
         };
 
 
+        //------------------------------------------------------------
+        gd.test = {};
+        
+        gd.test.refresh = false;
+        gd.test.mimeType = 'text/plain',
+        gd.test.listParams = {
+            'maxResults':15,
+            //'q':'title="old.txt"'
+        };
+        
+        gd.test.getList = function(callback){
+            callback = callback || function(info){};
+            
+            if (gd.test.list && !gd.test.refresh) {
+                callback(gd.test.list);
+            }
+            else {
+                console.log('gd.test.getList: getting the list');
+                gd.files.list(gd.test.listParams, function(info){
+                    gd.test.list = info;
+                    callback(info);
+                });
+            }
+                
+        };
+        
+        gd.test.getItem = function(n){
+            n = n || 0;
+            
+            var callback = function(info){
+                var item = info.output.items[n];
+                if (!item) {
+                    console.log('gdrive.test.getItem: no item: ' + n);
+                    return;
+                }
+                
+                var links = item.exportLinks;
+                if (!item.exportLinks) {
+                    links = {};
+                    links[item.mimeType] = item.downloadUrl;
+                }
+                
+                var url = links[gd.test.mimeType];
+                if (!url) {
+                    console.log('gdrive.test.getItem: no download url for entry: ' + n);
+                    return;
+                }
+                
+                console.log('gdrive.test.getItem: getting item: ' + n);
+                gd.apiget({
+                    'url': url,
+                    'callback': function(info){
+                        gd.test.item = info;
+                        gd.test.num = n;
+                    },
+                    'info': {
+                        'fname':'test.getItem',
+                        'desc':'item: ' + n
+                    }
+                });
+            };
+            
+            gd.test.getList(callback);
+        };
+        
+        
         //------------------------------------------------------------
         btk.global.gd = gd;
 

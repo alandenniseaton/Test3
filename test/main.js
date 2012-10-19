@@ -645,7 +645,7 @@ libs: {
 //	taaa : "./aaa",
 //	tevt : "./event",
 //	term : "./terminal",
-//	tlfs : "./lfs",
+	tlfs : "./lfs",
 	lgv  : "./main.logview",
 	btk  : "btk@btk"
 },

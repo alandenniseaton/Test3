@@ -51,6 +51,7 @@ init: function(libs, lfs) {
 btk.define({
 name: "lfs.request@test",
 libs: { btk:"btk@btk" },
+when: [ "state::document.ready" ],
 init: function(libs, exports){
 
 	var btk = libs.btk;
@@ -105,8 +106,12 @@ init: function(libs, exports){
 		btk.trigger.state('lfs.access.no');
 	}
 	
+	//was failing
+	//needed to delete the File System dir in my profile
 	if (requestFS) {
+		//btk.message('#test/lfs.request: TEMPORARY');
 		//requestFS(window.TEMPORARY, 1*M, onOK, onError);
+		btk.message('#test/lfs.request: PERSISTENT');
 		requestFS(window.PERSISTENT, 1*M, onOK, onError);
 	} else {
 		onError('no function window.requestFileSystem || window.webkitRequestFileSystem');
