@@ -180,7 +180,7 @@ btk.define({
             var sobject = [];
 
             for(var k in object) {
-                sobject.push(k + '=' + encodeURIComponent(object[k]));
+                sobject.push(encodeURIComponent(k) + '=' + encodeURIComponent(object[k]));
             }
 
             return sobject.join('&');
@@ -408,7 +408,7 @@ btk.define({
                 console.log(event);
             },
             false
-            );
+        );
 
 
         chrome.extension.onConnect.addListener(function(port){
@@ -655,9 +655,8 @@ btk.define({
         oaw.auth.client_id = '774996004010.apps.googleusercontent.com';
 
         oaw.auth.response_type = 'token';
-        oaw.auth.redirect_uri = 'http://example.com/oauth/blank.html';
-        //oaw.auth.redirect_uri = 'http://oauth.example.com/blank.html';
         //oaw.auth.redirect_uri = oaw.robots;
+        oaw.auth.redirect_uri = 'http://example.com/oauth2/NoteSpace/dummy.html';
         oaw.auth.secret = '8wXIs1DdNTr4FRmsvgAQm_MH';
         oaw.auth.email = '774996004010@developer.gserviceaccount.com';
         oaw.auth.js_origin = document.location.origin;
@@ -668,55 +667,44 @@ btk.define({
         oaw.token = oaw.lsm.getset('token',oaw.token);
 
 
-        oaw.parse_response = function(url) {
-            console.log('gdrive@test: oaw.parse_response: ' + url);
-        
-            var hash = url.substring(url.indexOf('#')+1);
-            var params = btk.xhr.optionStringToObject(hash);
-            
-            oaw.token.error = params.error;
-            
-            oaw.token.access = params.access_token || oaw.token.access;
-            oaw.token.type = params.token_type || oaw.token.type;
-            oaw.token.duration = params.expires_in || oaw.token.duration;
-            oaw.token.state = params.state || oaw.token.state;
-
-            console.log(params);
-            console.log(oaw.token);
-        };
-
-
         // see http://code.google.com/chrome/extensions/webRequest.html
         chrome.webRequest.onBeforeRequest.addListener(
             function(details) {
                 console.log('gdrive@test: onBeforeRequest');
                 console.log(details);
         
-                var redirect = 'oauth2/Success.html';
-                
-                // details.url has the goodies
-                oaw.parse_response(details.url);
-                
-                if (oaw.token.error) {
-                    redirect = 'oauth2/Failure.html';
-                    
-                } else {
-                    oaw.token.start = details.timeStamp;
-                    oaw.token.end = oaw.token.start + oaw.token.duration*1000;
-                    
-                    oaw.lsm.set('token', oaw.token);
-                }
+                var url = details.url;
+                var redirect = [
+                    'oauth2/Response.html',
+                    '?timestamp=', details.timeStamp,
+                    url.substring(url.indexOf('#'))
+                ].join('');
                 
                 return {
-                    //	'cancel':true,
                     'redirectUrl':chrome.extension.getURL(redirect)
                 };
             },
             {
-                urls:[ "http://example.com/oauth/blank.html*" ]
-                },
+                urls:[ oaw.auth.redirect_uri ]
+            },
             ["blocking"]
-            );
+        );
+
+
+        chrome.extension.onMessage.addListener(function(msg) {
+            console.log('gdrive@test: received message');
+            console.log(msg);
+            
+            if (msg.type != 'OAuth2.Authorisation.Token') return;
+            
+            if (msg.id != chrome.runtime.id) return;
+            
+            oaw.token = msg.token;
+            
+            if (!oaw.token.error) {
+                oaw.lsm.set('token', oaw.token);
+            }
+        });
 
 
         oaw.authorise = function(force) {
@@ -725,6 +713,7 @@ btk.define({
                 'client_id':oaw.auth.client_id,
                 'redirect_uri': oaw.auth.redirect_uri,
                 //'redirect_uri':'postmessage',
+                // don't know how to use this
                 // don't know where it is to be posted to!
                 // perhaps to itself!
                 // that would make sense.
@@ -737,7 +726,14 @@ btk.define({
                 'state':'NoteSpaceOAuthW'
             });
             
-            oaw.authorise.ilaunch(optionString);
+            if (force) {
+                oaw.authorise.wlaunch(optionString);
+                //oaw.authorise.ilaunch(optionString);
+            }
+            else {
+                //oaw.authorise.wlaunch(optionString);
+                oaw.authorise.ilaunch(optionString);
+            }
         };
         
         oaw.authorise.wlaunch = function(options) {
@@ -770,8 +766,8 @@ btk.define({
             token.type = token.type || 'Bearer';
 	
             var url = [
-            oa.auth.validateURI,
-            '?access_token=', encodeURIComponent(oaw.token.access)
+                oa.auth.validateURI,
+                '?access_token=', encodeURIComponent(oaw.token.access)
             ].join('');
 	
             oaw.validateURL = url;
@@ -796,6 +792,8 @@ btk.define({
                         console.log('received error (' + xhr.status + ') validating the token');
                         oaw.auth.validationResponse = JSON.parse(xhr.response || '{}');
                     }
+                    
+                    console.log(oaw.auth.validationResponse);
                 }
             };
 	
@@ -817,6 +815,7 @@ btk.define({
         // google-api javascript client
         //
         // does not work
+        // 121019:1758 does now (but not if immediate flag is false)
         //-----------------------------
         /*
         btk.namespace('gapi', btk);
@@ -824,18 +823,35 @@ btk.define({
         var ga = btk.gapi;
 
 
-        gapi.auth.init(function() {
-            gapi.client.setApiKey(oaw.auth.api_key);
-        });
+        ga.load = function(auth) {
+            gapi.client.load('drive','v2',function(){
+                console.log('gdrive.gapi.load: done');
+                if (auth) {
+                    auth();
+                }
+            });
+        };
+        
+        
+        ga.init = function(auth) {
+            gapi.auth.init(function() {
+                gapi.client.setApiKey(oaw.auth.api_key);
+                console.log('gdrive.gapi.init: done');
+                ga.load(auth);
+            });
+        };
 
 
         // auth window hangs trying to connect to somewhere
+        // when immediate flag is false
 
+        ga.immediate = false;
+        
         ga.authorise = function () {
             gapi.auth.authorize({
                 client_id: oaw.auth.client_id,
                 scope: oa.auth.scope,
-                immediate: false
+                immediate: ga.immediate // does not work if false
             }, function(authResult){
                 if (authResult && ~authResult.erro) {
                     console.log('gdrive.gapi.authorise@test: all OK');
@@ -845,8 +861,36 @@ btk.define({
             });
             console.log('gdrive.gapi.authorise@test: request sent');
         };
+        
+        ga.start = function() {
+            ga.init(ga.authorise);
+        };
+        
+        
+        ga.result = null;
+        
+        ga.about = function() {
+            var r = gapi.client.drive.about();
+            r.execute(function(result){
+                ga.result = result;
+                console.log('gdrive.gapi.about: done');
+            });
+        };
+        
+        
+        ga.files = {};
+        
+        ga.files.list = function(params) {
+            var r = gapi.client.drive.files.list(params);
+            r.execute(function(result) {
+                ga.result = result;
+                console.log('gdrive.gapi.files.list: done');
+            });
+        };
+        
+        btk.global.ga = ga;
         */
-
+        
         //------------------------------------------------------------
         //------------------------------------------------------------
         console.log('gdrive test module started');
@@ -871,7 +915,28 @@ btk.define({
         };
 
         gd.remaining = function() {
-            return (gd.token.end - Date.now())/1000;
+            var tuseconds = Math.floor(gd.token.end - Date.now());
+            if (tuseconds < 0) {
+                tuseconds = 0;
+            }
+            var tseconds = Math.floor(tuseconds/1000);
+            var tminutes = Math.floor(tseconds/60);
+            
+            var hours = Math.floor(tminutes/60);
+            var minutes = tminutes % 60;
+            var seconds = tseconds % 60;
+            var useconds = tuseconds % 1000;
+            
+            var msg = [
+                'Hours:', hours,
+                ', Minutes:', minutes,
+                ', Seconds:', seconds,
+                ', u:', useconds,
+                ', (', tuseconds,
+                ')'
+            ].join('');
+            
+            return msg;
         };
         
         

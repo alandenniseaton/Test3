@@ -1,5 +1,5 @@
 {
-    //"manifest_version" :2,
+    "manifest_version" :2,
     
 	"name": "test3",
 	
@@ -12,6 +12,14 @@
 		"48": "images/vm48.png",
 		"128": "images/vm128.png"
 	},
+    
+    "web_accessible_resources": [
+        /*needed for notifications*/
+        "images/vm16.png",
+        "images/vm48.png",
+        "images/vm128.png"
+    ],
+    
 /*	
 	"app": {
 		"launch": {
@@ -26,8 +34,9 @@
 	},
 	
 
-    /*better colours for google groups*/
+    
 	"content_scripts": [
+        /*better colours for google groups*/
 		{	
 			"matches": [
 				"http://groups.google.com/*",
@@ -40,12 +49,14 @@
 
 	"options_page": "Options.html",
 	
-    "background_page": "background.html",
-	/*
+    // version 1
+    //"background_page": "background.html",
+	//*
+    // version 2
     "background": {
         "page": "background.html"
     },
-	*/
+	//*/
 	"minimum_chrome_version": "12.0.706.0",
 	
 	"permissions":[
@@ -53,6 +64,7 @@
 		"*://*.google.com/*",
 		"*://*.googleapis.com/*",
         
+        "storage",
         "alarms", /*requires manifest version 2*/
 		"tts",
 		"unlimitedStorage",
@@ -64,7 +76,7 @@
 		"webRequestBlocking",
         
         /*redirect url for Google API project*/
-		"http://example.com/oauth/blank.html*",
+		"http://example.com/oauth2/NoteSpace/dummy.html*",
         
         /*test globs for simple page server*/
         /*needs webRequest api*/

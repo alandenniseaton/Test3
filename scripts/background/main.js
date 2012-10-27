@@ -88,6 +88,8 @@ btk.define({
             if (done) {
                 return value;
             }
+            
+            return undefined;
         }
         exports.lsset = lsset;
 	

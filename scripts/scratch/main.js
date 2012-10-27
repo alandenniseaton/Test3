@@ -257,7 +257,21 @@ btk.define({
 					
         x.z = z;
 					
-					
+	
+        btk.global.r = {
+            method: 'GET',
+            url: 'https://www.googleapis.com/drive/v2/files',
+            options: {
+                maxResults:15,
+                //key:'AIzaSyBWDSteALEpuET94Wd_Eb57bcDXrHTWA7s' //installed application
+                key:'AIzaSyB8NJH163gJC2kRYnX6xCMZqIMpOIMO-NQ' //web app
+            },
+            info:{
+                fname:'test@page.r',
+                desc:'testing out some stuff'
+            }
+        };
+        
         return x;
     }
 });

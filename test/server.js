@@ -42,13 +42,14 @@ btk.define({
             
             var b = new Blob(page, {type:'text/html'});
             
-            //var url = URL.createObjectURL(b);
+            var url = URL.createObjectURL(b);
+            /*
             var url = [
                 chrome.extension.getURL('Redirect.html'),
                 '#',
-                URL.createObjectURL(b)
+                encodeURIComponent(URL.createObjectURL(b))
             ].join('');
-            
+            */
             return url;
         };
 
